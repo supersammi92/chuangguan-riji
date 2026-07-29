@@ -25,7 +25,7 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 @keyframes coinPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
 .top-bar{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#ff9a56,#ff6b6b);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(255,106,86,.3)}
-.top-bar h1{font-size:17px;font-weight:700}
+.top-bar h1{font-size:17px;font-weight:700}.version-tag{font-size:10px;opacity:.6;font-weight:400;margin-left:4px}
 .coin-display{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.25);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;backdrop-filter:blur(10px)}
 .coin-display .coin-icon{display:flex;align-items:center}
 
@@ -208,7 +208,7 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 
 <!-- Top Bar -->
 <div class="top-bar" id="topBar">
-  <h1 id="topTitle">🐾 小伙伴</h1>
+  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v6</span></h1>
   <div class="coin-display"><span class="coin-icon"><span class="coin coin-lg"></span></span><span id="coinCount">0</span></div>
 </div>
 
@@ -473,8 +473,11 @@ function renderPetPage(){
   }
   ps.innerHTML=html;
 
+  // Clear any previously injected add-pet button area
+  const oldAdopt=document.getElementById('adoptArea');
+  if(oldAdopt)oldAdopt.remove();
   if(state.pets.length===0){
-    ps.insertAdjacentHTML('afterend','<div style="text-align:center;padding:8px"><button class="add-pet-btn" onclick="addPet()">✨ 领养新伙伴</button></div>');
+    ps.insertAdjacentHTML('afterend','<div id="adoptArea" style="text-align:center;padding:8px"><button class="add-pet-btn" onclick="addPet()">✨ 领养新伙伴</button></div>');
     document.getElementById('petStage').style.display='none';
     document.getElementById('petName').style.display='block';
     document.getElementById('petName').textContent='选一个，然后领养!';
@@ -567,13 +570,12 @@ function renderTaskPage(){
       <div class="tc-info"><div class="tc-name">${t.name}</div><div class="tc-coin">${coinHtml('sm')}${t.coins} · ${t.difficulty||''}</div></div>
       ${done?'<span class="tc-check">✅</span>':''}
     </div>`;
-  }).join('');
-
-  list.insertAdjacentHTML('beforeend','<div class="section-title">⚠️ 避免这些行为（会扣金币哦）</div>'+
-    state.config.penalties.map(p=>`<div class="task-card" onclick="triggerPenalty('${p.id}')" style="border-left:3px solid #ff6b6b">
+  }).join('')
+  + '<div class="section-title">⚠️ 避免这些行为（会扣金币哦）</div>'
+  + state.config.penalties.map(p=>`<div class="task-card" onclick="triggerPenalty('${p.id}')" style="border-left:3px solid #ff6b6b">
       <span style="font-size:24px">${p.name.slice(0,2)}</span>
       <div class="tc-info"><div class="tc-name">${p.name}</div><div class="tc-coin" style="color:#ff6b6b">-${coinHtml('sm')}${p.coins}</div></div>
-    </div>`).join(''));
+    </div>`).join('');
 }
 
 function completeSimpleTask(taskId){
@@ -816,7 +818,7 @@ function renderGoBoard(){
       if(stone){
         inner=`<div class="go-stone ${stone}"></div>`;
       }
-      const clickable=!stone&&!gs.solved?'onclick="goPlaceStone(${r},${c})"':'';
+      const clickable=!stone&&!gs.solved?`onclick="goPlaceStone(${r},${c})"`:'';
       // highlight target area
       let extraClass='';
       if(!stone&&!gs.solved&&gs.correct.row===r&&gs.correct.col===c)extraClass=' hint-cell';
@@ -1106,4 +1108,330 @@ function claimWish(wishId){
 function addCustomWish(){
   const name=prompt('输入心愿名称:');
   if(!name||!name.trim())return;
-  const cost=parseInt(prompt('需要多少金币? (建议80-200
+  const cost=parseInt(prompt('需要多少金币? (建议80-200):','100'));
+  if(isNaN(cost)||cost<1)return;
+  const id='wc'+Date.now().toString(36);
+  state.config.wishes.push({id,name:'✨ '+name.trim(),cost});
+  saveState();renderWishPage();
+}
+
+// ============================================================
+// REPORT SYSTEM - Enhanced
+// ============================================================
+function renderReportPage(){
+  const tk=today();
+  const ct=state.completedTasks[tk]||{};
+  const pen=(state.dailyPenalties[tk]&&Array.isArray(state.dailyPenalties[tk]))?state.dailyPenalties[tk]:[];
+  const shop=(state.shopHistory[tk]&&Array.isArray(state.shopHistory[tk]))?state.shopHistory[tk]:[];
+
+  const totalTasks=state.config.tasks.length;
+  const completedCount=state.config.tasks.filter(t=>ct[t.id]).length;
+  const earned=state.config.tasks.filter(t=>ct[t.id]).reduce((s,t)=>s+t.coins,0);
+
+  const penaltyTotal=pen.reduce((s,p)=>{
+    const cfg=state.config.penalties.find(x=>x.id===p.id);
+    return s+(cfg?cfg.coins:0);
+  },0);
+
+  const shopTotal=shop.reduce((s,sh)=>{
+    const cfg=state.config.shopItems.find(x=>x.id===sh.item);
+    return s+(cfg?cfg.cost:0);
+  },0);
+
+  const pct=totalTasks>0?Math.round(completedCount/totalTasks*100):0;
+  const emotion=pct>=80?'🌟':pct>=50?'😊':pct>0?'💪':'😴';
+  const net=earned-penaltyTotal-shopTotal;
+
+  document.getElementById('reportContent').innerHTML=`
+    <div class="report-header">
+      <div class="rh-date">📅 ${tk} 日报</div>
+      <div class="rh-summary">${emotion} ${completedCount}/${totalTasks}</div>
+      <div class="rh-detail">今日完成 ${completedCount} 项任务</div>
+      <div class="report-progress-bar"><div class="report-progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="report-card">
+      <h4>📋 任务完成详情</h4>
+      ${state.config.tasks.map(t=>{
+        const done=!!ct[t.id];
+        return `<div class="report-row">
+          <div class="rr-status">${done?'✅':'⬜'} ${t.name}</div>
+          <div class="rr-coin" style="color:${done?'var(--green)':'#ccc'}">${done?'+'+t.coins+' '+coinHtml('sm'):'---'}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="report-card">
+      <h4>⚠️ 扣分记录</h4>
+      ${pen.length===0?'<p style="color:var(--green);font-size:13px;padding:8px 0">✨ 今天没有扣分，表现很棒!</p>':
+        pen.map(p=>{
+          const cfg=state.config.penalties.find(x=>x.id===p.id);
+          return `<div class="report-row">
+            <span>${cfg?cfg.name:'未知'}</span>
+            <div class="rr-coin" style="color:#ff6b6b">-${cfg?cfg.coins:'?'} ${coinHtml('sm')}</div>
+          </div>`;
+        }).join('')}
+    </div>
+    <div class="report-card">
+      <h4>🏪 商店购买</h4>
+      ${shop.length===0?'<p style="color:var(--sub);font-size:13px;padding:8px 0">今天还没买东西</p>':
+        shop.map(sh=>{
+          const cfg=state.config.shopItems.find(x=>x.id===sh.item);
+          return `<div class="report-row">
+            <span>${cfg?cfg.icon+' '+cfg.name:'物品'}</span>
+            <div class="rr-coin" style="color:var(--accent)">-${cfg?cfg.cost:'?'} ${coinHtml('sm')}</div>
+          </div>`;
+        }).join('')}
+    </div>
+    <div class="report-card">
+      <div class="report-row" style="font-weight:600;border:none">
+        <span>🟢 获得金币</span><span style="color:var(--green)">+${earned} ${coinHtml('sm')}</span>
+      </div>
+      <div class="report-row" style="font-weight:600">
+        <span>🔴 扣除金币</span><span style="color:var(--accent2)">-${penaltyTotal+shopTotal} ${coinHtml('sm')}</span>
+      </div>
+      <div class="report-total" style="color:${net>=0?'var(--green)':'var(--accent2)'}">
+        今日净变化: ${net>=0?'+':''}${net} ${coinHtml('sm')}
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// PARENT SETTINGS
+// ============================================================
+function unlockParent(){
+  const pw=document.getElementById('parentPassword').value;
+  if(pw!==state.parentPin)return toastMsg('密码错误!',true);
+  document.getElementById('parentLock').style.display='none';
+  document.getElementById('parentContent').classList.add('show');
+  renderParentConfig();
+}
+
+function changePassword(){
+  const np=document.getElementById('newPassword').value;
+  if(!np||np.length<2)return toastMsg('密码太短!',true);
+  state.parentPin=np;saveState();toastMsg('密码已修改!✅');
+}
+
+function renderParentConfig(){
+  renderConfigList('configTasks',state.config.tasks,'t');
+  renderConfigList('configPenalties',state.config.penalties,'p');
+  renderConfigList('configShopItems',state.config.shopItems,'s');
+  renderConfigList('configWishes',state.config.wishes,'w');
+}
+
+function renderConfigList(containerId,items,prefix){
+  const container=document.getElementById(containerId);
+  container.innerHTML=items.map((item,i)=>{
+    if(prefix==='t'){
+      return `<div class="config-item">
+        <div class="ci-info"><strong>${item.name}</strong>难度:${item.difficulty||'--'}</div>
+        <input class="ci-input" value="${item.coins}" onchange="updateConfigItem('${containerId}','${item.id}','coins',this.value)" type="number" min="1" max="20" style="width:55px">
+        <span style="font-size:11px;color:var(--accent);display:flex;align-items:center;gap:1px">${coinHtml('sm')}</span>
+        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
+    }else if(prefix==='p'){
+      return `<div class="config-item">
+        <div class="ci-info"><strong>${item.name}</strong></div>
+        <input class="ci-input" value="${item.coins}" onchange="updateConfigItem('${containerId}','${item.id}','coins',this.value)" type="number" min="1" max="20" style="width:55px">
+        <span style="font-size:11px;color:#ff6b6b;display:flex;align-items:center;gap:1px">${coinHtml('sm')}</span>
+        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
+    }else if(prefix==='s'){
+      return `<div class="config-item">
+        <div class="ci-info"><strong>${item.icon} ${item.name}</strong>${item.desc||''}</div>
+        <input class="ci-input" value="${item.cost}" onchange="updateConfigItem('${containerId}','${item.id}','cost',this.value)" type="number" min="1" max="50" style="width:55px">
+        <span style="font-size:11px;color:var(--sub);display:flex;align-items:center;gap:1px">${coinHtml('sm')}</span>
+        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
+    }else{
+      return `<div class="config-item">
+        <div class="ci-info"><strong>${item.name}</strong></div>
+        <input class="ci-input" value="${item.cost}" onchange="updateConfigItem('${containerId}','${item.id}','cost',this.value)" type="number" min="10" max="500" style="width:55px">
+        <span style="font-size:11px;color:var(--sub);display:flex;align-items:center;gap:1px">${coinHtml('sm')}</span>
+        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
+    }
+  }).join('');
+}
+
+function updateConfigItem(containerId,itemId,field,value){
+  const numVal=parseInt(value);if(isNaN(numVal)||numVal<1)return;
+  let items;if(containerId==='configTasks')items=state.config.tasks;
+  else if(containerId==='configPenalties')items=state.config.penalties;
+  else if(containerId==='configShopItems')items=state.config.shopItems;
+  else items=state.config.wishes;
+  const item=items.find(x=>x.id===itemId);
+  if(item){item[field]=numVal;saveState();renderAllPages()}
+}
+
+function removeConfigItem(containerId,itemId){
+  let items;if(containerId==='configTasks')items=state.config.tasks;
+  else if(containerId==='configPenalties')items=state.config.penalties;
+  else if(containerId==='configShopItems')items=state.config.shopItems;
+  else items=state.config.wishes;
+  const idx=items.findIndex(x=>x.id===itemId);
+  if(idx>=0){items.splice(idx,1);saveState();renderParentConfig();renderAllPages()}
+}
+
+function addConfigTask(){
+  const name=prompt('任务名称(含emoji):','🧹 做家务');
+  if(!name)return;
+  const coins=parseInt(prompt('金币奖励:','4'));
+  if(isNaN(coins))return;
+  const diff=prompt('难度(简单/中等/较难):','简单');
+  state.config.tasks.push({id:'t'+Date.now().toString(36),name,cat:'habit',coins,difficulty:diff||'简单'});
+  saveState();renderParentConfig();renderAllPages();
+}
+
+function addConfigPenalty(){
+  const name=prompt('扣分项名称(含emoji):','📺 超时看电视');
+  if(!name)return;
+  const coins=parseInt(prompt('扣除金币:','4'));
+  if(isNaN(coins))return;
+  state.config.penalties.push({id:'p'+Date.now().toString(36),name,coins});
+  saveState();renderParentConfig();renderAllPages();
+}
+
+function addConfigShopItem(){
+  const name=prompt('商品名称:','饼干');
+  if(!name)return;
+  const icon=prompt('emoji图标:','🍪');
+  const cost=parseInt(prompt('价格(金币):','3'));
+  if(isNaN(cost))return;
+  const effect=prompt('效果类型(hunger/happiness/health/clean):','hunger');
+  const val=parseInt(prompt('效果值(1-50):','15'));
+  state.config.shopItems.push({id:'s'+Date.now().toString(36),name,icon:icon||'🎁',cost,effect:effect||'hunger',val:isNaN(val)?15:val,desc:''});
+  saveState();renderParentConfig();renderAllPages();
+}
+
+function addConfigWish(){
+  const name=prompt('心愿名称:','🎮 买游戏');
+  if(!name)return;
+  const cost=parseInt(prompt('需要金币:','100'));
+  if(isNaN(cost))return;
+  state.config.wishes.push({id:'w'+Date.now().toString(36),name:'✨ '+name,cost});
+  saveState();renderParentConfig();renderAllPages();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function switchPage(pageName){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pageName).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${pageName}"]`).classList.add('active');
+  const titles={pet:'🐾 小伙伴',task:'📋 今日任务',shop:'🏪 宠物商店',wish:'🌟 心愿清单',report:'📊 今日日报',parent:'⚙️ 家长后台'};
+  document.getElementById('topTitle').textContent=titles[pageName];
+
+  if(pageName==='pet')renderPetPage();
+  else if(pageName==='task')renderTaskPage();
+  else if(pageName==='shop')renderShopPage();
+  else if(pageName==='wish')renderWishPage();
+  else if(pageName==='report')renderReportPage();
+  else if(pageName==='parent'){
+    document.getElementById('parentLock').style.display='block';
+    document.getElementById('parentContent').classList.remove('show');
+    document.getElementById('parentPassword').value='';
+  }
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function toastMsg(msg,isPenalty=false){
+  const t=document.getElementById('toast');
+  // Build HTML manually - don't let innerHTML set then get overwritten by textContent
+  t.innerHTML='';
+  t.appendChild(document.createTextNode(msg));
+  t.className='toast'+(isPenalty?' penalty':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+function updateCoinDisplay(){
+  document.getElementById('coinCount').textContent=state.coins;
+}
+
+function renderAllPages(){
+  renderTaskPage();
+  renderShopPage();
+  renderWishPage();
+  renderReportPage();
+}
+
+// ============================================================
+// BOTTOM NAV CLICKS
+// ============================================================
+document.getElementById('bottomNav').addEventListener('click',(e)=>{
+  const btn=e.target.closest('.nav-item');
+  if(!btn)return;switchPage(btn.dataset.page);
+});
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click',(e)=>{
+  if(e.target===document.getElementById('modalOverlay'))closeModal();
+});
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  const tk=today();
+  // Normalize data structures - handle corrupted/old format data
+  if(!state.completedTasks||typeof state.completedTasks!=='object')state.completedTasks={};
+  if(!state.completedTasks[tk])state.completedTasks[tk]={};
+  if(!state.dailyPenalties)state.dailyPenalties={};
+  if(!state.dailyPenalties[tk]||!Array.isArray(state.dailyPenalties[tk]))state.dailyPenalties[tk]=[];
+  if(!state.shopHistory||typeof state.shopHistory!=='object')state.shopHistory={};
+  if(!state.shopHistory[tk]||!Array.isArray(state.shopHistory[tk]))state.shopHistory[tk]=[];
+  if(!state.config||!Array.isArray(state.config.tasks))state.config=DEFAULT_STATE.config;
+  updateCoinDisplay();
+  renderAllPages();
+  renderPetPage();
+  saveState();
+}
+
+// ============================================================
+// ERROR HANDLER — shows errors on-screen for debugging
+// ============================================================
+window.onerror=function(msg,src,line,col,err){
+  const dbg=document.getElementById('debugPanel');
+  if(dbg){
+    dbg.style.display='block';
+    dbg.innerHTML+='<div style="color:#ff6b6b;margin:4px 0;font-size:11px">❌ '+msg+' (line '+line+')</div>';
+  }
+};
+window.addEventListener('unhandledrejection',function(e){
+  const dbg=document.getElementById('debugPanel');
+  if(dbg){
+    dbg.style.display='block';
+    dbg.innerHTML+='<div style="color:#ff6b6b;margin:4px 0;font-size:11px">❌ Promise: '+e.reason+'</div>';
+  }
+});
+
+// ============================================================
+// PWA SERVICE WORKER
+// ============================================================
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js?v=6').catch(()=>{});
+  });
+}
+
+// ============================================================
+// START
+// ============================================================
+try{
+  init();
+  console.log('✅ v6 loaded successfully');
+}catch(e){
+  const dbg=document.getElementById('debugPanel');
+  if(dbg){
+    dbg.style.display='block';
+    dbg.innerHTML='<div style="color:#ff6b6b;font-size:13px;font-weight:700">❌ 初始化失败: '+e.message+'</div><div style="color:#888;font-size:11px">'+e.stack+'</div>';
+  }
+  console.error('Init error:',e);
+}
+</script>
+<!-- DEBUG: shows JS errors -->
+<div id="debugPanel" style="display:none;position:fixed;bottom:70px;left:0;right:0;background:#1a1a2e;color:#fff;padding:10px;font-family:monospace;z-index:9999;max-height:40vh;overflow-y:auto;border-top:3px solid #ff6b6b">
+  <div style="font-size:12px;font-weight:700;margin-bottom:6px">🐛 Debug Panel — v6</div>
+</div>
+</body>
+</html>
