@@ -1,1180 +1,1106 @@
-<!DOCTYPE html><html lang="zh-CN">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>小六一的闯关日记</title>
-<!-- PWA -->
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#667eea">
+<meta name="theme-color" content="#ff9a56">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="闯关日记">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="application-name" content="闯关日记">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--c1:#FF6B6B;--c2:#4ECDC4;--c3:#FFE66D;--c4:#95E1D3;--c5:#F38181;--c6:#AA96DA;--c7:#FCBAD3;--c8:#A8D8EA;--bg:linear-gradient(135deg,#E8F4FD,#FFF8E7,#F3E5F5);--card:#fff;--shadow:0 3px 12px rgba(0,0,0,.07);--radius:18px}
-body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:var(--bg);min-height:100vh;color:#333;overflow-x:hidden}
-
-/* Header */
-.header{background:linear-gradient(135deg,#667eea,#764ba2);padding:16px 24px;border-radius:0 0 28px 28px;box-shadow:0 4px 20px rgba(102,126,234,.35);position:relative;overflow:hidden}
-.header::after{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%}
-.header-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;max-width:1000px;margin:0 auto}
-.header h1{font-size:24px;color:#fff;text-shadow:2px 2px 4px rgba(0,0,0,.12)}.header .date{font-size:13px;color:rgba(255,255,255,.85)}.star-box{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);backdrop-filter:blur(8px);padding:10px 20px;border-radius:20px;border:2px solid rgba(255,255,255,.25)}.star-box .big-star{font-size:30px;animation:pulse 1.8s ease-in-out infinite}.star-box .cnt{font-size:28px;font-weight:bold;color:#FFE66D}.star-box .lbl{font-size:12px;color:rgba(255,255,255,.8);margin-left:4px}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2) rotate(8deg)}}
-
-/* Progress */
-.prog-wrap{max-width:1000px;margin:16px auto;padding:0 16px}
-.prog-bar{background:#fff;border-radius:40px;height:32px;overflow:hidden;position:relative;box-shadow:var(--shadow)}
-.prog-fill{height:100%;background:linear-gradient(90deg,#66BB6A,#43A047,#66BB6A);background-size:200% 100%;border-radius:40px;transition:width .5s ease;animation:shimmer 3s linear infinite}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.prog-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:bold;color:#333;white-space:nowrap}
-
-/* Journey Map */
-.journey-wrap{max-width:1000px;margin:0 auto 16px;padding:0 16px}
-.journey{display:flex;align-items:center;gap:6px;overflow-x:auto;padding:12px 16px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);justify-content:center;flex-wrap:wrap}
-.j-node{display:flex;align-items:center;gap:4px}
-.j-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:#f0f0f0;transition:all .3s}
-.j-dot.done{background:#66BB6A;color:#fff;box-shadow:0 2px 8px rgba(102,187,106,.4)}
-.j-dot.current{background:#FFA726;color:#fff;animation:pulse 1.5s ease-in-out infinite;box-shadow:0 2px 12px rgba(255,167,38,.5)}
-.j-line{width:20px;height:3px;border-radius:2px;background:#e0e0e0}.j-line.done{background:#66BB6A}
-.j-label{font-size:11px;text-align:center;color:#888;max-width:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.j-label.done{color:#66BB6A;font-weight:bold}
-
-/* Section */
-.section{max-width:1000px;margin:0 auto 20px;padding:0 16px}
-.sec-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.sec-icon{font-size:26px}.sec-title{font-size:18px;font-weight:bold}.sec-tag{font-size:12px;color:#888;margin-left:auto;background:#f5f5f5;padding:4px 12px;border-radius:12px}
-.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);transition:all .3s;border:3px solid transparent;cursor:pointer;position:relative;overflow:hidden}
-.card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
-.card.done{border-color:#66BB6A;background:linear-gradient(135deg,#E8F5E9,#fff)}.card.done::after{content:'✅';position:absolute;top:10px;right:14px;font-size:28px;opacity:.35}
-.card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}.c-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0}.c-info h3{font-size:16px;font-weight:bold}.c-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px}.c-tag{font-size:11px;padding:2px 8px;border-radius:10px;background:#f0f0f0;color:#666}.c-tag.t1{background:#E3F2FD;color:#1565C0}.c-tag.t2{background:#FFF3E0;color:#E65100}.c-detail{font-size:12px;color:#777;line-height:1.5;margin-bottom:10px}.c-sub{font-size:11px;color:#aaa;margin-bottom:10px}
-.c-btn{width:100%;padding:10px;border:none;border-radius:12px;font-size:14px;font-weight:bold;cursor:pointer;font-family:inherit;transition:all .3s}.c-btn.go{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}.c-btn.go:hover{transform:scale(1.03);box-shadow:0 4px 12px rgba(102,126,234,.4)}.c-btn.done-btn{background:#66BB6A;color:#fff}.c-btn.redo{background:#e0e0e0;color:#666}.c-btn.locked{background:#ccc;color:#999;cursor:not-allowed}
-
-/* Colors */
-.c-blue{background:linear-gradient(135deg,#42A5F5,#1E88E5)}.c-orange{background:linear-gradient(135deg,#FFA726,#FB8C00)}.c-purple{background:linear-gradient(135deg,#AB47BC,#8E24AA)}.c-green{background:linear-gradient(135deg,#66BB6A,#43A047)}.c-teal{background:linear-gradient(135deg,#26C6DA,#00ACC1)}.c-pink{background:linear-gradient(135deg,#EC407A,#D81B60)}.c-indigo{background:linear-gradient(135deg,#5C6BC0,#3949AB)}.c-amber{background:linear-gradient(135deg,#FFD54F,#FFB300)}
-
-/* Game Modal */
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:100;align-items:center;justify-content:center}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff8f0;--card:#fff;--accent:#ff9a56;--accent2:#ff6b6b;--green:#4ecdc4;--gold:#ffd700;--text:#3d3d3d;--sub:#888;--shadow:0 2px 12px rgba(0,0,0,.06);--radius:16px}
+body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;padding:0 0 80px;overflow-x:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.top-bar{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#ff9a56,#ff6b6b);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(255,106,86,.3)}
+.top-bar h1{font-size:17px;font-weight:700}
+.coin-display{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.25);padding:6px 14px;border-radius:20px;font-weight:700;font-size:15px;backdrop-filter:blur(10px)}
+.coin-display .coin-icon{font-size:20px;animation:coinPulse 2s infinite}
+@keyframes coinPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.page{display:none;padding:12px 14px;animation:fadeIn .3s ease}.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* Bottom Nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;display:flex;justify-content:space-around;padding:6px 4px 8px;box-shadow:0 -2px 16px rgba(0,0,0,.08);border-radius:20px 20px 0 0}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;cursor:pointer;padding:6px 8px;color:#bbb;font-size:10px;font-family:inherit;transition:all .2s;position:relative;min-width:0;flex:1}
+.nav-item .ni-icon{font-size:22px;transition:transform .2s}
+.nav-item.active{color:var(--accent)}.nav-item.active .ni-icon{transform:scale(1.15)}
+.nav-item .ni-badge{position:absolute;top:0;right:calc(50% - 22px);background:var(--accent2);color:#fff;font-size:9px;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+/* Pet Page */
+.pet-area{text-align:center;padding:20px 0}
+.pet-stage{position:relative;width:200px;height:200px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.pet-emoji{font-size:120px;transition:transform .3s;cursor:pointer}
+.pet-emoji:hover{transform:scale(1.08)}
+.pet-emoji.eating{animation:eatAnim .3s ease 3}@keyframes eatAnim{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.pet-emoji.playing{animation:playAnim .5s ease 3}@keyframes playAnim{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+.pet-emoji.crying{animation:cryAnim .4s ease 3}@keyframes cryAnim{0%,100%{transform:scale(1)}25%{transform:scale(1.1) rotate(-5deg)}75%{transform:scale(1.1) rotate(5deg)}}
+.pet-name{font-size:18px;font-weight:700;margin-bottom:12px;color:var(--accent)}
+.stat-row{display:flex;align-items:center;gap:10px;margin:8px 0;padding:0 20px}
+.stat-label{font-size:13px;width:36px;text-align:right;flex-shrink:0}
+.stat-bar{flex:1;height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden}
+.stat-fill{height:100%;border-radius:6px;transition:width .5s ease}
+.stat-fill.hunger{background:linear-gradient(90deg,#ff6b6b,#ff9a56)}
+.stat-fill.happiness{background:linear-gradient(90deg,#ffd700,#ffb347)}
+.stat-fill.health{background:linear-gradient(90deg,#4ecdc4,#44a08d)}
+.stat-fill.clean{background:linear-gradient(90deg,#a3c9ff,#6b9fff)}
+.pet-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px 0}
+.pet-btn{background:#fff;border:2px solid #eee;border-radius:20px;padding:8px 16px;font-size:14px;cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:6px}
+.pet-btn:active{transform:scale(.95)}
+.pet-btn .cost{font-size:11px;color:var(--accent);font-weight:700}
+.pet-btn:disabled{opacity:.4;pointer-events:none}
+.pet-select{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:8px 0}
+.pet-option{width:70px;height:90px;border-radius:16px;border:3px solid #eee;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:36px;transition:all .2s;font-family:inherit}
+.pet-option:hover,.pet-option.selected{border-color:var(--accent);background:#fff8f0}
+.pet-option span{font-size:11px;color:var(--text)}
+.add-pet-btn{background:linear-gradient(135deg,#ff9a56,#ff6b6b);color:#fff;border:none;border-radius:20px;padding:10px 24px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:700;margin-top:8px}
+/* Notification Toast */
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(0,0,0,.85);color:#fff;padding:16px 32px;border-radius:24px;font-size:18px;font-weight:700;z-index:300;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;text-align:center}
+.toast.show{transform:translate(-50%,-50%) scale(1)}
+.toast.penalty{background:rgba(255,107,107,.9)}
+/* Task Page */
+.task-list{display:flex;flex-direction:column;gap:10px}
+.task-card{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s}
+.task-card:active{transform:scale(.98)}
+.task-card.done{opacity:.6;background:#f5fdf5}
+.task-card .tc-icon{font-size:32px;flex-shrink:0}
+.task-card .tc-info{flex:1;min-width:0}
+.task-card .tc-name{font-size:15px;font-weight:600}
+.task-card .tc-coin{font-size:12px;color:var(--accent);margin-top:2px}
+.task-card .tc-check{font-size:24px;color:var(--green)}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
 .modal-overlay.show{display:flex}
-.modal-box{background:#fff;border-radius:24px;width:92vw;max-width:520px;max-height:85vh;overflow-y:auto;padding:24px;position:relative;animation:bounceIn .35s ease}
-@keyframes bounceIn{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
-.modal-close{position:absolute;top:12px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:#f0f0f0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.modal-title{font-size:20px;font-weight:bold;text-align:center;margin-bottom:16px}
-.modal-score{text-align:center;margin:12px 0;font-size:15px;color:#666}
-.modal-btn{display:block;margin:20px auto 0;padding:12px 36px;border:none;border-radius:24px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit}
-.modal-btn.green{background:linear-gradient(135deg,#66BB6A,#43A047)}
-
-/* Character Learning */
-.char-card{border:2px solid #e0e0e0;border-radius:20px;padding:30px;text-align:center;margin-bottom:16px;transition:all .3s}
-.char-big{font-size:72px;font-weight:bold;color:#333;margin-bottom:8px;cursor:pointer}.char-big:active{transform:scale(.95)}
-.char-pinyin{font-size:28px;color:#667eea;margin-bottom:4px}.char-word{font-size:18px;color:#888;margin-bottom:4px}.char-emoji{font-size:48px}
-.speaker-btn{background:none;border:none;font-size:24px;cursor:pointer;padding:6px 12px;border-radius:12px;background:#f0f0f0;margin-top:8px;transition:all .3s}.speaker-btn:hover{background:#e0e0e0;transform:scale(1.08)}
-#engBigSpeaker{animation:speakerPulse 2s ease-in-out infinite;display:inline-block}
-@keyframes speakerPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
-.char-pager{display:flex;justify-content:center;gap:8px;margin:12px 0;flex-wrap:wrap}.char-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .3s}.char-dot.active{background:#667eea;width:24px;border-radius:6px}
-.char-quiz-option{display:inline-block;width:64px;height:64px;border:3px solid #e0e0e0;border-radius:16px;margin:8px;font-size:32px;cursor:pointer;background:#fff;display:inline-flex;align-items:center;justify-content:center;transition:all .2s}.char-quiz-option:hover{transform:scale(1.1);border-color:#667eea}.char-quiz-option.correct{border-color:#66BB6A;background:#E8F5E9}.char-quiz-option.wrong{border-color:#FF6B6B;background:#FFEBEE;animation:shake .5s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-
-/* Math */
-.math-prob{text-align:center;padding:24px 0}.math-equation{font-size:48px;font-weight:bold;margin-bottom:8px}.math-visual{font-size:24px;margin-bottom:16px;color:#888;min-height:32px}.math-input{font-size:36px;font-weight:bold;width:120px;text-align:center;border:3px solid #ddd;border-radius:16px;padding:8px 0;margin:0 auto 16px;display:block;outline:none;font-family:inherit}.math-input:focus{border-color:#667eea}
-.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:260px;margin:0 auto}.numpad button{aspect-ratio:1;border:none;border-radius:14px;font-size:22px;font-weight:bold;background:#f5f5f5;cursor:pointer;transition:all .15s;font-family:inherit}.numpad button:hover{background:#e0e0e0;transform:scale(1.05)}.numpad button:active{transform:scale(.95)}.numpad .num-ok{background:linear-gradient(135deg,#66BB6A,#43A047);color:#fff}.numpad .num-del{background:#FF6B6B;color:#fff;font-size:16px}
-.math-feedback{text-align:center;margin-top:10px;font-size:24px;min-height:36px}
-
-/* Go Board */
-.go-wrap{text-align:center}
-.go-instruction{font-size:15px;color:#666;margin-bottom:12px}.go-instruction b{color:#333}
-.go-board{display:inline-grid;background:#5D4037;gap:1.5px;padding:1.5px;border-radius:8px;margin:0 auto 12px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
-.go-cell{width:40px;height:40px;background:#DEB887;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.go-cell:hover{background:#cda073}.go-cell.hint{background:#FFE082;animation:pulse .8s ease-in-out infinite}
-.go-stone{width:30px;height:30px;border-radius:50%}.go-stone.b{background:radial-gradient(circle at 35% 35%,#555,#000);box-shadow:2px 2px 5px rgba(0,0,0,.4)}.go-stone.w{background:radial-gradient(circle at 35% 35%,#fff,#ccc);box-shadow:2px 2px 5px rgba(0,0,0,.2);border:1px solid #aaa}.go-stone.new-w{animation:popIn .4s ease}
-@keyframes popIn{0%{transform:scale(0)}70%{transform:scale(1.3)}100%{transform:scale(1)}}
-.go-feedback{font-size:18px;font-weight:bold;min-height:28px;margin:8px 0}.go-feedback.ok{color:#66BB6A}.go-feedback.ng{color:#FF6B6B}
-.go-score{font-size:14px;color:#888;margin-bottom:8px}
-
-/* Parent Panel */
-.parent-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
-.parent-overlay.show{display:flex}
-.parent-panel{background:#fff;border-radius:20px;width:94vw;max-width:650px;max-height:88vh;overflow-y:auto;padding:24px;animation:bounceIn .35s ease}
-.parent-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;border-bottom:2px solid #eee;padding-bottom:10px}
-.ptab{padding:8px 14px;border:none;border-radius:10px 10px 0 0;background:none;cursor:pointer;font-size:13px;font-weight:bold;color:#888;font-family:inherit;transition:all .2s}.ptab:hover{color:#333}.ptab.active{background:#f5f5f5;color:#667eea}
-.ptab-content{display:none}.ptab-content.active{display:block}
-.p-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f5f5f5;gap:10px;flex-wrap:wrap}
-.p-row label{font-size:14px;font-weight:bold;min-width:80px}.p-row input,.p-row select,.p-row textarea{border:2px solid #ddd;border-radius:10px;padding:8px 12px;font-size:14px;font-family:inherit;flex:1;min-width:120px}.p-row input:focus,.p-row select:focus,.p-row textarea:focus{border-color:#667eea;outline:none}
-.p-row textarea{height:60px;resize:vertical}.p-row .toggle{width:52px;height:28px;border-radius:14px;border:none;cursor:pointer;position:relative;transition:all .3s}.p-row .toggle.on{background:#66BB6A}.p-row .toggle.off{background:#ccc}.p-row .toggle::after{content:'';position:absolute;top:4px;width:20px;height:20px;border-radius:50%;background:#fff;transition:all .3s}.p-row .toggle.on::after{left:28px}.p-row .toggle.off::after{left:4px}
-.p-row .slider{width:100%;accent-color:#667eea}
-.p-save{margin-top:16px;padding:10px 24px;border:none;border-radius:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:14px;font-weight:bold;cursor:pointer;font-family:inherit}
-.p-danger{background:#FF6B6B!important;margin-left:8px}
-.gear-btn{position:fixed;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;border:none;background:rgba(255,255,255,.9);box-shadow:0 3px 12px rgba(0,0,0,.15);font-size:24px;cursor:pointer;z-index:50;display:flex;align-items:center;justify-content:center;transition:all .3s}.gear-btn:hover{transform:scale(1.1)}
-
-/* Rewards + Weekly */
-.reward-wrap,.weekly-wrap{max-width:1000px;margin:0 auto 20px;padding:0 16px}
-.rew-card,.week-card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
-.rew-title,.week-title{font-size:16px;font-weight:bold;margin-bottom:12px}
-.rew-tiers{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.rew-tier{background:#fafafa;border-radius:14px;padding:14px 18px;text-align:center;min-width:100px;flex:1;transition:all .3s}.rew-tier.achieved{border:2px solid #66BB6A;background:#E8F5E9}.rew-tier .tier-stars{font-size:20px;margin-bottom:4px}.rew-tier .tier-name{font-size:13px;font-weight:bold}.rew-tier .tier-desc{font-size:11px;color:#888;margin-top:2px}
-.rew-monthly{flex:1 1 100%;background:linear-gradient(135deg,#FFF8E1,#FFECB3);border:2px dashed #FFB300;border-radius:14px;padding:16px 20px;text-align:center;transition:all .4s;position:relative;overflow:hidden}
-.rew-monthly.upcoming{background:linear-gradient(135deg,#f9f9f9,#e8e8e8);border-color:#ccc;opacity:.7}
-.rew-monthly.achieved{background:linear-gradient(135deg,#FFE082,#FFD54F)!important;border:3px solid #FF8F00!important;box-shadow:0 0 24px rgba(255,143,0,.4);animation:monthlyGlow 2s ease-in-out infinite}
-@keyframes monthlyGlow{0%,100%{box-shadow:0 0 16px rgba(255,143,0,.3)}50%{box-shadow:0 0 32px rgba(255,143,0,.6)}}
-.rew-monthly .rm-emoji{font-size:36px;margin-bottom:4px}
-.rew-monthly .rm-title{font-size:15px;font-weight:bold;color:#E65100}
-.rew-monthly.upcoming .rm-title{color:#999}
-.rew-monthly.achieved .rm-title{color:#E65100;font-size:18px}
-.rew-monthly .rm-desc{font-size:12px;color:#888;margin:4px 0}
-.rew-monthly .rm-bar-wrap{background:#e0e0e0;border-radius:10px;height:10px;max-width:300px;margin:8px auto;overflow:hidden}
-.rew-monthly .rm-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#FFB300,#FF8F00);transition:width .6s ease}
-.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;text-align:center}.week-day{padding:10px 4px;border-radius:12px;background:#fafafa}.week-day.today{background:#E3F2FD;border:2px solid #42A5F5}.week-day .wname{font-size:11px;color:#999}.week-day .wdate{font-size:14px;font-weight:bold;margin:4px 0}.week-day .wstars{font-size:16px}
-
-/* Floating star + confetti */
-.fstar{position:fixed;font-size:36px;pointer-events:none;z-index:9999;animation:flyUp 1.1s ease-out forwards}
-@keyframes flyUp{0%{opacity:1;transform:scale(.4) translateY(0)}30%{opacity:1;transform:scale(1.6) translateY(-25px)}100%{opacity:0;transform:scale(1) translateY(-100px)}}
-
-/* Celebration */
-.cel-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:300;align-items:center;justify-content:center}
-.cel-overlay.show{display:flex}
-.cel-card{background:#fff;border-radius:28px;padding:36px 44px;text-align:center;max-width:380px;animation:bounceIn .5s ease}.cel-card .emoji{font-size:64px;margin-bottom:10px;animation:celebrate .5s ease .2s 2}@keyframes celebrate{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-12deg) scale(1.2)}75%{transform:rotate(12deg) scale(1.2)}}.cel-card h2{font-size:22px;color:#FF6F00;margin-bottom:6px}.cel-card p{font-size:15px;color:#666;margin-bottom:16px}.cel-card button{padding:10px 32px;border:none;border-radius:20px;background:linear-gradient(135deg,#FFE66D,#FFA726);color:#fff;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit}
-
-/* Responsive */
-@media(max-width:768px){
-  .header h1{font-size:18px}.header{padding:12px 16px;border-radius:0 0 20px 20px}
-  .header-inner{gap:8px}
-  .card-grid{grid-template-columns:1fr}
-  .go-cell{width:32px;height:32px}.go-stone{width:24px;height:24px}
-  .char-big{font-size:56px}.math-equation{font-size:36px}
-  .week-grid{grid-template-columns:repeat(4,1fr)}
-  .star-box{padding:8px 14px}
-  .star-box .big-star{font-size:24px}
-  .star-box .cnt{font-size:22px}
-  .rew-tiers{flex-direction:column}
-  .modal-box{width:96vw;padding:18px;max-height:90vh}
-  .journey{gap:3px;padding:8px}
-  .j-dot{width:28px;height:28px;font-size:14px}
-  .j-line{width:14px}
-  .j-label{font-size:10px;max-width:32px}
-}
-@media(min-width:768px) and (max-width:1024px){
-  .card-grid{grid-template-columns:repeat(2,1fr)}
-  .header h1{font-size:22px}
-}
-/* iPad landscape */
-@media(min-width:1024px){
-  .card-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
-}
-/* Safe area for notch devices */
-@supports(padding:max(0px)){
-  .header{padding-top:max(16px,env(safe-area-inset-top))}
-  .gear-btn{bottom:max(20px,env(safe-area-inset-bottom,20px))}
-  body{padding-bottom:env(safe-area-inset-bottom)}
-}
-
-/* PWA Install Banner */
-.pwa-banner{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;z-index:250;padding:16px 20px;box-shadow:0 -2px 16px rgba(0,0,0,.12);border-radius:20px 20px 0 0;animation:slideUp .4s ease}
+.modal-box{background:#fff;border-radius:24px 24px 0 0;width:100%;max-width:500px;max-height:85vh;overflow-y:auto;padding:20px;animation:slideUp .35s ease}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.pwa-banner.show{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
-.pwa-banner .pb-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
-.pwa-banner .pb-text{flex:1;min-width:160px}.pb-text strong{display:block;font-size:15px}.pb-text span{font-size:12px;color:#888}
-.pwa-banner .pb-btn{padding:10px 20px;border:none;border-radius:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:14px;font-weight:bold;cursor:pointer;font-family:inherit}.pwa-banner .pb-close{background:none;border:none;font-size:20px;cursor:pointer;padding:4px 8px;color:#999}
+.modal-box h3{font-size:18px;margin-bottom:16px;text-align:center}
+.modal-close{position:absolute;right:16px;top:16px;background:none;border:none;font-size:24px;cursor:pointer;padding:4px}
+/* Exercise */
+.exercise-area{text-align:center;padding:20px 0}
+.ex-big{font-size:64px;margin-bottom:16px}
+.ex-question{font-size:20px;margin-bottom:20px;font-weight:600}
+.ex-options{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.ex-opt{padding:12px 20px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:14px;font-size:18px;cursor:pointer;font-family:inherit;transition:all .15s;min-width:60px}
+.ex-opt:active{transform:scale(.95)}
+.ex-opt.correct{background:#d4edda;border-color:#4caf50;animation:popIn .3s ease}
+.ex-opt.wrong{background:#f8d7da;border-color:#f44336;animation:shake .4s ease}
+@keyframes popIn{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.ex-feedback{font-size:28px;margin-top:16px;min-height:40px}
+.ex-score{font-size:14px;color:var(--sub);margin-top:8px}
+/* Math numpad */
+.numpad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:280px;margin:12px auto}
+.numpad button{padding:14px;font-size:20px;border:2px solid #e0e0e0;border-radius:12px;background:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
+.numpad button:active{transform:scale(.93);background:#f0f0f0}
+.numpad .np-submit{background:var(--accent);color:#fff;border-color:var(--accent);grid-column:span 2;font-weight:700}
+.numpad .np-del{grid-column:span 2;background:#f5f5f5}
+/* Shop */
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.shop-item{background:var(--card);border-radius:var(--radius);padding:14px 10px;text-align:center;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s}
+.shop-item:active{transform:scale(.95)}
+.shop-item .si-icon{font-size:36px;margin-bottom:6px}
+.shop-item .si-name{font-size:13px;font-weight:600;margin-bottom:4px}
+.shop-item .si-cost{font-size:11px;color:var(--accent);font-weight:700}
+.shop-item .si-effect{font-size:10px;color:var(--sub)}
+/* Wishes */
+.wish-header{text-align:center;padding:16px 0;background:linear-gradient(135deg,#ffd700,#ffb347);border-radius:var(--radius);color:#fff;margin-bottom:14px}
+.wish-header .wh-coins{font-size:40px;font-weight:800;margin-bottom:4px}
+.wish-header .wh-label{font-size:13px;opacity:.9}
+.wish-list{display:flex;flex-direction:column;gap:10px}
+.wish-item{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.wish-item .wi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.wish-item .wi-name{font-size:15px;font-weight:600}
+.wish-item .wi-cost{font-size:13px;color:var(--accent);font-weight:700}
+.wish-bar{height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden}
+.wish-fill{height:100%;background:linear-gradient(90deg,#ffd700,#ff9a56);border-radius:5px;transition:width .5s ease}
+.wish-actions{margin-top:8px;display:flex;gap:8px;justify-content:flex-end}
+.wish-actions button{padding:6px 14px;border-radius:14px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:12px;font-family:inherit}
+.wish-actions .wa-claim{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* Report */
+.report-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:10px}
+.report-card h4{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.report-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #f5f5f5}
+.report-row:last-child{border:none}
+.report-total{font-size:18px;font-weight:700;text-align:center;padding:12px;color:var(--accent);margin-top:8px}
+/* Parent Page */
+.parent-lock{text-align:center;padding:60px 20px}
+.parent-lock input{width:200px;padding:12px;border-radius:12px;border:2px solid #ddd;font-size:18px;text-align:center;font-family:inherit;margin-bottom:12px}
+.parent-lock button{padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:15px;cursor:pointer;font-family:inherit}
+.parent-content{display:none}
+.parent-content.show{display:block}
+.parent-section{margin-bottom:16px}
+.parent-section h4{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.config-item{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.config-item .ci-info{flex:1;min-width:0;font-size:13px}
+.config-item .ci-info strong{display:block;margin-bottom:2px}
+.config-item .ci-input{width:60px;padding:6px;border-radius:8px;border:1px solid #ddd;font-size:14px;text-align:center;font-family:inherit}
+.config-item .ci-del{background:none;border:none;font-size:18px;cursor:pointer;padding:4px;color:#ccc}
+.add-config-btn{width:100%;padding:10px;border:2px dashed #ddd;border-radius:12px;background:none;font-size:14px;cursor:pointer;font-family:inherit;color:var(--sub);margin-top:8px}
+.add-config-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* Section title */
+.section-title{font-size:14px;font-weight:700;color:var(--sub);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+/* Pet crying overlay */
+.cry-effect{position:fixed;inset:0;pointer-events:none;z-index:150;display:none}
+.cry-effect.show{display:flex;align-items:center;justify-content:center}
+.cry-effect .cry-emoji{font-size:100px;animation:cryBig .6s ease}
+@keyframes cryBig{0%{transform:scale(0);opacity:1}50%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:0}}
+/* Safe area */
+@supports(padding:max(0px)){.bottom-nav{padding-bottom:max(8px,env(safe-area-inset-bottom))}}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header"><div class="header-inner">
-<div><h1>🦁 小六一的闯关日记</h1><div class="date" id="d"></div></div>
-<div class="star-box"><span class="big-star">⭐</span><span class="cnt" id="sc">0</span><span class="lbl">能量星</span></div>
-</div></header>
-
-<!-- PROGRESS -->
-<div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div><div class="prog-text" id="pt">闯关进度 0/8</div></div></div>
-
-<!-- JOURNEY MAP -->
-<div class="journey-wrap"><div class="journey" id="journey"></div></div>
-
-<!-- TASKS -->
-<main id="main"></main>
-
-<!-- REWARDS -->
-<div class="reward-wrap"><div class="rew-card"><div class="rew-title">🏆 星星奖励站</div><div class="rew-tiers" id="rewards"></div></div></div>
-
-<!-- WEEKLY -->
-<div class="weekly-wrap"><div class="week-card"><div class="week-title">📅 本周能量星</div><div class="week-grid" id="weekly"></div></div></div>
-
-<!-- GAME MODAL -->
-<div class="modal-overlay" id="gmo"><div class="modal-box" id="gmc"></div></div>
-
-<!-- PARENT OVERLAY -->
-<div class="parent-overlay" id="ppo"><div class="parent-panel" id="ppc"></div></div>
-
-<!-- CELEBRATION -->
-<div class="cel-overlay" id="celo"><div class="cel-card"><div class="emoji" id="cele"></div><h2 id="celt"></h2><p id="celm"></p><button onclick="closeCel()">继续闯关</button></div></div>
-
-<!-- PWA INSTALL BANNER -->
-<div class="pwa-banner" id="pwaBanner">
-  <div class="pb-icon">📱</div>
-  <div class="pb-text"><strong>添加到主屏幕</strong><span>像APP一样使用，离线也能闯关</span></div>
-  <button class="pb-btn" id="pwaInstallBtn">📲 立即安装</button>
-  <button class="pb-close" onclick="dismissPwaBanner()">✕</button>
+<!-- Top Bar -->
+<div class="top-bar" id="topBar">
+  <h1 id="topTitle">🐾 小伙伴</h1>
+  <div class="coin-display"><span class="coin-icon">🪙</span><span id="coinCount">0</span></div>
 </div>
 
-<!-- GEAR BUTTON -->
-<button class="gear-btn" onclick="openParent()" title="家长后台">⚙️</button>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Cry Effect Overlay -->
+<div class="cry-effect" id="cryOverlay"><span class="cry-emoji">😭</span></div>
+
+<!-- ========== PAGE: 小伙伴 ========== -->
+<div class="page active" id="page-pet">
+  <div class="pet-select" id="petSelect"></div>
+  <div id="petStage">
+    <div class="pet-area">
+      <div class="pet-stage"><span class="pet-emoji" id="petEmoji">🐰</span></div>
+      <div class="pet-name" id="petName">请选择小伙伴</div>
+      <div id="petStats" style="display:none">
+        <div class="stat-row"><span class="stat-label">🍽️</span><div class="stat-bar"><div class="stat-fill hunger" id="statHunger" style="width:80%"></div></div></div>
+        <div class="stat-row"><span class="stat-label">😊</span><div class="stat-bar"><div class="stat-fill happiness" id="statHappiness" style="width:80%"></div></div></div>
+        <div class="stat-row"><span class="stat-label">❤️</span><div class="stat-bar"><div class="stat-fill health" id="statHealth" style="width:80%"></div></div></div>
+        <div class="stat-row"><span class="stat-label">🚿</span><div class="stat-bar"><div class="stat-fill clean" id="statClean" style="width:80%"></div></div></div>
+      </div>
+    </div>
+    <div class="pet-actions" id="petActions">
+      <button class="pet-btn" onclick="petAction('feed')"><span>🍎</span>喂食<span class="cost">🪙2</span></button>
+      <button class="pet-btn" onclick="petAction('play')"><span>🎾</span>陪玩<span class="cost">🪙1</span></button>
+      <button class="pet-btn" onclick="petAction('heal')"><span>💊</span>治病<span class="cost">🪙3</span></button>
+      <button class="pet-btn" onclick="petAction('bath')"><span>🛁</span>洗澡<span class="cost">🪙1</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE: 任务 ========== -->
+<div class="page" id="page-task">
+  <div class="task-list" id="taskList"></div>
+</div>
+
+<!-- ========== PAGE: 商店 ========== -->
+<div class="page" id="page-shop">
+  <div class="shop-grid" id="shopGrid"></div>
+</div>
+
+<!-- ========== PAGE: 心愿 ========== -->
+<div class="page" id="page-wish">
+  <div class="wish-header">
+    <div class="wh-coins" id="wishCoins">0</div>
+    <div class="wh-label">🪙 我的金币</div>
+  </div>
+  <div class="wish-list" id="wishList"></div>
+  <button class="add-config-btn" onclick="addCustomWish()" style="margin-top:12px">+ 自定义心愿</button>
+</div>
+
+<!-- ========== PAGE: 报告 ========== -->
+<div class="page" id="page-report">
+  <div id="reportContent"></div>
+</div>
+
+<!-- ========== PAGE: 家长 ========== -->
+<div class="page" id="page-parent">
+  <div class="parent-lock" id="parentLock">
+    <h3>🔐 家长验证</h3>
+    <p style="color:var(--sub);font-size:13px;margin:8px 0">请输入密码</p>
+    <input type="password" id="parentPassword" placeholder="输入密码" maxlength="6">
+    <br><button onclick="unlockParent()">确认</button>
+    <p style="color:#ccc;font-size:11px;margin-top:8px">默认密码: 1234</p>
+  </div>
+  <div class="parent-content" id="parentContent">
+    <div class="parent-section">
+      <h4>🔑 修改密码</h4>
+      <div style="display:flex;gap:8px">
+        <input type="password" id="newPassword" placeholder="新密码" class="ci-input" style="flex:1;width:auto" maxlength="6">
+        <button onclick="changePassword()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:inherit">保存</button>
+      </div>
+    </div>
+    <div class="section-title">📋 任务（完成获得金币奖励）</div>
+    <div id="configTasks"></div>
+    <button class="add-config-btn" onclick="addConfigTask()">+ 添加任务</button>
+    <div class="section-title">⚠️ 扣分项（触发扣除金币）</div>
+    <div id="configPenalties"></div>
+    <button class="add-config-btn" onclick="addConfigPenalty()">+ 添加扣分项</button>
+    <div class="section-title">🏪 商店商品</div>
+    <div id="configShopItems"></div>
+    <button class="add-config-btn" onclick="addConfigShopItem()">+ 添加商品</button>
+    <div class="section-title">🌟 心愿</div>
+    <div id="configWishes"></div>
+    <button class="add-config-btn" onclick="addConfigWish()">+ 添加心愿</button>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" data-page="pet"><span class="ni-icon">🐾</span>小伙伴</button>
+  <button class="nav-item" data-page="task"><span class="ni-icon">📋</span>任务</button>
+  <button class="nav-item" data-page="shop"><span class="ni-icon">🏪</span>商店</button>
+  <button class="nav-item" data-page="wish"><span class="ni-icon">🌟</span>心愿</button>
+  <button class="nav-item" data-page="report"><span class="ni-icon">📊</span>报告</button>
+  <button class="nav-item" data-page="parent"><span class="ni-icon">⚙️</span>家长</button>
+</div>
+
+<!-- Exercise Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox">
+    <div id="modalContent"></div>
+  </div>
+</div>
 
 <script>
 // ============================================================
-// CHARACTER DATABASE (150 chars, 30 days x 5)
+// AUDIO CONTEXT - Sound Effects
 // ============================================================
-const C=[
-['一','yī','一个','☝️'],['二','èr','二月','✌️'],['三','sān','三个','🤟'],['四','sì','四方','4️⃣'],['五','wǔ','五星','⭐'],
-['六','liù','六一','🎉'],['七','qī','七彩','🌈'],['八','bā','八方','8️⃣'],['九','jiǔ','九月','🍂'],['十','shí','十个','🔟'],
-['人','rén','大人','👤'],['口','kǒu','开口','👄'],['手','shǒu','小手','✋'],['足','zú','手足','🦶'],['头','tóu','点头','😀'],
-['目','mù','目光','👀'],['耳','ěr','耳朵','👂'],['牙','yá','牙齿','🦷'],['舌','shé','舌头','👅'],['心','xīn','开心','❤️'],
-['大','dà','大小','🐘'],['小','xiǎo','小的','🐶'],['多','duō','很多','➕'],['少','shǎo','少的','➖'],['上','shàng','上面','⬆️'],
-['下','xià','下面','⬇️'],['中','zhōng','中间','🎯'],['左','zuǒ','左边','⬅️'],['右','yòu','右边','➡️'],['前','qián','前面','⏩'],
-['后','hòu','后面','⏪'],['里','lǐ','里面','📦'],['外','wài','外面','🚪'],['天','tiān','天空','🌤️'],['地','dì','大地','🌍'],
-['日','rì','日出','☀️'],['月','yuè','月亮','🌙'],['星','xīng','星星','✨'],['云','yún','白云','☁️'],['雨','yǔ','下雨','🌧️'],
-['水','shuǐ','流水','💧'],['火','huǒ','火苗','🔥'],['山','shān','高山','⛰️'],['石','shí','石头','🪨'],['土','tǔ','泥土','🟫'],
-['木','mù','树木','🌳'],['林','lín','树林','🌲'],['花','huā','花朵','🌸'],['草','cǎo','小草','🌱'],['叶','yè','树叶','🍃'],
-['虫','chóng','虫子','🐛'],['鱼','yú','小鱼','🐟'],['鸟','niǎo','小鸟','🐦'],['马','mǎ','大马','🐴'],['牛','niú','牛奶','🥛'],
-['羊','yáng','小羊','🐑'],['狗','gǒu','小狗','🐶'],['猫','māo','小猫','🐱'],['鸡','jī','小鸡','🐔'],['鸭','yā','鸭子','🦆'],
-['车','chē','汽车','🚗'],['船','chuán','小船','⛵'],['飞','fēi','飞翔','✈️'],['走','zǒu','走路','🚶'],['跑','pǎo','奔跑','🏃'],
-['门','mén','开门','🚪'],['窗','chuāng','窗户','🪟'],['家','jiā','回家','🏠'],['房','fáng','房子','🏡'],['楼','lóu','高楼','🏢'],
-['书','shū','看书','📖'],['笔','bǐ','铅笔','✏️'],['纸','zhǐ','白纸','📄'],['画','huà','画画','🎨'],['字','zì','写字','🔤'],
-['爸','bà','爸爸','👨'],['妈','mā','妈妈','👩'],['爷','yé','爷爷','👴'],['奶','nǎi','奶奶','👵'],['哥','gē','哥哥','👦'],
-['姐','jiě','姐姐','👧'],['弟','dì','弟弟','👶'],['妹','mèi','妹妹','👧'],['我','wǒ','我们','🙋'],['你','nǐ','你好','👉'],
-['他','tā','他们','🧑'],['她','tā','她的','👩'],['男','nán','男生','👦'],['女','nǚ','女生','👧'],['老','lǎo','老人','👴'],
-['幼','yòu','幼儿','👶'],['师','shī','老师','👩‍🏫'],['友','yǒu','朋友','🤝'],['朋','péng','朋友','👫'],['伴','bàn','伙伴','🧑‍🤝‍🧑'],
-['好','hǎo','好的','👍'],['早','zǎo','早上','🌅'],['晚','wǎn','晚上','🌆'],['白','bái','白色','⚪'],['黑','hēi','黑色','⚫'],
-['红','hóng','红色','🔴'],['黄','huáng','黄色','🟡'],['蓝','lán','蓝色','🔵'],['绿','lǜ','绿色','🟢'],['色','sè','颜色','🎨'],
-['春','chūn','春天','🌸'],['夏','xià','夏天','☀️'],['秋','qiū','秋天','🍂'],['冬','dōng','冬天','⛄'],['风','fēng','刮风','💨'],
-['吃','chī','吃饭','🍽️'],['喝','hē','喝水','🥤'],['看','kàn','看见','👀'],['听','tīng','听见','👂'],['说','shuō','说话','💬'],
-['读','dú','读书','📚'],['写','xiě','写字','✍️'],['学','xué','学习','📖'],['玩','wán','玩耍','🎈'],['做','zuò','做事','🛠️'],
-['来','lái','过来','🤚'],['去','qù','出去','🏃'],['有','yǒu','有的','✅'],['无','wú','没有','❌'],['开','kāi','打开','🔓'],
-['关','guān','关上','🔒'],['出','chū','出来','🚪'],['入','rù','进入','🚶'],['见','jiàn','看见','👁️'],['想','xiǎng','想想','🤔'],
-['坐','zuò','坐下','🪑'],['立','lì','站立','🧍'],['停','tíng','停下','✋'],['起','qǐ','起来','⬆️'],['过','guò','过河','🌉'],
-['长','cháng','长短','📏'],['短','duǎn','短的','📏'],['高','gāo','高大','🦒'],['低','dī','低的','📉'],['远','yuǎn','远方','🌆'],
-['近','jìn','附近','📍'],['快','kuài','快慢','⚡'],['慢','màn','慢的','🐢'],['新','xīn','新的','✨'],['旧','jiù','旧的','📦'],
-['美','měi','美丽','😍'],['真','zhēn','真的','💯'],['对','duì','对的','✅'],['成','chéng','成功','🎉'],['得','dé','得到','🏆']
-];
-const dailySets=[];
-for(let i=0;i<30;i++)dailySets.push([i*5,i*5+1,i*5+2,i*5+3,i*5+4]);
+let audioCtx=null;
+function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)()}
+function playTone(freq,dur,type='sine',vol=.15){
+  initAudio();const o=audioCtx.createOscillator();const g=audioCtx.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,audioCtx.currentTime);
+  g.gain.setValueAtTime(vol,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);
+  o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur);
+}
+function sfxEat(){playTone(400,.1);setTimeout(()=>playTone(500,.1),100);setTimeout(()=>playTone(300,.1),200)}
+function sfxHappy(){playTone(523,.12);setTimeout(()=>playTone(659,.12),120);setTimeout(()=>playTone(784,.15),240)}
+function sfxCry(){playTone(300,.2,'square',.08);setTimeout(()=>playTone(250,.3,'square',.08),200)}
+function sfxCoin(){playTone(880,.08);setTimeout(()=>playTone(1100,.1),80)}
+function sfxPenalty(){playTone(200,.3,'sawtooth',.1)}
+function sfxWater(){playTone(600,.05,'triangle',.05);setTimeout(()=>playTone(500,.05,'triangle',.05),50);setTimeout(()=>playTone(550,.05,'triangle',.05),100);setTimeout(()=>playTone(450,.05,'triangle',.05),150)}
 
 // ============================================================
-// ENGLISH VOCABULARY (Oxford Reading Tree Level 1)
+// DATA MODEL & PERSISTENCE
 // ============================================================
-const EV=[{w:'Mum',c:'妈妈',e:'👩'},{w:'Dad',c:'爸爸',e:'👨'},{w:'Biff',c:'比夫',e:'👧'},
-{w:'Chip',c:'奇普',e:'👦'},{w:'Kipper',c:'基珀',e:'👶'},{w:'Floppy',c:'小狗',e:'🐕'},
-{w:'dog',c:'狗',e:'🐶'},{w:'cat',c:'猫',e:'🐱'},{w:'bird',c:'鸟',e:'🐦'},{w:'fish',c:'鱼',e:'🐟'},
-{w:'book',c:'书',e:'📖'},{w:'ball',c:'球',e:'⚽'},{w:'car',c:'汽车',e:'🚗'},{w:'bike',c:'自行车',e:'🚲'},
-{w:'bus',c:'公交车',e:'🚌'},{w:'tree',c:'树',e:'🌳'},{w:'house',c:'房子',e:'🏠'},{w:'door',c:'门',e:'🚪'},
-{w:'cup',c:'杯子',e:'🥤'},{w:'hat',c:'帽子',e:'🎩'},{w:'apple',c:'苹果',e:'🍎'},{w:'banana',c:'香蕉',e:'🍌'},
-{w:'bed',c:'床',e:'🛏️'},{w:'chair',c:'椅子',e:'🪑'},{w:'table',c:'桌子',e:'🪑'},
-{w:'big',c:'大的',e:'🐘'},{w:'little',c:'小的',e:'🐭'},{w:'red',c:'红色的',e:'🔴'},
-{w:'blue',c:'蓝色的',e:'🔵'},{w:'yellow',c:'黄色的',e:'🟡'},{w:'green',c:'绿色的',e:'🟢'},
-{w:'one',c:'一',e:'1️⃣'},{w:'two',c:'二',e:'2️⃣'},{w:'three',c:'三',e:'3️⃣'},
-{w:'look',c:'看',e:'👀'},{w:'see',c:'看见',e:'👁️'},{w:'go',c:'去',e:'🏃'},{w:'run',c:'跑',e:'🏃'},
-{w:'jump',c:'跳',e:'⬆️'},{w:'sit',c:'坐',e:'🪑'},{w:'eat',c:'吃',e:'🍽️'},{w:'drink',c:'喝',e:'🥤'}];
-
-// ============================================================
-// DEFAULTS
-// ============================================================
-const defaultTasks=[
-{id:'t1',name:'汉字小达人',icon:'🔤',icls:'c-blue',type:'char',section:'morning',detail:'每天学习5-10个新汉字，跟读认识后闯关测试',dur:'15-20分钟',enabled:true},
-{id:'t2',name:'数学大冒险',icon:'🔢',icls:'c-orange',type:'math',section:'morning',detail:'从10以内加减法开始，逐步挑战20以内',dur:'15-20分钟',enabled:true},
-{id:'t3',name:'英语探险家',icon:'📚',icls:'c-purple',type:'english',section:'morning',detail:'牛津树Level 1词汇闯关，看图选词听发音',dur:'15-20分钟',enabled:true},
-{id:'t4',name:'思维小天才',icon:'🧠',icls:'c-teal',type:'thinking',section:'afternoon',detail:'找规律/找不同/数一数/比大小，思维小火花',dur:'20-30分钟',enabled:true},
-{id:'t5',name:'围棋小棋手',icon:'⚫',icls:'c-indigo',type:'go',section:'afternoon',detail:'围棋吃子练习，找到能吃掉黑子的位置',dur:'15-20分钟',enabled:true},
-{id:'t6',name:'运动小健将',icon:'⚽',icls:'c-green',type:'check',section:'afternoon',detail:'户外运动30-60分钟，骑车跑步踢球跳绳',dur:'30-60分钟',enabled:true},
-{id:'t7',name:'阅读小书虫',icon:'📖',icls:'c-pink',type:'check',section:'evening',detail:'亲子阅读20分钟，中文绘本或英文故事',dur:'20分钟',enabled:true},
-{id:'t8',name:'闯关总结',icon:'🌟',icls:'c-amber',type:'summary',section:'evening',detail:'回顾今天的闯关成果，数数能量星',dur:'5分钟',enabled:true}
-];
-const defaultSettings={
-childName:'小六一',
-math:{difficulty:'add10',count:10},
-char:{dayIndex:0,countPerDay:5},
-english:{count:8},
-thinking:{count:8},
-go:{difficulty:1,count:5},
-rewards:[
-{threshold:5,name:'小铜星',desc:'选一个小零食',emoji:'🍬'},
-{threshold:8,name:'小银星',desc:'多看15分钟动画片',emoji:'📺'},
-{threshold:10,name:'小金星',desc:'周末去公园玩',emoji:'🎪'},
-{threshold:12,name:'超级英雄',desc:'选一个心愿',emoji:'🏆'}
-],
-tasks:JSON.parse(JSON.stringify(defaultTasks)),
-soundEnabled:true
+const STORAGE_KEY='workbench_v4';
+const DEFAULT_STATE={
+  coins:20,
+  pets:[],
+  activePetIdx:0,
+  completedTasks:{},
+  dailyPenalties:{},
+  shopHistory:{},
+  wishProgress:{},
+  parentPin:'1234',
+  config:{
+    tasks:[
+      {id:'t1',name:'🔤 识字小达人',cat:'study',coins:4,difficulty:'中等'},
+      {id:'t2',name:'🔢 数学大冒险',cat:'study',coins:4,difficulty:'中等'},
+      {id:'t3',name:'📚 英语探险家',cat:'study',coins:5,difficulty:'较难'},
+      {id:'t4',name:'🧠 思维小天才',cat:'study',coins:5,difficulty:'较难'},
+      {id:'t5',name:'⚫ 围棋小棋手',cat:'game',coins:3,difficulty:'简单'},
+      {id:'t6',name:'⚡ 运动小健将',cat:'sport',coins:3,difficulty:'简单'},
+      {id:'t7',name:'📖 阅读小书虫',cat:'habit',coins:3,difficulty:'简单'},
+    ],
+    penalties:[
+      {id:'p1',name:'📺 超时看电视',coins:4},
+      {id:'p2',name:'📝 未完成作业',coins:5},
+      {id:'p3',name:'🤥 欺骗/说谎',coins:5},
+      {id:'p4',name:'🐌 拖延不做事',coins:3},
+    ],
+    shopItems:[
+      {id:'s1',name:'胡萝卜',icon:'🥕',cost:2,effect:'hunger',val:20,desc:'填饱肚子'},
+      {id:'s2',name:'苹果',icon:'🍎',cost:1,effect:'hunger',val:10,desc:'小零食'},
+      {id:'s3',name:'小蛋糕',icon:'🧁',cost:3,effect:'happiness',val:25,desc:'超美味!'},
+      {id:'s4',name:'小鱼干',icon:'🐟',cost:5,effect:'hunger',val:30,desc:'营养大餐'},
+      {id:'s5',name:'玩具球',icon:'🎾',cost:2,effect:'happiness',val:15,desc:'一起玩!'},
+      {id:'s6',name:'草莓',icon:'🍓',cost:1,effect:'happiness',val:10,desc:'甜甜的'},
+      {id:'s7',name:'医疗包',icon:'💊',cost:5,effect:'health',val:40,desc:'健康恢复'},
+      {id:'s8',name:'沐浴露',icon:'🧴',cost:3,effect:'clean',val:35,desc:'香喷喷!'},
+      {id:'s9',name:'冰淇淋',icon:'🍦',cost:2,effect:'happiness',val:12,desc:'凉爽美味'},
+      {id:'s10',name:'毛绒玩具',icon:'🧸',cost:10,effect:'happiness',val:50,desc:'最好的伙伴!'},
+    ],
+    wishes:[
+      {id:'w1',name:'🎢 游乐场一次',cost:150},
+      {id:'w2',name:'✈️ 3天旅游',cost:200},
+      {id:'w3',name:'🧸 买新玩具',cost:80},
+      {id:'w4',name:'🎬 看电影',cost:120},
+    ]
+  }
 };
 
-// ============================================================
-// HELPERS
-// ============================================================
-function tk(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function gs(k,d){let v=localStorage.getItem(k);return v?JSON.parse(v):d}
-function ss(k,v){localStorage.setItem(k,JSON.stringify(v))}
-function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function getSettings(){return gs('parentSettings',JSON.parse(JSON.stringify(defaultSettings)))}
-function saveSettings(s){ss('parentSettings',s)}
+let state=loadState();
+
+function loadState(){
+  try{const d=localStorage.getItem(STORAGE_KEY);if(d){const s=JSON.parse(d);return deepMerge(JSON.parse(JSON.stringify(DEFAULT_STATE)),s)}}catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_STATE));
+}
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function deepMerge(base,overlay){for(const k in overlay){if(overlay[k]&&typeof overlay[k]==='object'&&!Array.isArray(overlay[k])){base[k]=deepMerge(base[k]||{},overlay[k])}else{base[k]=overlay[k]}}return base}
+
+// Today key
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function today(){return todayKey()}
+// Week key
+function weekKey(){const d=new Date();d.setDate(d.getDate()-d.getDay());return d.toISOString().slice(0,10)}
 
 // ============================================================
-// RENDER ALL
+// PET SYSTEM
 // ============================================================
-// ============================================================
-// MONTHLY PERFECT TRACKING (August 2026)
-// ============================================================
-function computeMonthlyPerfect(){
-  const year=2026,month=8,daysInMonth=31;
-  const settings=getSettings();
-  const enabledTasks=settings.tasks.filter(t=>t.enabled);
-  let perfectDays=0,totalElapsed=0;
-  const today=new Date();
-  for(let d=1;d<=daysInMonth;d++){
-    const key=year+'-'+String(month).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const dateObj=new Date(year,month-1,d);
-    if(dateObj>today)break;
-    totalElapsed++;
-    const taskState=gs('taskState_'+key,{});
-    if(taskState&&Object.keys(taskState).length>0&&enabledTasks.every(t=>taskState[t.id]))perfectDays++;
+const PET_TYPES={rabbit:{emoji:'🐰',name:'小兔子'},cat:{emoji:'🐱',name:'小猫咪'},dog:{emoji:'🐶',name:'小狗狗'}};
+
+function getActivePet(){return state.pets[state.activePetIdx]||null}
+function createPet(type,name){
+  return{id:Date.now().toString(36),type,name,hunger:80,happiness:80,health:100,clean:100,
+    lastFed:0,lastPlayed:0,lastHealed:0,lastBathed:0,created:Date.now()};
+}
+
+// Time decay - lose ~2 points per hour of inactivity
+function applyDecay(pet){
+  const now=Date.now(),h=3600000;
+  if(pet.lastFed>0)pet.hunger=Math.max(0,pet.hunger-Math.floor((now-pet.lastFed)/h*.8));
+  if(pet.lastPlayed>0)pet.happiness=Math.max(0,pet.happiness-Math.floor((now-pet.lastPlayed)/h*.6));
+  if(pet.lastHealed>0)pet.health=Math.max(0,pet.health-Math.floor((now-pet.lastHealed)/h*.3));
+  if(pet.lastBathed>0)pet.clean=Math.max(0,pet.clean-Math.floor((now-pet.lastBathed)/h*.5));
+}
+
+function petAction(type){
+  const pet=getActivePet();
+  if(!pet)return toastMsg('请先选择小伙伴!🐾');
+  const costs={feed:2,play:1,heal:3,bath:1};
+  const cost=costs[type];
+  if(state.coins<cost)return toastMsg('金币不够啦!🪙',true);
+
+  state.coins-=cost;
+  const now=Date.now();
+  const boosts={feed:[20,'hunger','lastFed'],play:[20,'happiness','lastPlayed'],
+                heal:[35,'health','lastHealed'],bath:[35,'clean','lastBathed']};
+  const[boost,stat,timeKey]=boosts[type];
+  pet[stat]=Math.min(100,pet[stat]+boost);
+  pet[timeKey]=now;
+
+  const petEmoji=document.getElementById('petEmoji');
+  const anims={feed:'eating',play:'playing',bath:'eating'};
+  if(anims[type]){petEmoji.classList.add(anims[type]);setTimeout(()=>petEmoji.classList.remove(anims[type]),1200)}
+
+  const sfxMap={feed:sfxEat,play:sfxHappy,heal:sfxHappy,bath:sfxWater};
+  (sfxMap[type])();
+  const msgs={feed:'好吃好吃!😋',play:'好开心!🎉',heal:'好多了!💪',bath:'香喷喷!✨'};
+  toastMsg(msgs[type]);
+
+  saveState();renderPetPage();updateCoinDisplay();
+}
+
+function triggerPenalty(penaltyId){
+  const p=state.config.penalties.find(x=>x.id===penaltyId);
+  if(!p)return;
+  state.coins=Math.max(0,state.coins-p.coins);
+  const key=today();
+  if(!state.dailyPenalties[key])state.dailyPenalties[key]=[];
+  state.dailyPenalties[key].push({id:penaltyId,time:Date.now()});
+
+  sfxCry();
+  document.getElementById('cryOverlay').classList.add('show');
+  setTimeout(()=>document.getElementById('cryOverlay').classList.remove('show'),1000);
+  toastMsg(`${p.name.split(' ')[1]||p.name} — 扣${p.coins}🪙 呜呜~😭`,true);
+
+  saveState();renderPetPage();updateCoinDisplay();
+}
+
+function renderPetPage(){
+  // Pet selection
+  const ps=document.getElementById('petSelect');
+  const pet=getActivePet();
+  let html='';
+  for(const[k,v]of Object.entries(PET_TYPES)){
+    const has=state.pets.some(p=>p.type===k&&p.id!==(pet?pet.id:null));
+    html+=`<button class="pet-option${pet&&pet.type===k?' selected':''}" onclick="selectPetType('${k}')">${v.emoji}<span>${v.name}</span></button>`;
   }
-  const monthKey=year+'-0'+month;
-  const existingAchievements=gs('monthlyAchievements',{});
-  const achieved=totalElapsed>=daysInMonth&&perfectDays>=daysInMonth;
-  if(achieved&&!existingAchievements[monthKey]){
-    existingAchievements[monthKey]={achieved:true,achievedDate:tk()};
-    ss('monthlyAchievements',existingAchievements);
-  }
-  const alreadyAchieved=!!(existingAchievements[monthKey]&&existingAchievements[monthKey].achieved);
-  return{
-    perfectDays,totalDays:daysInMonth,elapsedDays:totalElapsed,
-    achieved:achieved||alreadyAchieved,
-    monthStarted:today>=new Date(year,month-1,1)
-  };
-}
+  ps.innerHTML=html;
 
-function renderDate(){
-const d=new Date();const w=['日','一','二','三','四','五','六'];
-document.getElementById('d').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+w[d.getDay()];
-}
-function renderAll(){
-renderDate();
-const settings=getSettings();
-const taskState=gs('taskState_'+tk(),{});
-const enabledTasks=settings.tasks.filter(t=>t.enabled);
-const total=enabledTasks.length;
-const done=enabledTasks.filter(t=>taskState[t.id]).length;
-
-// Progress
-const pct=total>0?done/total*100:0;
-document.getElementById('pf').style.width=pct+'%';
-document.getElementById('pt').textContent='闯关进度 '+done+'/'+total;
-document.getElementById('sc').textContent=done;
-
-// Journey
-const jhtml=enabledTasks.map((t,i)=>{
-const isDone=taskState[t.id];
-const isCurrent=i===done;
-const cls=isDone?'done':(isCurrent?'current':'');
-const lineCls=i>0?(taskState[enabledTasks[i-1].id]?'done':''):'';
-return `<div class="j-node">${i>0?`<div class="j-line ${lineCls}"></div>`:''}<div class="j-dot ${cls}" title="${t.name}">${t.icon}</div><div class="j-label ${isDone?'done':''}">${t.name}</div></div>`;
-}).join('');
-document.getElementById('journey').innerHTML=jhtml;
-
-// Tasks
-const sections={morning:{icon:'🌅',title:'上午闯关',tasks:[]},afternoon:{icon:'☀️',title:'下午闯关',tasks:[]},evening:{icon:'🌙',title:'晚间闯关',tasks:[]}};
-enabledTasks.forEach(t=>{if(sections[t.section])sections[t.section].tasks.push(t);});
-let mhtml='';
-for(const [skey,sec] of Object.entries(sections)){
-if(sec.tasks.length===0)continue;
-const secDone=sec.tasks.filter(t=>taskState[t.id]).length;
-mhtml+=`<div class="section"><div class="sec-header"><span class="sec-icon">${sec.icon}</span><span class="sec-title">${sec.title}</span><span class="sec-tag">${secDone}/${sec.tasks.length}</span></div><div class="card-grid">`;
-sec.tasks.forEach(t=>{
-const isDone=taskState[t.id];
-mhtml+=`<div class="card ${isDone?'done':''}" id="card_${t.id}"><div class="card-top"><div class="c-icon ${t.icls}">${t.icon}</div><div class="c-info"><h3>${t.name}</h3><div class="c-meta"><span class="c-tag t1">${t.dur}</span><span class="c-tag t2">${t.type==='check'?'生活任务':(t.type==='summary'?'每日回顾':'互动闯关')}</span></div></div></div><div class="c-detail">${t.detail}</div>`;
-if(isDone){
-mhtml+=`<button class="c-btn done-btn" onclick="undoTask('${t.id}')">✅ 已完成（点击撤销）</button>`;
-}else{
-let btnText='',btnCls='go';
-if(t.type==='char')btnText='📖 开始学汉字';
-else if(t.type==='math')btnText='🧮 开始做题';
-else if(t.type==='english')btnText='📚 开始学单词';
-else if(t.type==='thinking')btnText='🧠 开始挑战';
-else if(t.type==='go')btnText='⚫ 开始吃子';
-else if(t.type==='summary')btnText='📊 查看总结';
-else btnText='✅ 点击完成';
-mhtml+=`<button class="c-btn ${btnCls}" onclick="doTask('${t.id}','${t.type}')">${btnText}</button>`;
-}
-mhtml+=`</div>`;
-});
-mhtml+=`</div></div>`;
-}
-document.getElementById('main').innerHTML=mhtml;
-
-// Rewards
-const rhtml=settings.rewards.map(r=>{
-const achieved=done>=r.threshold;
-return `<div class="rew-tier ${achieved?'achieved':''}"><div class="tier-stars">${(r.emoji||'⭐').repeat(Math.min(r.threshold,12))}</div><div class="tier-name">${r.name} (${r.threshold}颗)</div><div class="tier-desc">${r.desc}</div></div>`;
-}).join('');
-// August Monthly Perfect
-const aug=computeMonthlyPerfect();
-let augCard='';
-if(aug.monthStarted){
-  const pct=aug.elapsedDays>0?Math.round(aug.perfectDays/aug.elapsedDays*100):0;
-  augCard=`<div class="rew-monthly ${aug.achieved?'achieved':''}">
-<div class="rm-emoji">${aug.achieved?'🏆':'🗓️'}</div>
-<div class="rm-title">${aug.achieved?'🎉 心愿达成！':'8月全勤挑战'}</div>
-<div class="rm-desc">${aug.achieved?'8月31天全部通关，愿望解锁！':`已坚持 ${aug.perfectDays}/${aug.totalDays} 天全勤`}</div>
-${aug.achieved?'':'<div class="rm-bar-wrap"><div class="rm-bar-fill" style="width:'+Math.round(aug.perfectDays/aug.totalDays*100)+'%"></div></div>'}
-</div>`;
-}else{
-  augCard=`<div class="rew-monthly upcoming">
-<div class="rm-emoji">🗓️</div>
-<div class="rm-title">8月心愿达成</div>
-<div class="rm-desc">8月全勤31天每天全部通关，解锁一个心愿！即将开始…</div>
-</div>`;
-}
-const finalRhtml=`<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:stretch">${rhtml}${augCard}</div>`;
-document.getElementById('rewards').innerHTML=finalRhtml;
-
-// Weekly
-renderWeekly(done);
-}
-
-function renderWeekly(todayStars){
-const weekData=gs('weekStars',{});
-const today=new Date();const td=today.getDay();const sunday=new Date(today);sunday.setDate(today.getDate()-td);
-const wns=['日','一','二','三','四','五','六'];
-const todayKey=tk();
-let wh='';
-for(let i=0;i<7;i++){const d=new Date(sunday);d.setDate(sunday.getDate()+i);
-const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-const s=weekData[key]||0;const isToday=key===todayKey;
-wh+=`<div class="week-day ${isToday?'today':''}"><div class="wname">周${wns[i]}</div><div class="wdate">${d.getMonth()+1}/${d.getDate()}</div><div class="wstars">${s>0?'⭐'.repeat(Math.min(s,5))+(s>5?'+'+s:''):'○'}</div></div>`;}
-document.getElementById('weekly').innerHTML=wh;
-// update today's stars in weekly
-weekData[todayKey]=todayStars;ss('weekStars',weekData);
-}
-
-// ============================================================
-// TASK ACTIONS
-// ============================================================
-function doTask(id,type){
-if(type==='char')openCharModule(id);
-else if(type==='math')openMathModule(id);
-else if(type==='english')openEngModule(id);
-else if(type==='thinking')openThinkModule(id);
-else if(type==='go')openGoModule(id);
-else if(type==='summary')openSummaryModule(id);
-else finishTask(id);
-}
-
-function finishTask(id,spawnStar=true){
-const state=gs('taskState_'+tk(),{});
-state[id]=true;ss('taskState_'+tk(),state);renderAll();
-if(spawnStar)spawnFloatingStar();
-checkAllDone();
-}
-
-function undoTask(id){
-const state=gs('taskState_'+tk(),{});
-state[id]=false;ss('taskState_'+tk(),state);renderAll();
-}
-
-// ============================================================
-// CHARACTER LEARNING MODULE
-// ============================================================
-let charState={idx:0,mode:'learn',quizChars:[],qIdx:0,correct:0,total:0};
-
-function openCharModule(taskId){
-const s=getSettings();
-const dayIdx=s.char.dayIndex||0;
-const countPerDay=s.char.countPerDay||5;
-let chars=[];
-for(let d=0;d<dailySets.length&&chars.length<countPerDay;d++){
-const di=(dayIdx+d)%dailySets.length;
-for(const ci of dailySets[di]){if(chars.length>=countPerDay)break;chars.push(ci);}
-}
-charState={idx:0,mode:'learn',quizChars:chars,qIdx:0,correct:0,total:chars.length,taskId:taskId,dayIdx:dayIdx};
-renderCharModal();
-}
-
-function renderCharModal(){
-const s=charState;const ci=s.quizChars[s.idx];const ch=C[ci];
-let html='<button class="modal-close" onclick="closeGameModal()">✕</button>';
-if(s.mode==='learn'){
-html+=`<div class="modal-title">📖 汉字学习 · 第${s.dayIdx+1}天（${s.idx+1}/${s.total}）</div>
-<div class="char-card">
-<div class="char-big" onclick="speakChar('${ch[0]}')">${ch[0]}</div>
-<div class="char-pinyin">${ch[1]}</div>
-<div class="char-word">${ch[2]}</div>
-<div class="char-emoji">${ch[3]}</div>
-<button class="speaker-btn" onclick="speakChar('${ch[0]}')">🔊 听发音</button>
-</div>
-<div class="char-pager">${s.quizChars.map((_,i)=>`<div class="char-dot ${i===s.idx?'active':''}"></div>`).join('')}</div>
-<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-<button class="modal-btn" onclick="charPrev()" ${s.idx===0?'disabled':''} style="background:#ccc;${s.idx===0?'opacity:.5':''}">⬅ 上一个</button>
-${s.idx<s.total-1?'<button class="modal-btn" onclick="charNext()">下一个 ➡</button>':'<button class="modal-btn green" onclick="startCharQuiz()">🎯 开始闯关测验</button>'}
-</div>`;
-}else{
-const qci=s.quizChars[s.qIdx];const qch=C[qci];
-// Generate 4 options
-let options=[qci];
-let others=shuffle(C.map((_,i)=>i).filter(i=>i!==qci&&!s.quizChars.includes(i))).slice(0,3);
-if(others.length<3){others=others.concat(shuffle(C.map((_,i)=>i).filter(i=>i!==qci&&!options.includes(i)&&!others.includes(i))).slice(0,3-others.length));}
-options=options.concat(others);
-options=shuffle(options);
-html+=`<div class="modal-title">🎯 汉字测验 · ${s.qIdx+1}/${s.total}</div>
-<div style="text-align:center;margin-bottom:12px;font-size:14px;color:#666;">下面这些字，哪个是"<b>${qch[1]} - ${qch[2]} ${qch[3]}</b>"？</div>
-<div style="text-align:center;">${options.map(oi=>`<button class="char-quiz-option" onclick="checkCharAnswer(${oi})">${C[oi][0]}</button>`).join('')}</div>
-<div style="text-align:center;margin-top:8px;font-size:13px;color:#999;">已答对：${s.correct}/${s.qIdx}</div>`;
-}
-document.getElementById('gmc').innerHTML=html;
-document.getElementById('gmo').classList.add('show');
-}
-
-function charPrev(){charState.idx--;renderCharModal();}
-function charNext(){charState.idx++;renderCharModal();speakChar(C[charState.quizChars[charState.idx]][0]);}
-function startCharQuiz(){charState.mode='quiz';charState.qIdx=0;charState.correct=0;renderCharModal();}
-
-function checkCharAnswer(selected){
-const s=charState;const correct=s.quizChars[s.qIdx];
-const btns=document.querySelectorAll('.char-quiz-option');
-btns.forEach(b=>{const ci=parseInt(b.onclick.toString().match(/checkCharAnswer\((\d+)\)/)[1]);if(ci===correct)b.classList.add('correct');else if(ci===selected&&ci!==correct)b.classList.add('wrong');});
-if(selected===correct){s.correct++;speakChar(C[correct][0]);}
-setTimeout(()=>{
-s.qIdx++;
-if(s.qIdx>=s.total){finishCharQuiz();}else{renderCharModal();}
-},600);
-}
-
-function finishCharQuiz(){
-const s=charState;
-closeGameModal();
-finishTask(s.taskId);
-showCelebration('🎉','汉字闯关完成！','认识了 '+s.total+' 个新汉字，答对 '+s.correct+' 题！');
-}
-
-function speakChar(ch){
-if(!getSettings().soundEnabled)return;
-if(typeof speechSynthesis!=='undefined'){
-speechSynthesis.cancel();
-const u=new SpeechSynthesisUtterance(ch);u.lang='zh-CN';u.rate=0.7;speechSynthesis.speak(u);
-}
-}
-
-// ============================================================
-// MATH MODULE
-// ============================================================
-let mathState={idx:0,correct:0,total:0,probs:[],taskId:'',input:'',feedback:''};
-
-function openMathModule(taskId){
-const s=getSettings();const d=s.math.difficulty||'add10';const cnt=s.math.count||10;
-const probs=[];
-for(let i=0;i<cnt;i++){
-let a,b,op,ans;
-if(d==='add10'){a=Math.floor(Math.random()*10)+1;b=Math.floor(Math.random()*(10-a))+1;op='+';ans=a+b;}
-else if(d==='sub10'){b=Math.floor(Math.random()*10)+1;a=b+Math.floor(Math.random()*(10-b))+1;op='-';ans=a-b;}
-else if(d==='add20'){a=Math.floor(Math.random()*19)+1;b=Math.floor(Math.random()*Math.min(20-a,19))+1;op='+';ans=a+b;if(a+b>20){a=Math.floor(Math.random()*10)+1;b=Math.floor(Math.random()*10)+1;ans=a+b;}}
-else if(d==='sub20'){ans=Math.floor(Math.random()*19)+1;b=Math.floor(Math.random()*(ans))+1;a=ans+b;op='-';if(a>20){ans=Math.floor(Math.random()*10)+1;b=Math.floor(Math.random()*ans)+1;a=ans+b;}}
-else{const r=Math.random();if(r<.5){a=Math.floor(Math.random()*19)+1;b=Math.floor(Math.random()*Math.min(20-a,19))+1;op='+';ans=a+b;if(a+b>20){a=Math.floor(Math.random()*10)+1;b=Math.floor(Math.random()*10)+1;ans=a+b;}}else{ans=Math.floor(Math.random()*19)+1;b=Math.floor(Math.random()*ans)+1;a=ans+b;op='-';if(a>20){ans=Math.floor(Math.random()*10)+1;b=Math.floor(Math.random()*ans)+1;a=ans+b;}}}
-probs.push({a,b,op,ans});
-}
-mathState={idx:0,correct:0,total:cnt,probs,taskId,input:'',feedback:''};
-renderMathModal();
-}
-
-function renderMathModal(){
-const s=mathState;const p=s.probs[s.idx];
-const fruits=['🍎','🍌','🍇','🍓'];
-const f1=fruits[s.idx%4];const f2=fruits[(s.idx+1)%4];
-const visA=p.a<=10?(f1+' ').repeat(p.a):'●●●'.repeat(Math.floor(p.a/3))+(p.a%3>0?'●'.repeat(p.a%3):'');
-const visB=p.b<=10?(f2+' ').repeat(p.b):'●●'.repeat(Math.floor(p.b/3))+(p.b%3>0?'●'.repeat(p.b%3):'');
-const vis=visA.length<40?visA+' '+p.op+' '+visB+' = ?':'';
-let html=`<button class="modal-close" onclick="closeGameModal()">✕</button>
-<div class="modal-title">🧮 数学大冒险 · ${s.idx+1}/${s.total}题</div>
-<div class="math-prob">
-<div class="math-equation">${p.a} ${p.op} ${p.b} = <span style="color:#667eea;">?</span></div>`;
-if(vis)html+=`<div class="math-visual">${vis}</div>`;
-html+=`<input type="text" class="math-input" id="mathInput" value="${s.input}" inputmode="numeric" pattern="[0-9]*" oninput="mathState.input=this.value" onkeydown="if(event.key==='Enter')mathSubmit()" maxlength="2" autofocus>
-<div class="math-feedback" id="mathFb">${s.feedback}</div>
-<div class="numpad">`;
-for(let i=1;i<=9;i++)html+=`<button onclick="mathTap(${i})">${i}</button>`;
-html+=`<button class="num-del" onclick="mathTap('del')">⌫</button><button onclick="mathTap(0)">0</button><button class="num-ok" onclick="mathSubmit()">✔</button></div></div>`;
-if(s.idx>0)html+=`<div class="modal-score">已答对 ${s.correct}/${s.idx} 题</div>`;
-document.getElementById('gmc').innerHTML=html;
-document.getElementById('gmo').classList.add('show');
-setTimeout(()=>{const inp=document.getElementById('mathInput');if(inp)inp.focus();},100);
-}
-
-function mathTap(v){
-if(v==='del'){mathState.input=mathState.input.slice(0,-1);}
-else{mathState.input+=String(v);}
-renderMathModal();
-if(document.getElementById('mathInput')){
-document.getElementById('mathInput').value=mathState.input;
-}
-}
-
-function mathSubmit(){
-const s=mathState;const p=s.probs[s.idx];
-const userAns=parseInt(s.input);
-if(isNaN(userAns)){s.feedback='❌ 请输入数字';s.input='';renderMathModal();return;}
-if(userAns===p.ans){
-s.correct++;s.feedback='✅ 回答正确！太棒了！';s.input='';
-renderMathModal();
-setTimeout(()=>{s.feedback='';s.idx++;if(s.idx>=s.total)finishMath();else renderMathModal();},500);
-}else{
-s.feedback='❌ 答错了，正确答案是 '+p.ans;s.input='';
-renderMathModal();
-setTimeout(()=>{s.feedback='';s.idx++;if(s.idx>=s.total)finishMath();else renderMathModal();},800);
-}
-}
-
-function finishMath(){
-const s=mathState;closeGameModal();finishTask(s.taskId);showCelebration('🎉','数学闯关完成！',s.total+' 道题，答对 '+s.correct+' 题！');
-}
-
-// ============================================================
-// ENGLISH MODULE
-// ============================================================
-let engState={idx:0,mode:'learn',words:[],qIdx:0,correct:0,total:0,taskId:'',quizType:0};
-
-function openEngModule(taskId){
-  const s=getSettings();const cnt=s.english?s.english.count:8;
-  const all=shuffle([...EV]);const selected=all.slice(0,cnt);
-  engState={idx:0,mode:'learn',words:selected,qIdx:0,correct:0,total:cnt,taskId,quizType:0};
-  renderEngModal();
-}
-
-function renderEngModal(){
-  const s=engState;
-  let html='<button class="modal-close" onclick="closeGameModal()">✕</button>';
-  if(s.mode==='learn'){
-    const w=s.words[s.idx];
-    html+=`<div class="modal-title">📚 单词学习 · ${s.idx+1}/${s.words.length}</div>
-<div class="char-card">
-<div class="char-emoji" style="font-size:56px">${w.e}</div>
-<div class="char-big" style="cursor:pointer" onclick="speakEng('${w.w}')">${w.w}</div>
-<div class="char-pinyin">${w.c}</div>
-<button class="speaker-btn" onclick="speakEng('${w.w}')">🔊 听发音</button>
-</div>
-<div class="char-pager">${s.words.map((_,i)=>`<div class="char-dot ${i===s.idx?'active':''}"></div>`).join('')}</div>
-<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-<button class="modal-btn" onclick="engPrev()" ${s.idx===0?'disabled style="background:#ccc;opacity:.5"':''}>⬅ 上一个</button>
-${s.idx<s.words.length-1?'<button class="modal-btn" onclick="engNext()">下一个 ➡</button>':'<button class="modal-btn green" onclick="startEngQuiz()">🎯 开始闯关</button>'}
-</div>`;
+  if(state.pets.length===0){
+    ps.insertAdjacentHTML('afterend','<div style="text-align:center;padding:8px"><button class="add-pet-btn" onclick="addPet()">✨ 领养新伙伴</button></div>');
+    document.getElementById('petStage').style.display='none';
+    document.getElementById('petName').style.display='block';
+    document.getElementById('petName').textContent='选一个，然后领养!';
+    document.getElementById('petStats').style.display='none';
+    document.getElementById('petEmoji').textContent='🐣';
   }else{
-    const q=s.words[s.qIdx];
-    // 0=听读闯关(show word+auto-speak→pick emoji), 1=听音识词(auto-speak only→pick word)
-    const qt=s.quizType;
-    let options=[q];
-    let others=EV.filter(x=>x.w!==q.w);
-    others=shuffle(others).slice(0,3);
-    options=options.concat(others);
-    options=shuffle(options);
-    if(qt===0){
-      // 听读闯关：看单词 + 听发音 → 选图片
-      html+=`<div class="modal-title">📚 听读闯关 · ${s.qIdx+1}/${s.words.length}</div>
-<div style="text-align:center;margin-bottom:12px;">
-<div style="font-size:48px;font-weight:bold;color:#333;margin-bottom:4px;letter-spacing:4px">${q.w}</div>
-<div style="font-size:14px;color:#888;margin-bottom:6px">${q.c}</div>
-<button class="speaker-btn" style="font-size:28px;padding:10px 20px" onclick="speakEng('${q.w}')" id="engSpeaker">🔊 点我听发音</button>
-<div style="font-size:14px;color:#667eea;margin-top:8px">👆 先听读，再选出正确的图片</div>
-</div>`;
-    }else{
-      // 听音识词：只听发音 → 选单词
-      html+=`<div class="modal-title">📚 听音识词 · ${s.qIdx+1}/${s.words.length}</div>
-<div style="text-align:center;margin-bottom:12px;">
-<div style="font-size:64px;margin-bottom:8px;cursor:pointer" onclick="speakEng('${q.w}')" id="engBigSpeaker">🔊</div>
-<button class="speaker-btn" style="font-size:24px;padding:8px 16px" onclick="speakEng('${q.w}')">再听一遍</button>
-<div style="font-size:14px;color:#667eea;margin-top:8px">👆 仔细听，选出你听到的单词！</div>
-</div>`;
+    // Remove the add button if it was added
+    const btns=ps.parentElement.querySelectorAll('.add-pet-btn');
+    btns.forEach(b=>b.parentElement.remove());
+    // If no pet selected, select first
+    if(state.activePetIdx>=state.pets.length)state.activePetIdx=0;
+    const p=getActivePet();
+    applyDecay(p);
+    document.getElementById('petStage').style.display='block';
+    document.getElementById('petEmoji').textContent=PET_TYPES[p.type].emoji;
+    document.getElementById('petName').textContent=p.name||PET_TYPES[p.type].name;
+    document.getElementById('petStats').style.display='block';
+    document.getElementById('statHunger').style.width=p.hunger+'%';
+    document.getElementById('statHappiness').style.width=p.happiness+'%';
+    document.getElementById('statHealth').style.width=p.health+'%';
+    document.getElementById('statClean').style.width=p.clean+'%';
+    // Disable actions if no coins
+    const actions=document.getElementById('petActions').querySelectorAll('button');
+    actions.forEach(b=>{b.disabled=state.coins<1});
+    // Switch pets if multiple
+    if(state.pets.length>1){
+      const existingSwitcher=document.getElementById('petSwitcher');
+      if(!existingSwitcher){
+        const sw=document.createElement('div');
+        sw.id='petSwitcher';sw.style.cssText='display:flex;gap:6px;justify-content:center;padding:8px;flex-wrap:wrap';
+        state.pets.forEach((pp,i)=>{
+          const btn=document.createElement('button');
+          btn.style.cssText=`padding:6px 12px;border-radius:14px;border:${i===state.activePetIdx?'2px solid var(--accent)':'1px solid #ddd'};background:${i===state.activePetIdx?'#fff8f0':'#fff'};cursor:pointer;font-size:13px;font-family:inherit;transition:.15s`;
+          btn.textContent=`${PET_TYPES[pp.type].emoji} ${pp.name||PET_TYPES[pp.type].name}`;
+          btn.onclick=()=>{state.activePetIdx=i;saveState();renderPetPage()};
+          sw.appendChild(btn);
+        });
+        document.getElementById('petStage').insertBefore(sw,document.getElementById('petStage').firstChild);
+      }else{
+        existingSwitcher.innerHTML='';
+        state.pets.forEach((pp,i)=>{
+          const btn=document.createElement('button');
+          btn.style.cssText=`padding:6px 12px;border-radius:14px;border:${i===state.activePetIdx?'2px solid var(--accent)':'1px solid #ddd'};background:${i===state.activePetIdx?'#fff8f0':'#fff'};cursor:pointer;font-size:13px;font-family:inherit`;
+          btn.textContent=`${PET_TYPES[pp.type].emoji} ${pp.name||PET_TYPES[pp.type].name}`;
+          btn.onclick=()=>{state.activePetIdx=i;saveState();renderPetPage()};
+          existingSwitcher.appendChild(btn);
+        });
+      }
     }
-    html+=`<div style="text-align:center;">${options.map(o=>{
-      if(qt===0)return `<button class="char-quiz-option" style="width:72px;height:72px;font-size:40px" onclick="checkEngAns('${o.w}','${q.w}')">${o.e}</button>`;
-      else return `<button class="char-quiz-option" style="width:auto;height:auto;padding:14px 22px;font-size:24px;font-weight:bold;min-width:80px" onclick="checkEngAns('${o.w}','${q.w}')">${o.w}</button>`;
-    }).join('')}</div>
-<div style="text-align:center;margin-top:8px;font-size:13px;color:#999;">✅ ${s.correct} / ${s.qIdx} 题</div>`;
+    // Can add more pets
+    if(state.pets.length<Object.keys(PET_TYPES).length){
+      if(!ps.parentElement.querySelector('.add-pet-btn')){
+        ps.insertAdjacentHTML('afterend','<div style="text-align:center;padding:4px"><button class="add-pet-btn" onclick="addPet()">+ 添加新伙伴</button></div>');
+      }
+    }
   }
-  document.getElementById('gmc').innerHTML=html;
-  document.getElementById('gmo').classList.add('show');
-  // Auto-speak for quiz questions
-  if(s.mode==='quiz'){
-    setTimeout(()=>{speakEng(s.words[s.qIdx].w);},400);
-  }
+  saveState();
 }
 
-function engPrev(){engState.idx--;renderEngModal();}
-function engNext(){engState.idx++;renderEngModal();speakEng(engState.words[engState.idx].w);}
-function startEngQuiz(){engState.mode='quiz';engState.qIdx=0;engState.correct=0;engState.quizType=Math.random()<0.7?0:1;renderEngModal();}
-
-function checkEngAns(selected,correct){
-  const s=engState;
-  const btns=document.querySelectorAll('.char-quiz-option');
-  btns.forEach(b=>{
-    const match=b.getAttribute('onclick')?.match(/checkEngAns\('([^']+)','([^']+)'\)/);
-    const val=match?match[1]:b.textContent;
-    if(val===correct)b.classList.add('correct');
-    else if(val===selected&&val!==correct)b.classList.add('wrong');
-  });
-  if(selected===correct){s.correct++;speakEng(correct);}
-  setTimeout(()=>{
-    s.qIdx++;s.quizType=Math.random()<0.7?0:1;
-    if(s.qIdx>=s.words.length)finishEngQuiz();
-    else renderEngModal();
-  },700);
+function selectPetType(type){
+  const sel=document.querySelectorAll('.pet-option');
+  sel.forEach(s=>s.classList.remove('selected'));
+  const target=Array.from(sel).find(s=>s.textContent.includes(PET_TYPES[type].name));
+  if(target)target.classList.add('selected');
 }
 
-function finishEngQuiz(){
-  const s=engState;closeGameModal();finishTask(s.taskId);
-  showCelebration('🎉','英语闯关完成！','学会了 '+s.words.length+' 个新单词，答对 '+s.correct+' 题！');
-}
-
-function speakEng(word){
-  if(!getSettings().soundEnabled)return;
-  if(typeof speechSynthesis!=='undefined'){
-    speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(word);u.lang='en-US';u.rate=0.75;speechSynthesis.speak(u);
-  }
+function addPet(){
+  const sel=document.querySelector('.pet-option.selected');
+  if(!sel)return toastMsg('请先点击选择一个宠物!',true);
+  const type=Object.keys(PET_TYPES).find(k=>PET_TYPES[k].name===sel.querySelector('span').textContent);
+  if(!type)return;
+  // Check if already have this type (allow if user wants)
+  const existing=state.pets.find(p=>p.type===type);
+  if(existing)return toastMsg('你已经有这个伙伴啦!');
+  const name=prompt('给你的小伙伴起个名字吧!',PET_TYPES[type].name);
+  if(name===null)return;
+  const pet=createPet(type,name||PET_TYPES[type].name);
+  state.pets.push(pet);
+  state.activePetIdx=state.pets.length-1;
+  saveState();renderPetPage();
+  sfxHappy();toastMsg('欢迎新伙伴!🎉');
 }
 
 // ============================================================
-// THINKING MODULE (Pattern / Odd-One-Out / Counting / Compare)
+// TASK SYSTEM
 // ============================================================
-let thinkState={idx:0,correct:0,total:0,questions:[],taskId:'',feedback:''};
+function renderTaskPage(){
+  const tk=today();
+  if(!state.completedTasks[tk])state.completedTasks[tk]={};
+  const list=document.getElementById('taskList');
+  list.innerHTML=state.config.tasks.map(t=>{
+    const done=state.completedTasks[tk][t.id];
+    return `<div class="task-card${done?' done':''}" onclick="${t.cat==='study'||t.cat==='game'?'startTask(\''+t.id+'\')':'completeSimpleTask(\''+t.id+'\')'}">
+      <span class="tc-icon">${t.name.slice(0,2)}</span>
+      <div class="tc-info"><div class="tc-name">${t.name}</div><div class="tc-coin">🪙${t.coins} · ${t.difficulty||''}</div></div>
+      ${done?'<span class="tc-check">✅</span>':''}
+    </div>`;
+  }).join('');
 
-function genThinkQuestions(cnt){
-  const qs=[];
-  const types=['pattern','odd','count','compare'];
-  for(let i=0;i<cnt;i++){
-    const t=types[i%types.length];
-    if(t==='pattern')qs.push(genPatternQ());
-    else if(t==='odd')qs.push(genOddQ());
-    else if(t==='count')qs.push(genCountQ());
-    else qs.push(genCompareQ());
-  }
-  return shuffle(qs);
+  // Penalty section
+  list.insertAdjacentHTML('beforeend','<div class="section-title">⚠️ 避免这些行为（会扣金币哦）</div>'+
+    state.config.penalties.map(p=>`<div class="task-card" onclick="triggerPenalty('${p.id}')" style="border-left:3px solid #ff6b6b">
+      <span style="font-size:24px">${p.name.slice(0,2)}</span>
+      <div class="tc-info"><div class="tc-name">${p.name}</div><div class="tc-coin" style="color:#ff6b6b">-🪙${p.coins}</div></div>
+    </div>`).join(''));
 }
 
-function genPatternQ(){
+function completeSimpleTask(taskId){
+  const tk=today();
+  if(state.completedTasks[tk][taskId])return;
+  const t=state.config.tasks.find(x=>x.id===taskId);
+  if(!t)return;
+  state.completedTasks[tk][taskId]=true;
+  state.coins+=t.coins;
+  sfxCoin();
+  toastMsg(`+${t.coins}🪙 太棒了!🌟`);
+  saveState();renderTaskPage();updateCoinDisplay();renderReportPage();
+}
+
+// Interactive tasks
+let exState=null;
+function startTask(taskId){
+  const t=state.config.tasks.find(x=>x.id===taskId);
+  if(!t)return;
+  let content='';
+  if(taskId==='t1')content=genChineseEx(t);
+  else if(taskId==='t2')content=genMathEx(t);
+  else if(taskId==='t3')content=genEnglishEx(t);
+  else if(taskId==='t4')content=genThinkingEx(t);
+  else if(taskId==='t5')content=genGoEx(t);
+  else return completeSimpleTask(taskId);
+
+  document.getElementById('modalContent').innerHTML=content;
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('show');
+  exState=null;
+}
+
+// Chinese character exercise
+function genChineseEx(task){
+  const pairs=[['🐱','猫'],['🐶','狗'],['🐰','兔'],['🐟','鱼'],['🐦','鸟'],['🐴','马'],['🐮','牛'],['🐑','羊'],['🌙','月'],['⭐','星'],['🌊','海'],['🏔️','山'],['🌳','树'],['🌸','花'],['🌞','日'],['🚗','车'],['🚢','船'],['✈️','机'],['🍎','果'],['📖','书']];
+  const q=pairs[Math.floor(Math.random()*pairs.length)];
+  const wrong=pairs.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[q[1],...wrong.map(p=>p[1])].sort(()=>Math.random()-.5);
+  exState={correct:q[1],task,total:0,correctCount:0,rounds:6};
+  return `<div class="exercise-area">
+    <h3>🔤 识字小达人</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题</p>
+    <div class="ex-big">${q[0]}</div>
+    <div class="ex-question">这个是什么字？</div>
+    <div class="ex-options">${opts.map(o=>`<button class="ex-opt" onclick="answerEx('${o}')">${o}</button>`).join('')}</div>
+    <div class="ex-feedback" id="exFeedback"></div>
+    <div class="ex-score" id="exScore"></div>
+  </div>`;
+}
+
+function genMathEx(task){
+  const level=10;const a=Math.floor(Math.random()*level)+1;const b=Math.floor(Math.random()*level)+1;
+  const op=Math.random()>.5?'+':'-';let ans;
+  if(op==='+')ans=a+b;else{if(a<b)[a,b]=[b,a];ans=a-b}
+  exState={correct:ans,task,total:0,correctCount:0,rounds:6};
+  return `<div class="exercise-area">
+    <h3>🔢 数学大冒险</h3><p style="color:var(--sub);margin-bottom:8px">第1/${exState.rounds}题</p>
+    <div class="ex-big" style="font-size:48px">${a} ${op} ${b} = ?</div>
+    <input type="number" id="mathInput" style="width:120px;padding:12px;font-size:24px;text-align:center;border:2px solid #ddd;border-radius:12px;font-family:inherit;margin:12px 0" placeholder="?">
+    <br><button onclick="checkMathAnswer()" style="padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:16px;cursor:pointer;font-family:inherit;font-weight:600">✅ 提交</button>
+    <div class="ex-feedback" id="exFeedback"></div>
+    <div class="ex-score" id="exScore"></div>
+  </div>`;
+}
+
+function checkMathAnswer(){
+  const inp=document.getElementById('mathInput');const val=parseInt(inp.value);
+  if(isNaN(val))return toastMsg('请输入数字!',true);
+  answerEx(String(val));
+}
+
+function genEnglishEx(task){
+  const words=[['apple','🍎','苹果'],['cat','🐱','猫'],['dog','🐶','狗'],['fish','🐟','鱼'],['bird','🐦','鸟'],['star','⭐','星星'],['moon','🌙','月亮'],['car','🚗','车'],['book','📖','书'],['flower','🌸','花'],['sun','🌞','太阳'],['tree','🌳','树']];
+  const q=words[Math.floor(Math.random()*words.length)];
+  const wrong=words.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[q[0],...wrong.map(w=>w[0])].sort(()=>Math.random()-.5);
+  exState={correct:q[0],task,total:0,correctCount:0,rounds:6};
+  return `<div class="exercise-area">
+    <h3>📚 英语探险家</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题</p>
+    <div class="ex-big">${q[1]}</div>
+    <div class="ex-question">${q[2]} — 选英文单词</div>
+    <div class="ex-options">${opts.map(o=>`<button class="ex-opt" onclick="answerEx('${o}')" style="font-size:16px;min-width:80px">${o}</button>`).join('')}</div>
+    <div class="ex-feedback" id="exFeedback"></div>
+    <div class="ex-score" id="exScore"></div>
+  </div>`;
+}
+
+function genThinkingEx(task){
   const patterns=[
-    {seq:['🍎','🍌','🍎','🍌'],ans:'🍎',opts:['🍎','🍌','🍇','🍓'],hint:'水果排队：苹果→香蕉→苹果→香蕉→？'},
-    {seq:['🔴','🔵','🔴','🔵'],ans:'🔴',opts:['🔴','🔵','🟡','🟢'],hint:'彩色珠子排队：红→蓝→红→蓝→？'},
-    {seq:['⭐','🌟','⭐','🌟'],ans:'⭐',opts:['⭐','🌟','✨','💫'],hint:'星星排队：小星→大星→小星→大星→？'},
-    {seq:['🐶','🐱','🐶','🐱'],ans:'🐶',opts:['🐶','🐱','🐰','🐹'],hint:'小动物排队：小狗→小猫→小狗→小猫→？'},
-    {seq:['1️⃣','2️⃣','1️⃣','2️⃣'],ans:'1️⃣',opts:['1️⃣','2️⃣','3️⃣','4️⃣'],hint:'数字排队：1→2→1→2→？'},
-    {seq:['⚪','⚫','⚪','⚫'],ans:'⚪',opts:['⚪','⚫','🔘','⬜'],hint:'颜色排队：白→黑→白→黑→？'},
-    {seq:['🌸','🌿','🌸','🌿'],ans:'🌸',opts:['🌸','🌿','🌺','🍀'],hint:'花朵排队：花→叶→花→叶→？'},
-    {seq:['🚗','🚌','🚗','🚌'],ans:'🚗',opts:['🚗','🚌','🚲','✈️'],hint:'车辆排队：小车→公交→小车→公交→？'}
+    {q:'🔴🟡🔴🟡🔴❓',opts:['🟡','🔴','🟢'],ans:'🟡'},
+    {q:'🔺🔻🔺🔻❓',opts:['🔻','🔺','◼️'],ans:'🔺'},
+    {q:'🐱🐶🐱🐶🐱❓',opts:['🐶','🐱','🐰'],ans:'🐶'},
+    {q:'🍎🍌🍎🍌🍎❓',opts:['🍌','🍎','🍇'],ans:'🍌'},
   ];
-  return {type:'pattern',...patterns[Math.floor(Math.random()*patterns.length)]};
+  const q=patterns[Math.floor(Math.random()*patterns.length)];
+  exState={correct:q.ans,task,total:0,correctCount:0,rounds:6};
+  return `<div class="exercise-area">
+    <h3>🧠 思维小天才</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题 · 找规律</p>
+    <div class="ex-big" style="font-size:40px">${q.q}</div>
+    <div class="ex-question">❓ 处应该是什么？</div>
+    <div class="ex-options">${q.opts.map(o=>`<button class="ex-opt" onclick="answerEx('${o}')" style="font-size:32px">${o}</button>`).join('')}</div>
+    <div class="ex-feedback" id="exFeedback"></div>
+    <div class="ex-score" id="exScore"></div>
+  </div>`;
 }
 
-function genOddQ(){
-  const groups=[
-    {items:['🍎','🍌','🐶','🍇'],odd:2,reason:'🐶 不是水果哦'},
-    {items:['🚗','🚌','🍎','🚲'],odd:2,reason:'🍎 不是交通工具'},
-    {items:['👀','👂','🍎','👃'],odd:2,reason:'🍎 不是五官'},
-    {items:['🐶','🐱','🐰','🚗'],odd:3,reason:'🚗 不是小动物'},
-    {items:['🔴','🔵','🟡','📱'],odd:3,reason:'📱 不是颜色'},
-    {items:['🍎','🍌','🍇','🥕'],odd:3,reason:'🥕 是蔬菜不是水果'},
-    {items:['🐦','🦋','✈️','🐝'],odd:2,reason:'✈️ 不是会飞的动物'},
-    {items:['👟','🧦','👒','👞'],odd:2,reason:'👒 是帽子不是穿的'}
+function genGoEx(task){
+  exState={correct:'eat',task,total:0,correctCount:0,rounds:3,currentRound:0};
+  return renderGoRound();
+}
+
+function renderGoRound(){
+  const boards=[
+    {board:'⬜⬛⬜⬛⬜\n⬛⚪⬜⬛⬜\n⬜⬛⚫⬜⬜\n⬜⬜⬛⬜⬜\n⬜⬜⬜⬜⬜',q:'黑棋(⚫)吃掉了几颗白棋(⚪)？',ans:'1'},
+    {board:'⬜⬜⬜⬜⬜\n⬜⚪⬛⬜⬜\n⬜⬛⚫⬛⬜\n⬜⬜⬛⚪⬜\n⬜⬜⬜⬜⬜',q:'黑棋(⚫)正在包围白棋，能吃掉几颗？',ans:'2'},
+    {board:'⬜⬜⬜⬜⬜\n⬜⚪⚫⬜⬜\n⬜⚫⬜⚫⬜\n⬜⬜⚫⚪⬜\n⬜⬜⬜⬜⬜',q:'黑棋(⚫)吃掉了几个白棋(⚪)？',ans:'1'},
   ];
-  return {type:'odd',...groups[Math.floor(Math.random()*groups.length)]};
+  const r=exState.currentRound;
+  if(r>=exState.rounds)return finishEx();
+  const b=boards[r%boards.length];
+  return `<div class="exercise-area">
+    <h3>⚫ 围棋小棋手</h3><p style="color:var(--sub);margin-bottom:8px">第${r+1}/${exState.rounds}轮</p>
+    <pre style="font-size:16px;line-height:1.6;background:#f9f4e8;padding:10px;border-radius:12px;display:inline-block;text-align:left">${b.board}</pre>
+    <div class="ex-question" style="margin-top:12px">${b.q}</div>
+    <div class="ex-options">${['1','2','0'].map(o=>`<button class="ex-opt" onclick="answerEx('${o}')">${o}颗</button>`).join('')}</div>
+    <div class="ex-feedback" id="exFeedback"></div>
+    <div class="ex-score" id="exScore"></div>
+  </div>`;
 }
 
-function genCountQ(){
-  const emojis=['🍎','⭐','🐶','🌸','🚗','🔴','🐱','🍌'];
-  const em=emojis[Math.floor(Math.random()*emojis.length)];
-  const n=2+Math.floor(Math.random()*7); // 2-8
-  const correct=n;
-  let opts=[correct,correct+1,correct-1,correct+2].filter(x=>x>=1&&x<=9);
-  while(opts.length<4){opts.push(Math.floor(Math.random()*8)+1);}
-  opts=[...new Set(opts)].slice(0,4);
-  opts=shuffle(opts);
-  return {type:'count',emojis:Array(n).fill(em),ans:correct,opts,hint:'数一数有几个'+em+'？'};
-}
+function answerEx(choice){
+  exState.total++;
+  const fb=document.getElementById('exFeedback');
+  const sc=document.getElementById('exScore');
+  const isCorrect=choice===exState.correct;
 
-function genCompareQ(){
-  const pairs=[
-    {a:'🐘',b:'🐭',q:'哪个更大？',ans:0,al:'大象',bl:'老鼠'},
-    {a:'🐭',b:'🐘',q:'哪个更小？',ans:0,al:'老鼠',bl:'大象'},
-    {a:'🦒',b:'🐶',q:'哪个更高？',ans:0,al:'长颈鹿',bl:'小狗'},
-    {a:'🐢',b:'🐇',q:'哪个更慢？',ans:0,al:'乌龟',bl:'兔子'},
-    {a:'🐇',b:'🐢',q:'哪个更快？',ans:0,al:'兔子',bl:'乌龟'},
-    {a:'🏠',b:'🏢',q:'哪个更高？',ans:1,al:'房子',bl:'高楼'},
-    {a:'🍎',b:'🍉',q:'哪个更大？',ans:1,al:'苹果',bl:'西瓜'},
-    {a:'🐳',b:'🐟',q:'哪个更大？',ans:0,al:'鲸鱼',bl:'小鱼'},
-    {a:'5️⃣',b:'3️⃣',q:'哪个更多？',ans:0,al:'5',bl:'3'},
-    {a:'2️⃣',b:'8️⃣',q:'哪个更多？',ans:1,al:'2',bl:'8'}
-  ];
-  return {type:'compare',...pairs[Math.floor(Math.random()*pairs.length)]};
-}
+  if(isCorrect){exState.correctCount++;fb.textContent='✅ 答对了!';playTone(600,.1);playTone(800,.15)}
+  else{fb.textContent='❌ 再想想~';playTone(250,.2,'square',.05)}
+  sc.textContent=`正确: ${exState.correctCount}/${exState.total}`;
 
-function openThinkModule(taskId){
-  const s=getSettings();const cnt=s.thinking?s.thinking.count:8;
-  const qs=genThinkQuestions(cnt);
-  thinkState={idx:0,correct:0,total:cnt,questions:qs,taskId,feedback:''};
-  renderThinkModal();
-}
-
-function renderThinkModal(){
-  const s=thinkState;const q=s.questions[s.idx];
-  let html=`<button class="modal-close" onclick="closeGameModal()">✕</button>
-<div class="modal-title">🧠 思维大挑战 · 第${s.idx+1}/${s.total}关</div>`;
-  if(q.type==='pattern'){
-    html+=`<div style="text-align:center;margin-bottom:16px;">
-<div style="font-size:14px;color:#888;margin-bottom:8px">🔍 找规律：接下来是什么呢？</div>
-<div style="font-size:40px;letter-spacing:8px;margin-bottom:8px">${q.seq.map(x=>x).join(' ')} <span style="color:#FF6B6B;font-size:36px">❓</span></div>
-<div style="font-size:13px;color:#999">${q.hint}</div></div>
-<div style="text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">${q.opts.map(o=>`<button class="char-quiz-option" style="width:72px;height:72px;font-size:40px" onclick="checkThinkAns('${o}','${q.ans}')">${o}</button>`).join('')}</div>`;
-  }else if(q.type==='odd'){
-    html+=`<div style="text-align:center;margin-bottom:16px;">
-<div style="font-size:14px;color:#888;margin-bottom:8px">🔍 找不同：哪一个跟别的不是一类？</div>
-<div style="font-size:44px;letter-spacing:10px;margin-bottom:8px">${q.items.join(' ')}</div></div>
-<div style="text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">${q.items.map((it,i)=>`<button class="char-quiz-option" style="width:72px;height:72px;font-size:40px" onclick="checkThinkAnsIdx(${i},${q.odd})">${it}</button>`).join('')}</div>`;
-  }else if(q.type==='count'){
-    html+=`<div style="text-align:center;margin-bottom:16px;">
-<div style="font-size:14px;color:#888;margin-bottom:8px">🔢 ${q.hint}</div>
-<div style="font-size:36px;letter-spacing:6px;margin-bottom:12px;">${q.emojis.join(' ')}</div></div>
-<div style="text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">${q.opts.map(o=>`<button class="char-quiz-option" style="width:64px;height:64px;font-size:28px;font-weight:bold" onclick="checkThinkAnsNum(${o},${q.ans})">${o}</button>`).join('')}</div>`;
-  }else if(q.type==='compare'){
-    html+=`<div style="text-align:center;margin-bottom:16px;">
-<div style="font-size:14px;color:#888;margin-bottom:8px">⚖️ ${q.q}</div>
-<div style="display:flex;align-items:center;justify-content:center;gap:30px;margin:16px 0;">
-<div style="text-align:center;"><div style="font-size:64px">${q.a}</div><div style="font-size:12px;color:#888">${q.al}</div></div>
-<div style="font-size:24px;color:#999">VS</div>
-<div style="text-align:center;"><div style="font-size:64px">${q.b}</div><div style="font-size:12px;color:#888">${q.bl}</div></div>
-</div></div>
-<div style="text-align:center;display:flex;gap:12px;justify-content:center;">${[0,1].map(i=>`<button class="char-quiz-option" style="width:auto;height:auto;padding:16px 24px;font-size:22px;font-weight:bold" onclick="checkThinkAnsIdx(${i},${q.ans})">${i===0?q.al:q.bl}</button>`).join('')}</div>`;
+  // Highlight options
+  const opts=document.querySelectorAll('.ex-modal-btn');
+  if(!opts.length){
+    document.querySelectorAll('.ex-opt').forEach(o=>{
+      if(o.textContent.trim()===choice||o.textContent===choice){
+        if(isCorrect)o.classList.add('correct');else o.classList.add('wrong');
+      }
+    });
   }
-  html+=`<div style="text-align:center;margin-top:12px;font-size:13px;color:#999;">已答对：${s.correct}/${s.idx}</div>
-<div class="math-feedback" style="text-align:center;min-height:28px;margin-top:8px;font-size:18px;">${s.feedback}</div>`;
-  document.getElementById('gmc').innerHTML=html;
-  document.getElementById('gmo').classList.add('show');
-}
 
-function checkThinkAns(selected,correct){
-  thinkState.feedback=selected===correct?'✅ 答对了！太聪明了！':'❌ 再想想哦…正确答案是 '+correct;
-  renderThinkModal();
-  setTimeout(()=>advanceThink(selected===correct),700);
-}
-function checkThinkAnsIdx(i,correctIdx){
-  thinkState.feedback=i===correctIdx?'✅ 答对了！太聪明了！':'❌ 再想想哦…';
-  renderThinkModal();
-  setTimeout(()=>advanceThink(i===correctIdx),700);
-}
-function checkThinkAnsNum(n,correct){
-  thinkState.feedback=n===correct?'✅ 答对了！太聪明了！':'❌ 再想想哦…正确答案是 '+correct;
-  renderThinkModal();
-  setTimeout(()=>advanceThink(n===correct),700);
-}
-function advanceThink(wasCorrect){
-  if(wasCorrect)thinkState.correct++;
-  thinkState.feedback='';thinkState.idx++;
-  if(thinkState.idx>=thinkState.total)finishThink();
-  else renderThinkModal();
-}
-function finishThink(){
-  const s=thinkState;closeGameModal();finishTask(s.taskId);
-  showCelebration('🎉','思维闯关完成！',s.total+' 道思维题，答对 '+s.correct+' 题！小脑袋真厉害！');
-}
-
-// ============================================================
-// GO MODULE
-// ============================================================
-let goState={idx:0,correct:0,total:0,probs:[],taskId:'',board:[],size:7,answer:null,tries:0,feedback:'',showHint:false};
-
-function generateGoProblem(diff){
-const size=7;const board=Array(size).fill(null).map(()=>Array(size).fill(0));
-let cx,cy;
-if(diff===1){cx=Math.random()<.5?0:size-1;cy=Math.random()<.5?0:size-1;} // corner
-else if(diff===2){ // edge
-if(Math.random()<.5){cx=Math.random()<.5?0:size-1;cy=1+Math.floor(Math.random()*(size-2));}
-else{cy=Math.random()<.5?0:size-1;cx=1+Math.floor(Math.random()*(size-2));}
-}else{cx=2+Math.floor(Math.random()*3);cy=2+Math.floor(Math.random()*3);} // center
-board[cy][cx]=1; // black
-const dirs=[[-1,0],[1,0],[0,-1],[0,1]];
-const neighbors=[];
-for(const[dr,dc]of dirs){const r=cy+dr,c=cx+dc;if(r>=0&&r<size&&c>=0&&c<size)neighbors.push([r,c]);}
-const ai=Math.floor(Math.random()*neighbors.length);
-const answer=neighbors[ai];
-for(let i=0;i<neighbors.length;i++){if(i!==ai)board[neighbors[i][0]][neighbors[i][1]]=2;}
-return{board,answer,size};
-}
-
-function openGoModule(taskId){
-const s=getSettings();const diff=s.go.difficulty||1;const cnt=s.go.count||5;
-const probs=[];for(let i=0;i<cnt;i++)probs.push(generateGoProblem(diff));
-goState={idx:0,correct:0,total:cnt,probs,taskId,board:probs[0].board,size:probs[0].size,answer:probs[0].answer,tries:0,feedback:'',showHint:false};
-renderGoModal();
-}
-
-function renderGoModal(){
-const s=goState;const p=s.probs[s.idx];s.board=p.board;s.answer=p.answer;s.size=p.size;
-let html=`<button class="modal-close" onclick="closeGameModal()">✕</button>
-<div class="modal-title">⚫ 围棋吃子练习 · 第${s.idx+1}/${s.total}关</div>
-<div class="go-wrap">
-<div class="go-instruction"><b>黑子</b>只剩最后一口气了，<br>点击正确位置放白子吃掉它！</div>
-<div class="go-board" style="grid-template-columns:repeat(${s.size},36px);grid-template-rows:repeat(${s.size},36px)">`;
-for(let r=0;r<s.size;r++){
-for(let c=0;c<s.size;c++){
-const v=p.board[r][c];
-const isHint=s.showHint&&r===p.answer[0]&&c===p.answer[1];
-html+=`<div class="go-cell ${isHint?'hint':''}" onclick="goClick(${r},${c})">`;
-if(v===1)html+=`<div class="go-stone b"></div>`;
-else if(v===2)html+=`<div class="go-stone w"></div>`;
-html+=`</div>`;
-}
-}
-html+=`</div>
-<div class="go-feedback" id="goFb">${s.feedback}</div>`;
-if(s.tries>=3&&!s.showHint)html+=`<div style="text-align:center;margin-bottom:8px"><button class="modal-btn" style="background:#FFA726;font-size:14px;padding:8px 20px" onclick="goShowHint()">💡 给我提示</button></div>`;
-html+=`<div class="go-score">已吃掉 ${s.correct}/${s.idx} 块黑子</div>
-</div>`;
-document.getElementById('gmc').innerHTML=html;
-document.getElementById('gmo').classList.add('show');
-}
-
-function goClick(r,c){
-const s=goState;const p=s.probs[s.idx];
-if(p.board[r][c]!==0)return;
-if(r===p.answer[0]&&c===p.answer[1]){
-p.board[r][c]=2;s.correct++;s.tries=0;s.showHint=false;s.feedback='🎉 正确！吃掉黑子！';renderGoModal();
-setTimeout(()=>{s.feedback='';s.idx++;if(s.idx>=s.total)finishGo();else renderGoModal();},600);
-}else{
-s.tries++;if(s.tries>=3){s.showHint=true}s.feedback='❌ 这个位置不能吃子，再想想~';renderGoModal();
-}
-}
-
-function goShowHint(){goState.showHint=true;renderGoModal();}
-
-function finishGo(){const s=goState;closeGameModal();finishTask(s.taskId);showCelebration('🎉','围棋闯关完成！','吃掉 '+s.correct+' 块黑子！');}
-
-// ============================================================
-// SUMMARY MODULE
-// ============================================================
-function openSummaryModule(taskId){
-const state=gs('taskState_'+tk(),{});const settings=getSettings();
-const all=settings.tasks.filter(t=>t.enabled);const done=all.filter(t=>state[t.id]);
-let html=`<button class="modal-close" onclick="closeGameModal()">✕</button>
-<div class="modal-title">🌟 今日闯关总结</div>
-<div style="text-align:center;margin-bottom:16px;font-size:42px;">⭐ ${done.length}</div>
-<div style="text-align:center;font-size:14px;color:#666;margin-bottom:16px;">能量星</div>`;
-html+=`<div style="background:#f9f9f9;border-radius:16px;padding:16px;">`;
-all.forEach(t=>{const isDone=state[t.id];html+=`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #eee">${isDone?'✅':'⬜'} <span style="${isDone?'text-decoration:line-through;color:#888':''}">${t.icon} ${t.name}</span></div>`;});
-html+=`</div>`;
-if(done.length===all.length)html+=`<div style="text-align:center;margin-top:16px;font-size:18px;color:#FF6F00;font-weight:bold">🏆 太厉害了！全部通关！</div>`;
-html+=`<button class="modal-btn green" onclick="closeGameModal();finishTask('${taskId}',true)" style="margin-top:16px">完成总结 ✅</button>`;
-document.getElementById('gmc').innerHTML=html;
-document.getElementById('gmo').classList.add('show');
-}
-
-// ============================================================
-// PARENT BACKEND
-// ============================================================
-function openParent(){
-const s=getSettings();
-let html=`<button class="modal-close" onclick="closeParent()">✕</button>
-<div style="font-size:18px;font-weight:bold;margin-bottom:14px;">⚙️ 家长后台管理</div>
-<div class="parent-tabs">
-<button class="ptab active" onclick="switchPTab('tasks',this)">📋 任务</button>
-<button class="ptab" onclick="switchPTab('math',this)">🔢 数学</button>
-<button class="ptab" onclick="switchPTab('char',this)">🔤 识字</button>
-<button class="ptab" onclick="switchPTab('english',this)">📚 英语</button>
-<button class="ptab" onclick="switchPTab('thinking',this)">🧠 思维</button>
-<button class="ptab" onclick="switchPTab('go',this)">⚫ 围棋</button>
-<button class="ptab" onclick="switchPTab('reward',this)">🏆 奖励</button>
-<button class="ptab" onclick="switchPTab('data',this)">🔄 数据</button>
-</div>
-<!-- Tasks Tab -->
-<div class="ptab-content active" id="ptab-tasks">
-${s.tasks.map((t,i)=>`<div class="p-row"><label>${t.icon} ${t.name}</label><input value="${t.name}" onchange="updateTask(${i},'name',this.value)"><input value="${t.dur}" onchange="updateTask(${i},'dur',this.value)" style="max-width:100px"><button class="toggle ${t.enabled?'on':'off'}" onclick="toggleTaskEnabled(${i})"></button></div>`).join('')}
-<button class="p-save" onclick="saveParentChanges()">💾 保存任务设置</button>
-</div>
-<!-- Math Tab -->
-<div class="ptab-content" id="ptab-math">
-<div class="p-row"><label>难度级别</label><select id="psMathDiff" onchange="saveParentSetting()"><option value="add10" ${s.math.difficulty==='add10'?'selected':''}>10以内加法</option><option value="sub10" ${s.math.difficulty==='sub10'?'selected':''}>10以内减法</option><option value="add20" ${s.math.difficulty==='add20'?'selected':''}>20以内加法</option><option value="sub20" ${s.math.difficulty==='sub20'?'selected':''}>20以内减法</option><option value="mixed" ${s.math.difficulty==='mixed'?'selected':''}>混合模式</option></select></div>
-<div class="p-row"><label>每日题量</label><input type="range" min="5" max="20" value="${s.math.count}" id="psMathCnt" oninput="this.nextElementSibling.textContent=this.value+'题';saveParentSetting()"><span>${s.math.count}题</span></div>
-</div>
-<!-- Char Tab -->
-<div class="ptab-content" id="ptab-char">
-<div class="p-row"><label>当前学习天</label><select id="psCharDay" onchange="saveParentSetting()">${Array.from({length:30},(_,i)=>`<option value="${i}" ${s.char.dayIndex===i?'selected':''}>第${i+1}天（${C[i*5][0]}~${C[Math.min(i*5+4,149)][0]}）</option>`).join('')}</select></div>
-<div class="p-row"><label>每天学字数</label><input type="range" min="5" max="10" value="${s.char.countPerDay}" id="psCharCnt" oninput="this.nextElementSibling.textContent=this.value+'字';saveParentSetting()"><span>${s.char.countPerDay}字</span></div>
-<div style="margin-top:8px;padding:10px;background:#f9f9f9;border-radius:10px;font-size:13px;">
-<b>今日汉字预览：</b>${(()=>{let preview=[];for(let d=0;d<dailySets.length&&preview.length<s.char.countPerDay;d++){const di=(s.char.dayIndex+d)%dailySets.length;for(const ci of dailySets[di]){if(preview.length>=s.char.countPerDay)break;preview.push(C[ci][0]);}}return preview.join(' ');})()}
-</div>
-</div>
-<!-- English Tab -->
-<div class="ptab-content" id="ptab-english">
-<div class="p-row"><label>每日单词数</label><input type="range" min="5" max="12" value="${s.english.count}" id="psEngCnt" oninput="this.nextElementSibling.textContent=this.value+'个';saveParentSetting()"><span>${s.english.count}个</span></div>
-<div style="margin-top:8px;padding:10px;background:#f9f9f9;border-radius:10px;font-size:13px;">
-<b>今日单词预览（随机抽取${s.english.count}个）：</b> ${EV.slice(0,12).map(x=>x.w+'('+x.c+')').join('、')} …
-</div>
-</div>
-<!-- Thinking Tab -->
-<div class="ptab-content" id="ptab-thinking">
-<div class="p-row"><label>每日题量</label><input type="range" min="4" max="16" value="${s.thinking.count}" id="psThinkCnt" oninput="this.nextElementSibling.textContent=this.value+'题';saveParentSetting()"><span>${s.thinking.count}题</span></div>
-<div style="margin-top:8px;padding:10px;background:#f9f9f9;border-radius:10px;font-size:13px;">
-<b>题型包含：</b> 🔍找规律、🔍找不同、🔢数一数、⚖️比大小 — 随机轮换
-</div>
-</div>
-<!-- Go Tab -->
-<div class="ptab-content" id="ptab-go">
-<div class="p-row"><label>难度</label><select id="psGoDiff" onchange="saveParentSetting()"><option value="1" ${s.go.difficulty===1?'selected':''}>简单（角部吃子）</option><option value="2" ${s.go.difficulty===2?'selected':''}>中等（边线吃子）</option><option value="3" ${s.go.difficulty===3?'selected':''}>困难（中央吃子）</option></select></div>
-<div class="p-row"><label>每日题量</label><input type="range" min="3" max="10" value="${s.go.count}" id="psGoCnt" oninput="this.nextElementSibling.textContent=this.value+'题';saveParentSetting()"><span>${s.go.count}题</span></div>
-</div>
-<!-- Reward Tab -->
-<div class="ptab-content" id="ptab-reward">
-${s.rewards.map((r,i)=>`<div class="p-row"><label>${r.emoji} 等级${i+1}</label><input type="number" value="${r.threshold}" style="max-width:60px" onchange="updateReward(${i},'threshold',parseInt(this.value))"><input value="${r.name}" style="max-width:100px" onchange="updateReward(${i},'name',this.value)"><input value="${r.desc}" onchange="updateReward(${i},'desc',this.value)"></div>`).join('')}
-<button class="p-save" onclick="saveParentChanges()">💾 保存奖励设置</button>
-</div>
-<!-- Data Tab -->
-<div class="ptab-content" id="ptab-data">
-<div class="p-row"><label>声音开关</label><button class="toggle ${s.soundEnabled?'on':'off'}" onclick="toggleSound()"></button></div>
-<button class="p-save" onclick="if(confirm('确定要重置今日所有闯关数据吗？')){resetToday();}">🔄 重置今日数据</button>
-<button class="p-save p-danger" onclick="if(confirm('确定要重置所有数据吗？包括设置和记录。')){resetAll();}">⚠️ 重置全部数据</button>
-<p style="margin-top:12px;font-size:12px;color:#999">注：重置后无法恢复，请谨慎操作</p>
-</div>`;
-document.getElementById('ppc').innerHTML=html;
-document.getElementById('ppo').classList.add('show');
-}
-
-function closeParent(){document.getElementById('ppo').classList.remove('show');renderAll();}
-function switchPTab(tab,btn){
-document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
-document.querySelectorAll('.ptab-content').forEach(c=>c.classList.remove('active'));
-btn.classList.add('active');document.getElementById('ptab-'+tab).classList.add('active');
-}
-function updateTask(i,key,val){const s=getSettings();s.tasks[i][key]=val;saveSettings(s);}
-function toggleTaskEnabled(i){const s=getSettings();s.tasks[i].enabled=!s.tasks[i].enabled;saveSettings(s);openParent();}
-function updateReward(i,key,val){const s=getSettings();s.rewards[i][key]=val;saveSettings(s);}
-function toggleSound(){const s=getSettings();s.soundEnabled=!s.soundEnabled;saveSettings(s);renderAll();}
-function saveParentSetting(){const s=getSettings();
-s.math.difficulty=(document.getElementById('psMathDiff')||{}).value||s.math.difficulty;
-s.math.count=parseInt((document.getElementById('psMathCnt')||{}).value)||s.math.count;
-s.char.dayIndex=parseInt((document.getElementById('psCharDay')||{}).value)||s.char.dayIndex;
-s.char.countPerDay=parseInt((document.getElementById('psCharCnt')||{}).value)||s.char.countPerDay;
-s.english.count=parseInt((document.getElementById('psEngCnt')||{}).value)||s.english.count;
-s.thinking.count=parseInt((document.getElementById('psThinkCnt')||{}).value)||s.thinking.count;
-s.go.difficulty=parseInt((document.getElementById('psGoDiff')||{}).value)||s.go.difficulty;
-s.go.count=parseInt((document.getElementById('psGoCnt')||{}).value)||s.go.count;
-saveSettings(s);
-}
-function saveParentChanges(){saveParentSetting();closeParent();
-const s=getSettings();ss('parentSettings',s);renderAll();alert('✅ 设置已保存！');openParent();}
-function resetToday(){ss('taskState_'+tk(),{});const weekData=gs('weekStars',{});weekData[tk()]=0;ss('weekStars',weekData);closeParent();renderAll();}
-function resetAll(){localStorage.removeItem('parentSettings');localStorage.removeItem('taskState_'+tk());ss('weekStars',{});closeParent();renderAll();}
-
-// ============================================================
-// GAME MODAL
-// ============================================================
-function closeGameModal(){document.getElementById('gmo').classList.remove('show');mathState={idx:0,correct:0,total:0,probs:[],taskId:'',input:'',feedback:''};engState={idx:0,mode:'learn',words:[],qIdx:0,correct:0,total:0,taskId:'',quizType:0};thinkState={idx:0,correct:0,total:0,questions:[],taskId:'',feedback:''};goState={idx:0,correct:0,total:0,probs:[],taskId:'',board:[],size:7,answer:null,tries:0,feedback:'',showHint:false};}
-
-// ============================================================
-// EFFECTS
-// ============================================================
-function spawnFloatingStar(){
-const star=document.createElement('div');star.className='fstar';star.textContent='⭐';
-star.style.left=(window.innerWidth/2-18+Math.random()*60-30)+'px';
-star.style.top=(window.innerHeight/2-18)+'px';
-document.body.appendChild(star);setTimeout(()=>star.remove(),1200);
-}
-
-function showCelebration(emoji,title,msg){
-document.getElementById('cele').textContent=emoji;
-document.getElementById('celt').textContent=title;
-document.getElementById('celm').textContent=msg;
-document.getElementById('celo').classList.add('show');
-}
-function closeCel(){document.getElementById('celo').classList.remove('show');}
-
-function checkAllDone(){
-const settings=getSettings();const taskState=gs('taskState_'+tk(),{});
-const all=settings.tasks.filter(t=>t.enabled);
-const done=all.filter(t=>taskState[t.id]);
-if(done.length===all.length&&all.length>0){
-setTimeout(()=>{showCelebration('🏆','全部通关！','小六一今天太厉害了！所有关卡全部通关！');},300);
-// Check if today completes the August perfect month (first-time only)
-const today=new Date();
-if(today.getFullYear()===2026&&today.getMonth()+1===8){
-  const existingAchievements=gs('monthlyAchievements',{});
-  if(!existingAchievements['2026-08']||!existingAchievements['2026-08'].achieved){
-    // Count perfect days up to today
-    const enabledTasks=settings.tasks.filter(t=>t.enabled);
-    let perfectDays=0;
-    for(let d=1;d<=today.getDate();d++){
-      const key='2026-08-'+String(d).padStart(2,'0');
-      const ts=gs('taskState_'+key,{});
-      if(ts&&Object.keys(ts).length>0&&enabledTasks.every(t=>ts[t.id]))perfectDays++;
+  setTimeout(()=>{
+    if(exState.task.id==='t5'){
+      exState.currentRound++;renderGoContinue();
+    }else{
+      continueChineseOrGeneral();
     }
-    if(perfectDays>=31){
-      // First time! Award and celebrate
-      existingAchievements['2026-08']={achieved:true,achievedDate:tk()};
-      ss('monthlyAchievements',existingAchievements);
-      setTimeout(()=>{
-        showCelebration('🏆','🎉 心愿达成！','8月全勤31天全部通关！\n你的心愿可以实现了！');
-        setTimeout(()=>renderAll(),1000);
-      },2500);
+  },1000);
+}
+
+function continueChineseOrGeneral(){
+  exState.currentRound=(exState.currentRound||0)+1;
+  if(exState.currentRound>=exState.rounds){finishEx();return}
+
+  // Generate next question based on task type
+  if(exState.task.id==='t1')regenerateChinese();
+  else if(exState.task.id==='t3')regenerateEnglish();
+  else if(exState.task.id==='t4')regenerateThinking();
+  else if(exState.task.id==='t2')regenerateMath();
+}
+
+function regenerateChinese(){
+  const pairs=[['🐱','猫'],['🐶','狗'],['🐰','兔'],['🐟','鱼'],['🐦','鸟'],['🐴','马'],['🐮','牛'],['🐑','羊'],['🌙','月'],['⭐','星'],['🌊','海'],['🏔️','山'],['🌳','树'],['🌸','花'],['🌞','日'],['🚗','车'],['🚢','船'],['✈️','机'],['🍎','果'],['📖','书']];
+  const q=pairs[Math.floor(Math.random()*pairs.length)];
+  const wrong=pairs.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[q[1],...wrong.map(p=>p[1])].sort(()=>Math.random()-.5);
+  exState.correct=q[1];
+  document.querySelector('.ex-big').textContent=q[0];
+  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i];o.className='ex-opt'});
+  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
+  document.getElementById('exFeedback').textContent='';
+}
+
+function regenerateEnglish(){
+  const words=[['apple','🍎','苹果'],['cat','🐱','猫'],['dog','🐶','狗'],['fish','🐟','鱼'],['bird','🐦','鸟'],['star','⭐','星星'],['moon','🌙','月亮'],['car','🚗','车'],['book','📖','书'],['flower','🌸','花'],['sun','🌞','太阳'],['tree','🌳','树']];
+  const q=words[Math.floor(Math.random()*words.length)];
+  const wrong=words.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[q[0],...wrong.map(w=>w[0])].sort(()=>Math.random()-.5);
+  exState.correct=q[0];
+  document.querySelector('.ex-big').textContent=q[1];
+  document.querySelector('.ex-question').textContent=q[2]+' — 选英文单词';
+  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i];o.className='ex-opt'});
+  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
+  document.getElementById('exFeedback').textContent='';
+}
+
+function regenerateThinking(){
+  const patterns=[{q:'🔴🟡🔴🟡🔴❓',opts:['🟡','🔴','🟢'],ans:'🟡'},{q:'🔺🔻🔺🔻❓',opts:['🔻','🔺','◼️'],ans:'🔺'},{q:'🐱🐶🐱🐶🐱❓',opts:['🐶','🐱','🐰'],ans:'🐶'},{q:'🍎🍌🍎🍌🍎❓',opts:['🍌','🍎','🍇'],ans:'🍌'}];
+  const q=patterns[Math.floor(Math.random()*patterns.length)];
+  exState.correct=q.ans;
+  document.querySelector('.ex-big').textContent=q.q;
+  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=q.opts[i];o.className='ex-opt'});
+  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
+  document.getElementById('exFeedback').textContent='';
+}
+
+function regenerateMath(){
+  const a=Math.floor(Math.random()*10)+1;const b=Math.floor(Math.random()*10)+1;
+  const op=Math.random()>.5?'+':'-';let ans;
+  if(op==='+')ans=a+b;else{if(a<b)[a,b]=[b,a];ans=a-b}
+  exState.correct=String(ans);
+  const container=document.querySelector('.ex-big');
+  if(container)container.textContent=`${a} ${op} ${b} = ?`;
+  const inp=document.getElementById('mathInput');if(inp)inp.value='';
+  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
+  document.getElementById('exFeedback').textContent='';
+}
+
+function renderGoContinue(){
+  document.getElementById('modalContent').innerHTML=renderGoRound();
+}
+
+function finishEx(){
+  const tk=today();
+  const ratio=exState.correctCount/exState.total;
+  if(ratio>=0.5){
+    state.completedTasks[tk][exState.task.id]=true;
+    state.coins+=exState.task.coins;
+    sfxCoin();
+    document.getElementById('modalContent').innerHTML=`
+      <div class="exercise-area"><div class="ex-big">🎉</div>
+      <h3>任务完成!</h3><p>答对 ${exState.correctCount}/${exState.total} 题</p>
+      <p style="font-size:24px;color:var(--accent);font-weight:700">+${exState.task.coins}🪙</p>
+      <button onclick="closeModal()" style="margin-top:16px;padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:15px;cursor:pointer;font-family:inherit">✅ 收下奖励</button></div>`;
+  }else{
+    document.getElementById('modalContent').innerHTML=`
+      <div class="exercise-area"><div class="ex-big">😅</div>
+      <h3>还要再练练哦</h3><p>答对 ${exState.correctCount}/${exState.total} 题</p>
+      <p style="color:var(--sub)">需要答对一半以上才能获得金币</p>
+      <button onclick="closeModal();startTask('${exState.task.id}')" style="margin-top:16px;padding:10px 30px;background:var(--accent2);color:#fff;border:none;border-radius:16px;font-size:15px;cursor:pointer;font-family:inherit">🔄 再来一次</button></div>`;
+  }
+  saveState();renderTaskPage();updateCoinDisplay();renderReportPage();
+}
+
+// ============================================================
+// SHOP SYSTEM
+// ============================================================
+function renderShopPage(){
+  document.getElementById('shopGrid').innerHTML=state.config.shopItems.map(s=>`
+    <div class="shop-item" onclick="buyItem('${s.id}')">
+      <div class="si-icon">${s.icon}</div>
+      <div class="si-name">${s.name}</div>
+      <div class="si-effect">${s.desc||''}</div>
+      <div class="si-cost">🪙${s.cost}</div>
+    </div>`).join('');
+}
+
+function buyItem(itemId){
+  const item=state.config.shopItems.find(s=>s.id===itemId);
+  if(!item)return;
+  if(state.coins<item.cost)return toastMsg('金币不够啦!🪙',true);
+  const pet=getActivePet();
+  if(!pet)return toastMsg('请先选择小伙伴!');
+  state.coins-=item.cost;
+  pet[item.effect]=Math.min(100,pet[item.effect]+item.val);
+  const key=today();
+  if(!state.shopHistory[key])state.shopHistory[key]=[];
+  state.shopHistory[key].push({item:itemId,time:Date.now()});
+  sfxEat();
+  const petEmoji=document.getElementById('petEmoji');
+  petEmoji.classList.add('eating');
+  setTimeout(()=>petEmoji.classList.remove('eating'),1200);
+  toastMsg(`${item.icon} 买了${item.name}!`);
+  saveState();updateCoinDisplay();renderPetPage();
+}
+
+// ============================================================
+// WISH SYSTEM
+// ============================================================
+function renderWishPage(){
+  document.getElementById('wishCoins').textContent=state.coins;
+  document.getElementById('wishList').innerHTML=state.config.wishes.map(w=>{
+    const prog=state.wishProgress[w.id]||0;
+    const pct=Math.min(100,Math.round(prog/w.cost*100));
+    return `<div class="wish-item">
+      <div class="wi-top"><span class="wi-name">${w.name}</span><span class="wi-cost">🪙${prog}/${w.cost}</span></div>
+      <div class="wish-bar"><div class="wish-fill" style="width:${pct}%"></div></div>
+      <div class="wish-actions">
+        <button onclick="contributeWish('${w.id}',10)">+10🪙</button>
+        <button onclick="contributeWish('${w.id}',50)">+50🪙</button>
+        <button class="wa-claim" ${prog<w.cost||state.coins<w.cost-prog?'disabled':''} onclick="claimWish('${w.id}')">${prog>=w.cost?'✅ 兑换':'攒够了来换'}</button>
+      </div></div>`;
+  }).join('');
+}
+
+function contributeWish(wishId,amount){
+  const w=state.config.wishes.find(x=>x.id===wishId);
+  if(!w)return;
+  const prog=state.wishProgress[wishId]||0;
+  const remaining=w.cost-prog;
+  const actual=Math.min(amount,remaining,state.coins);
+  if(actual<=0)return toastMsg('已经攒够了!',true);
+  state.coins-=actual;state.wishProgress[wishId]=(state.wishProgress[wishId]||0)+actual;
+  sfxCoin();saveState();renderWishPage();updateCoinDisplay();
+  if(state.wishProgress[wishId]>=w.cost)toastMsg('🌟 心愿达成!可以兑换了!');
+}
+
+function claimWish(wishId){
+  const w=state.config.wishes.find(x=>x.id===wishId);
+  if(!w)return;
+  const prog=state.wishProgress[wishId]||0;
+  if(prog<w.cost)return;
+  state.wishProgress[wishId]=0;
+  sfxHappy();toastMsg(`🎉 恭喜!${w.name} 已兑换!`);
+  saveState();renderWishPage();
+}
+
+function addCustomWish(){
+  const name=prompt('输入心愿名称:');
+  if(!name||!name.trim())return;
+  const cost=parseInt(prompt('需要多少金币? (建议80-200):','100'));
+  if(isNaN(cost)||cost<1)return;
+  const id='wc'+Date.now().toString(36);
+  state.config.wishes.push({id,name:'✨ '+name.trim(),cost});
+  saveState();renderWishPage();
+}
+
+// ============================================================
+// REPORT SYSTEM
+// ============================================================
+function renderReportPage(){
+  const tk=today();
+  const ct=state.completedTasks[tk]||{};
+  const pen=state.dailyPenalties[tk]||[];
+  const shop=state.shopHistory[tk]||[];
+  const completed=state.config.tasks.filter(t=>ct[t.id]);
+  const earned=completed.reduce((s,t)=>s+t.coins,0);
+  const penaltyTotal=pen.reduce((s,p)=>{
+    const cfg=state.config.penalties.find(x=>x.id===p.id);
+    return s+(cfg?cfg.coins:0);
+  },0);
+  const shopTotal=shop.reduce((s,sh)=>{
+    const cfg=state.config.shopItems.find(x=>x.id===sh.item);
+    return s+(cfg?cfg.cost:0);
+  },0);
+
+  document.getElementById('reportContent').innerHTML=`
+    <div class="report-card">
+      <h4>📋 今日任务</h4>
+      ${state.config.tasks.map(t=>{
+        const done=!!ct[t.id];
+        return `<div class="report-row"><span>${done?'✅':'⬜'} ${t.name}</span><span style="color:${done?'var(--green)':'#ccc'}">${done?'+'+t.coins+'🪙':'---'}</span></div>`;
+      }).join('')}
+    </div>
+    <div class="report-card">
+      <h4>⚠️ 今日扣分</h4>
+      ${pen.length===0?'<p style="color:var(--sub);font-size:13px;padding:8px 0">今天没有扣分，很棒!</p>':
+        pen.map(p=>{const cfg=state.config.penalties.find(x=>x.id===p.id);
+          return `<div class="report-row"><span>${cfg?cfg.name:'未知'}</span><span style="color:#ff6b6b">-${cfg?cfg.coins:'?'}🪙</span></div>`;
+        }).join('')}
+    </div>
+    <div class="report-card">
+      <h4>🏪 今日购物</h4>
+      ${shop.length===0?'<p style="color:var(--sub);font-size:13px;padding:8px 0">今天还没买东西</p>':
+        shop.map(sh=>{const cfg=state.config.shopItems.find(x=>x.id===sh.item);
+          return `<div class="report-row"><span>${cfg?cfg.icon+' '+cfg.name:'物品'}</span><span style="color:var(--accent)">-${cfg?cfg.cost:'?'}🪙</span></div>`;
+        }).join('')}
+    </div>
+    <div class="report-card"><div class="report-total">
+      🪙 今日获得: <span style="color:var(--green)">+${earned}</span> &nbsp;
+      花费: <span style="color:var(--accent)">-${penaltyTotal+shopTotal}</span> &nbsp;
+      净变化: <span style="color:${earned-penaltyTotal-shopTotal>=0?'var(--green)':'var(--accent2)'}">${earned-penaltyTotal-shopTotal>=0?'+':''}${earned-penaltyTotal-shopTotal}</span>
+    </div></div>`;
+}
+
+// ============================================================
+// PARENT SETTINGS
+// ============================================================
+function unlockParent(){
+  const pw=document.getElementById('parentPassword').value;
+  if(pw!==state.parentPin)return toastMsg('密码错误!',true);
+  document.getElementById('parentLock').style.display='none';
+  document.getElementById('parentContent').classList.add('show');
+  renderParentConfig();
+}
+
+function changePassword(){
+  const np=document.getElementById('newPassword').value;
+  if(!np||np.length<2)return toastMsg('密码太短!',true);
+  state.parentPin=np;saveState();toastMsg('密码已修改!✅');
+}
+
+function renderParentConfig(){
+  renderConfigList('configTasks',state.config.tasks,'t');
+  renderConfigList('configPenalties',state.config.penalties,'p');
+  renderConfigList('configShopItems',state.config.shopItems,'s');
+  renderConfigList('configWishes',state.config.wishes,'w');
+}
+
+function renderConfigList(containerId,items,prefix){
+  const container=document.getElementById(containerId);
+  container.innerHTML=items.map((item,i)=>{
+    if(prefix==='t'){
+      return `<div class="config-item">
+        <div class="ci-info"><strong>${item.name}</strong>难度:${item.difficulty||'--'}</div>
+        <input class="ci-input" value="${item.coins}" onchange="updateConfigItem('${containerId}','${item.id}','coins',this.value)" type="number" min="1" max="20" style="width:55px">
+        <span style="font-size:12px;color:var(--sub)">🪙</span>
+        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
+    }else if(prefix==='p'){
+      return `<div class="config-item">
+        <div class="ci-info"><strong>${item.name}</strong></div>
+        <input class="ci-input" value="${item.coins}" onchange="updateConfigItem('${containerId}','${item.id}','coins',this.value)" type="number" min="1" max="20" style="width:55px">
+        <span style="font-size:12px;color:#ff6b6b">🪙</span>
+        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
+    }else if(prefix==='s'){
+      return `<div class="config-item">
+        <div class="ci-info"><strong>${item.icon} ${item.name}</strong>${item.desc||''}</div>
+        <input class="ci-input" value="${item.cost}" onchange="updateConfigItem('${containerId}','${item.id}','cost',this.value)" type="number" min="1" max="50" style="width:55px">
+        <span style="font-size:12px;color:var(--sub)">🪙</span>
+        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
+    }else{
+      return `<div class="config-item">
+        <div class="ci-info"><strong>${item.name}</strong></div>
+        <input class="ci-input" value="${item.cost}" onchange="updateConfigItem('${containerId}','${item.id}','cost',this.value)" type="number" min="10" max="500" style="width:55px">
+        <span style="font-size:12px;color:var(--sub)">🪙</span>
+        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
     }
+  }).join('');
+}
+
+function updateConfigItem(containerId,itemId,field,value){
+  const numVal=parseInt(value);if(isNaN(numVal)||numVal<1)return;
+  let items;if(containerId==='configTasks')items=state.config.tasks;
+  else if(containerId==='configPenalties')items=state.config.penalties;
+  else if(containerId==='configShopItems')items=state.config.shopItems;
+  else items=state.config.wishes;
+  const item=items.find(x=>x.id===itemId);
+  if(item){item[field]=numVal;saveState();renderAllPages()}
+}
+
+function removeConfigItem(containerId,itemId){
+  let items;if(containerId==='configTasks')items=state.config.tasks;
+  else if(containerId==='configPenalties')items=state.config.penalties;
+  else if(containerId==='configShopItems')items=state.config.shopItems;
+  else items=state.config.wishes;
+  const idx=items.findIndex(x=>x.id===itemId);
+  if(idx>=0){items.splice(idx,1);saveState();renderParentConfig();renderAllPages()}
+}
+
+function addConfigTask(){
+  const name=prompt('任务名称(含emoji):','🧹 做家务');
+  if(!name)return;
+  const coins=parseInt(prompt('金币奖励:','4'));
+  if(isNaN(coins))return;
+  const diff=prompt('难度(简单/中等/较难):','简单');
+  state.config.tasks.push({id:'t'+Date.now().toString(36),name,cat:'habit',coins,difficulty:diff||'简单'});
+  saveState();renderParentConfig();renderAllPages();
+}
+
+function addConfigPenalty(){
+  const name=prompt('扣分项名称(含emoji):','📺 超时看电视');
+  if(!name)return;
+  const coins=parseInt(prompt('扣除金币:','4'));
+  if(isNaN(coins))return;
+  state.config.penalties.push({id:'p'+Date.now().toString(36),name,coins});
+  saveState();renderParentConfig();renderAllPages();
+}
+
+function addConfigShopItem(){
+  const name=prompt('商品名称:','饼干');
+  if(!name)return;
+  const icon=prompt('emoji图标:','🍪');
+  const cost=parseInt(prompt('价格(🪙):','3'));
+  if(isNaN(cost))return;
+  const effect=prompt('效果类型(hunger/happiness/health/clean):','hunger');
+  const val=parseInt(prompt('效果值(1-50):','15'));
+  state.config.shopItems.push({id:'s'+Date.now().toString(36),name,icon:icon||'🎁',cost,effect:effect||'hunger',val:isNaN(val)?15:val,desc:''});
+  saveState();renderParentConfig();renderAllPages();
+}
+
+function addConfigWish(){
+  const name=prompt('心愿名称:','🎮 买游戏');
+  if(!name)return;
+  const cost=parseInt(prompt('需要金币:','100'));
+  if(isNaN(cost))return;
+  state.config.wishes.push({id:'w'+Date.now().toString(36),name:'✨ '+name,cost});
+  saveState();renderParentConfig();renderAllPages();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function switchPage(pageName){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pageName).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${pageName}"]`).classList.add('active');
+  const titles={pet:'🐾 小伙伴',task:'📋 今日任务',shop:'🏪 宠物商店',wish:'🌟 心愿清单',report:'📊 今日日报',parent:'⚙️ 家长后台'};
+  document.getElementById('topTitle').textContent=titles[pageName];
+
+  if(pageName==='pet')renderPetPage();
+  else if(pageName==='task')renderTaskPage();
+  else if(pageName==='shop')renderShopPage();
+  else if(pageName==='wish')renderWishPage();
+  else if(pageName==='report')renderReportPage();
+  else if(pageName==='parent'){
+    document.getElementById('parentLock').style.display='block';
+    document.getElementById('parentContent').classList.remove('show');
+    document.getElementById('parentPassword').value='';
   }
 }
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function toastMsg(msg,isPenalty=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast'+(isPenalty?' penalty':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
 }
+
+function updateCoinDisplay(){
+  document.getElementById('coinCount').textContent=state.coins;
 }
+
+function renderAllPages(){
+  renderTaskPage();
+  renderShopPage();
+  renderWishPage();
+  renderReportPage();
+}
+
+// ============================================================
+// BOTTOM NAV CLICKS
+// ============================================================
+document.getElementById('bottomNav').addEventListener('click',(e)=>{
+  const btn=e.target.closest('.nav-item');
+  if(!btn)return;switchPage(btn.dataset.page);
+});
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click',(e)=>{
+  if(e.target===document.getElementById('modalOverlay'))closeModal();
+});
 
 // ============================================================
 // INIT
 // ============================================================
-renderAll();
+function init(){
+  // Ensure today's task state exists
+  const tk=today();
+  if(!state.completedTasks[tk])state.completedTasks[tk]={};
+  if(!state.dailyPenalties[tk])state.dailyPenalties[tk]=[];
+  if(!state.shopHistory[tk])state.shopHistory[tk]={};
+  // Initialize app
+  updateCoinDisplay();
+  renderAllPages();
+  renderPetPage();
+  saveState();
+}
 
 // ============================================================
-// PWA: Service Worker & Install Prompt
+// PWA SERVICE WORKER
 // ============================================================
-let deferredPrompt=null;
-
-// Register Service Worker
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('/sw.js').then(reg=>{
-      console.log('SW registered:', reg.scope);
-    }).catch(err=>{
-      console.log('SW registration failed:', err);
-    });
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
   });
 }
 
-// Listen for install prompt
-window.addEventListener('beforeinstallprompt',(e)=>{
-  e.preventDefault();
-  deferredPrompt=e;
-  // Show banner after 3 seconds
-  setTimeout(()=>{
-    const banner=document.getElementById('pwaBanner');
-    if(banner&&sessionStorage.getItem('pwaBannerDismissed')!=='1'){
-      banner.classList.add('show');
-    }
-  },3000);
-});
-
-// Install button click
-document.getElementById('pwaInstallBtn').addEventListener('click',async()=>{
-  if(!deferredPrompt)return;
-  deferredPrompt.prompt();
-  const {outcome}=await deferredPrompt.userChoice;
-  console.log('Install outcome:',outcome);
-  deferredPrompt=null;
-  document.getElementById('pwaBanner').classList.remove('show');
-  sessionStorage.setItem('pwaBannerDismissed','1');
-});
-
-function dismissPwaBanner(){
-  document.getElementById('pwaBanner').classList.remove('show');
-  sessionStorage.setItem('pwaBannerDismissed','1');
-}
-
-// Hide banner if already installed
-if(window.matchMedia('(display-mode: standalone)').matches){
-  sessionStorage.setItem('pwaBannerDismissed','1');
-}
+// ============================================================
+// START
+// ============================================================
+init();
 </script>
 </body>
 </html>
