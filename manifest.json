@@ -1,0 +1,25 @@
+{
+  "name": "小六一的闯关日记",
+  "short_name": "闯关日记",
+  "description": "小六一每日学习闯关打卡 - 汉字、数学、英语、思维、围棋",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E8F4FD",
+  "theme_color": "#667eea",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
