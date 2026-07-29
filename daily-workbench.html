@@ -14,19 +14,31 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#fff8f0;--card:#fff;--accent:#ff9a56;--accent2:#ff6b6b;--green:#4ecdc4;--gold:#ffd700;--text:#3d3d3d;--sub:#888;--shadow:0 2px 12px rgba(0,0,0,.06);--radius:16px}
 body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;padding:0 0 80px;overflow-x:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+
+/* ===== GOLDEN COIN ===== */
+.coin{display:inline-block;width:18px;height:18px;background:linear-gradient(135deg,#ffe566 0%,#ffb300 40%,#e6a000 100%);border-radius:50%;position:relative;vertical-align:middle;box-shadow:0 1px 3px rgba(180,120,0,.3),inset 0 -2px 3px rgba(0,0,0,.12);margin:0 1px;border:1px solid rgba(180,120,0,.3)}
+.coin::after{content:'¥';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:9px;font-weight:800;color:#8b6914;line-height:1}
+.coin-lg{width:26px;height:26px;background:linear-gradient(135deg,#fff8c0 0%,#ffd700 30%,#ffb300 70%,#cc8800 100%);border-radius:50%;position:relative;box-shadow:0 2px 8px rgba(180,120,0,.35),inset 0 -3px 5px rgba(0,0,0,.15);animation:coinPulse 2s infinite;border:2px solid rgba(200,140,0,.4)}
+.coin-lg::after{content:'¥';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;font-weight:900;color:#8b6914;line-height:1}
+.coin-sm{display:inline-block;width:14px;height:14px;background:linear-gradient(135deg,#ffe566,#ffb300);border-radius:50%;vertical-align:middle;box-shadow:0 1px 2px rgba(180,120,0,.2),inset 0 -1px 2px rgba(0,0,0,.1);margin:0 1px;border:1px solid rgba(180,120,0,.2);position:relative}
+.coin-sm::after{content:'¥';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:7px;font-weight:800;color:#8b6914;line-height:1}
+@keyframes coinPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
 .top-bar{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#ff9a56,#ff6b6b);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 16px rgba(255,106,86,.3)}
 .top-bar h1{font-size:17px;font-weight:700}
-.coin-display{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.25);padding:6px 14px;border-radius:20px;font-weight:700;font-size:15px;backdrop-filter:blur(10px)}
-.coin-display .coin-icon{font-size:20px;animation:coinPulse 2s infinite}
-@keyframes coinPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.coin-display{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.25);padding:6px 14px;border-radius:20px;font-weight:700;font-size:16px;backdrop-filter:blur(10px)}
+.coin-display .coin-icon{display:flex;align-items:center}
+
 .page{display:none;padding:12px 14px;animation:fadeIn .3s ease}.page.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
 /* Bottom Nav */
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:#fff;display:flex;justify-content:space-around;padding:6px 4px 8px;box-shadow:0 -2px 16px rgba(0,0,0,.08);border-radius:20px 20px 0 0}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;cursor:pointer;padding:6px 8px;color:#bbb;font-size:10px;font-family:inherit;transition:all .2s;position:relative;min-width:0;flex:1}
 .nav-item .ni-icon{font-size:22px;transition:transform .2s}
 .nav-item.active{color:var(--accent)}.nav-item.active .ni-icon{transform:scale(1.15)}
 .nav-item .ni-badge{position:absolute;top:0;right:calc(50% - 22px);background:var(--accent2);color:#fff;font-size:9px;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+
 /* Pet Page */
 .pet-area{text-align:center;padding:20px 0}
 .pet-stage{position:relative;width:200px;height:200px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
@@ -54,10 +66,12 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 .pet-option:hover,.pet-option.selected{border-color:var(--accent);background:#fff8f0}
 .pet-option span{font-size:11px;color:var(--text)}
 .add-pet-btn{background:linear-gradient(135deg,#ff9a56,#ff6b6b);color:#fff;border:none;border-radius:20px;padding:10px 24px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:700;margin-top:8px}
-/* Notification Toast */
+
+/* Toast */
 .toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(0,0,0,.85);color:#fff;padding:16px 32px;border-radius:24px;font-size:18px;font-weight:700;z-index:300;transition:transform .3s cubic-bezier(.175,.885,.32,1.275);pointer-events:none;text-align:center}
 .toast.show{transform:translate(-50%,-50%) scale(1)}
 .toast.penalty{background:rgba(255,107,107,.9)}
+
 /* Task Page */
 .task-list{display:flex;flex-direction:column;gap:10px}
 .task-card{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s}
@@ -66,8 +80,9 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 .task-card .tc-icon{font-size:32px;flex-shrink:0}
 .task-card .tc-info{flex:1;min-width:0}
 .task-card .tc-name{font-size:15px;font-weight:600}
-.task-card .tc-coin{font-size:12px;color:var(--accent);margin-top:2px}
+.task-card .tc-coin{font-size:12px;color:var(--accent);margin-top:2px;display:flex;align-items:center;gap:3px}
 .task-card .tc-check{font-size:24px;color:var(--green)}
+
 /* Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:flex-end;justify-content:center}
 .modal-overlay.show{display:flex}
@@ -75,10 +90,11 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .modal-box h3{font-size:18px;margin-bottom:16px;text-align:center}
 .modal-close{position:absolute;right:16px;top:16px;background:none;border:none;font-size:24px;cursor:pointer;padding:4px}
+
 /* Exercise */
 .exercise-area{text-align:center;padding:20px 0}
 .ex-big{font-size:64px;margin-bottom:16px}
-.ex-question{font-size:20px;margin-bottom:20px;font-weight:600}
+.ex-question{font-size:18px;margin-bottom:20px;font-weight:600}
 .ex-options{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .ex-opt{padding:12px 20px;background:#f5f5f5;border:2px solid #e0e0e0;border-radius:14px;font-size:18px;cursor:pointer;font-family:inherit;transition:all .15s;min-width:60px}
 .ex-opt:active{transform:scale(.95)}
@@ -88,40 +104,77 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .ex-feedback{font-size:28px;margin-top:16px;min-height:40px}
 .ex-score{font-size:14px;color:var(--sub);margin-top:8px}
+.ex-speak{display:inline-flex;align-items:center;gap:4px;padding:8px 20px;background:#fff3e0;border:2px solid #ff9a56;border-radius:20px;font-size:24px;font-weight:700;color:var(--accent);margin-top:12px;cursor:pointer;font-family:inherit;letter-spacing:2px}
+.ex-speak:active{background:#ffe0b2}
+
 /* Math numpad */
 .numpad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:280px;margin:12px auto}
 .numpad button{padding:14px;font-size:20px;border:2px solid #e0e0e0;border-radius:12px;background:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
 .numpad button:active{transform:scale(.93);background:#f0f0f0}
 .numpad .np-submit{background:var(--accent);color:#fff;border-color:var(--accent);grid-column:span 2;font-weight:700}
 .numpad .np-del{grid-column:span 2;background:#f5f5f5}
+
+/* Go Board */
+.go-board-container{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0}
+.go-board{display:grid;gap:1px;background:#dcb35c;padding:2px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.go-cell{width:40px;height:40px;background:#e8c97a;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;border-radius:2px}
+.go-cell::before,.go-cell::after{content:'';position:absolute;background:#8b6914}
+.go-cell::before{top:50%;left:0;right:0;height:1px;transform:translateY(-50%)}
+.go-cell::after{left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%)}
+.go-stone{width:32px;height:32px;border-radius:50%;position:relative;z-index:1;box-shadow:1px 2px 4px rgba(0,0,0,.3);transition:transform .2s}
+.go-stone.black{background:radial-gradient(circle at 35% 35%,#555,#111)}
+.go-stone.white{background:radial-gradient(circle at 35% 35%,#fff,#ddd)}
+.go-stone.placed{animation:stonePlace .3s ease}
+.go-stone.hint{animation:stoneHint 1s infinite}
+@keyframes stonePlace{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes stoneHint{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+.go-controls{display:flex;gap:10px}
+.go-controls button{padding:8px 16px;border-radius:14px;border:1px solid #ddd;background:#fff;cursor:pointer;font-family:inherit;font-size:14px;transition:all .15s}
+.go-controls button:active{transform:scale(.95)}
+.go-controls .go-undo{background:#fff3e0;border-color:#ff9a56;color:var(--accent)}
+.go-controls .go-reset{background:#f5f5f5}
+.go-controls .go-submit{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+.go-tip{font-size:13px;color:var(--sub);text-align:center;margin-top:4px}
+
 /* Shop */
 .shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .shop-item{background:var(--card);border-radius:var(--radius);padding:14px 10px;text-align:center;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s}
 .shop-item:active{transform:scale(.95)}
 .shop-item .si-icon{font-size:36px;margin-bottom:6px}
 .shop-item .si-name{font-size:13px;font-weight:600;margin-bottom:4px}
-.shop-item .si-cost{font-size:11px;color:var(--accent);font-weight:700}
+.shop-item .si-cost{font-size:11px;color:var(--accent);font-weight:700;display:flex;align-items:center;justify-content:center;gap:2px}
 .shop-item .si-effect{font-size:10px;color:var(--sub)}
+
 /* Wishes */
 .wish-header{text-align:center;padding:16px 0;background:linear-gradient(135deg,#ffd700,#ffb347);border-radius:var(--radius);color:#fff;margin-bottom:14px}
-.wish-header .wh-coins{font-size:40px;font-weight:800;margin-bottom:4px}
+.wish-header .wh-coins{font-size:40px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:6px}
 .wish-header .wh-label{font-size:13px;opacity:.9}
 .wish-list{display:flex;flex-direction:column;gap:10px}
 .wish-item{background:var(--card);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
 .wish-item .wi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .wish-item .wi-name{font-size:15px;font-weight:600}
-.wish-item .wi-cost{font-size:13px;color:var(--accent);font-weight:700}
+.wish-item .wi-cost{font-size:13px;color:var(--accent);font-weight:700;display:flex;align-items:center;gap:2px}
 .wish-bar{height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden}
 .wish-fill{height:100%;background:linear-gradient(90deg,#ffd700,#ff9a56);border-radius:5px;transition:width .5s ease}
 .wish-actions{margin-top:8px;display:flex;gap:8px;justify-content:flex-end}
 .wish-actions button{padding:6px 14px;border-radius:14px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:12px;font-family:inherit}
 .wish-actions .wa-claim{background:var(--accent);color:#fff;border-color:var(--accent)}
+
 /* Report */
+.report-header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:var(--radius);padding:16px;text-align:center;margin-bottom:12px}
+.report-header .rh-date{font-size:13px;opacity:.9;margin-bottom:4px}
+.report-header .rh-summary{font-size:28px;font-weight:800;margin:8px 0}
+.report-header .rh-detail{font-size:12px;opacity:.8}
+.report-progress-bar{height:12px;background:rgba(255,255,255,.3);border-radius:6px;overflow:hidden;margin:8px 0;max-width:300px;margin-left:auto;margin-right:auto}
+.report-progress-fill{height:100%;background:#fff;border-radius:6px;transition:width .5s ease}
 .report-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:10px}
 .report-card h4{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.report-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid #f5f5f5}
+.report-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px;border-bottom:1px solid #f5f5f5}
 .report-row:last-child{border:none}
-.report-total{font-size:18px;font-weight:700;text-align:center;padding:12px;color:var(--accent);margin-top:8px}
+.report-row .rr-status{display:flex;align-items:center;gap:6px}
+.report-row .rr-coin{display:flex;align-items:center;gap:3px;font-weight:600}
+.report-total{font-size:16px;font-weight:700;text-align:center;padding:12px;color:var(--accent);margin-top:8px}
+
 /* Parent Page */
 .parent-lock{text-align:center;padding:60px 20px}
 .parent-lock input{width:200px;padding:12px;border-radius:12px;border:2px solid #ddd;font-size:18px;text-align:center;font-family:inherit;margin-bottom:12px}
@@ -137,13 +190,16 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 .config-item .ci-del{background:none;border:none;font-size:18px;cursor:pointer;padding:4px;color:#ccc}
 .add-config-btn{width:100%;padding:10px;border:2px dashed #ddd;border-radius:12px;background:none;font-size:14px;cursor:pointer;font-family:inherit;color:var(--sub);margin-top:8px}
 .add-config-btn:hover{border-color:var(--accent);color:var(--accent)}
+
 /* Section title */
 .section-title{font-size:14px;font-weight:700;color:var(--sub);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+
 /* Pet crying overlay */
 .cry-effect{position:fixed;inset:0;pointer-events:none;z-index:150;display:none}
 .cry-effect.show{display:flex;align-items:center;justify-content:center}
 .cry-effect .cry-emoji{font-size:100px;animation:cryBig .6s ease}
 @keyframes cryBig{0%{transform:scale(0);opacity:1}50%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:0}}
+
 /* Safe area */
 @supports(padding:max(0px)){.bottom-nav{padding-bottom:max(8px,env(safe-area-inset-bottom))}}
 </style>
@@ -153,7 +209,7 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 <!-- Top Bar -->
 <div class="top-bar" id="topBar">
   <h1 id="topTitle">🐾 小伙伴</h1>
-  <div class="coin-display"><span class="coin-icon">🪙</span><span id="coinCount">0</span></div>
+  <div class="coin-display"><span class="coin-icon"><span class="coin coin-lg"></span></span><span id="coinCount">0</span></div>
 </div>
 
 <!-- Toast -->
@@ -177,10 +233,10 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
       </div>
     </div>
     <div class="pet-actions" id="petActions">
-      <button class="pet-btn" onclick="petAction('feed')"><span>🍎</span>喂食<span class="cost">🪙2</span></button>
-      <button class="pet-btn" onclick="petAction('play')"><span>🎾</span>陪玩<span class="cost">🪙1</span></button>
-      <button class="pet-btn" onclick="petAction('heal')"><span>💊</span>治病<span class="cost">🪙3</span></button>
-      <button class="pet-btn" onclick="petAction('bath')"><span>🛁</span>洗澡<span class="cost">🪙1</span></button>
+      <button class="pet-btn" onclick="petAction('feed')"><span>🍎</span>喂食<span class="cost"><span class="coin coin-sm"></span>2</span></button>
+      <button class="pet-btn" onclick="petAction('play')"><span>🎾</span>陪玩<span class="cost"><span class="coin coin-sm"></span>1</span></button>
+      <button class="pet-btn" onclick="petAction('heal')"><span>💊</span>治病<span class="cost"><span class="coin coin-sm"></span>3</span></button>
+      <button class="pet-btn" onclick="petAction('bath')"><span>🛁</span>洗澡<span class="cost"><span class="coin coin-sm"></span>1</span></button>
     </div>
   </div>
 </div>
@@ -198,8 +254,8 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 <!-- ========== PAGE: 心愿 ========== -->
 <div class="page" id="page-wish">
   <div class="wish-header">
-    <div class="wh-coins" id="wishCoins">0</div>
-    <div class="wh-label">🪙 我的金币</div>
+    <div class="wh-coins"><span class="coin coin-lg"></span><span id="wishCoins">0</span></div>
+    <div class="wh-label">我的金币</div>
   </div>
   <div class="wish-list" id="wishList"></div>
   <button class="add-config-btn" onclick="addCustomWish()" style="margin-top:12px">+ 自定义心愿</button>
@@ -279,9 +335,14 @@ function sfxPenalty(){playTone(200,.3,'sawtooth',.1)}
 function sfxWater(){playTone(600,.05,'triangle',.05);setTimeout(()=>playTone(500,.05,'triangle',.05),50);setTimeout(()=>playTone(550,.05,'triangle',.05),100);setTimeout(()=>playTone(450,.05,'triangle',.05),150)}
 
 // ============================================================
+// COIN HTML Helper
+// ============================================================
+function coinHtml(size='sm'){return '<span class="coin coin-'+size+'"></span>';}
+
+// ============================================================
 // DATA MODEL & PERSISTENCE
 // ============================================================
-const STORAGE_KEY='workbench_v4';
+const STORAGE_KEY='workbench_v5';
 const DEFAULT_STATE={
   coins:20,
   pets:[],
@@ -340,8 +401,6 @@ function deepMerge(base,overlay){for(const k in overlay){if(overlay[k]&&typeof o
 // Today key
 function todayKey(){return new Date().toISOString().slice(0,10)}
 function today(){return todayKey()}
-// Week key
-function weekKey(){const d=new Date();d.setDate(d.getDate()-d.getDay());return d.toISOString().slice(0,10)}
 
 // ============================================================
 // PET SYSTEM
@@ -354,7 +413,6 @@ function createPet(type,name){
     lastFed:0,lastPlayed:0,lastHealed:0,lastBathed:0,created:Date.now()};
 }
 
-// Time decay - lose ~2 points per hour of inactivity
 function applyDecay(pet){
   const now=Date.now(),h=3600000;
   if(pet.lastFed>0)pet.hunger=Math.max(0,pet.hunger-Math.floor((now-pet.lastFed)/h*.8));
@@ -368,7 +426,7 @@ function petAction(type){
   if(!pet)return toastMsg('请先选择小伙伴!🐾');
   const costs={feed:2,play:1,heal:3,bath:1};
   const cost=costs[type];
-  if(state.coins<cost)return toastMsg('金币不够啦!🪙',true);
+  if(state.coins<cost)return toastMsg('金币不够啦!',true);
 
   state.coins-=cost;
   const now=Date.now();
@@ -401,18 +459,16 @@ function triggerPenalty(penaltyId){
   sfxCry();
   document.getElementById('cryOverlay').classList.add('show');
   setTimeout(()=>document.getElementById('cryOverlay').classList.remove('show'),1000);
-  toastMsg(`${p.name.split(' ')[1]||p.name} — 扣${p.coins}🪙 呜呜~😭`,true);
+  toastMsg(`${p.name.split(' ')[1]||p.name} — 扣${p.coins}金币 呜呜~😭`,true);
 
   saveState();renderPetPage();updateCoinDisplay();
 }
 
 function renderPetPage(){
-  // Pet selection
   const ps=document.getElementById('petSelect');
   const pet=getActivePet();
   let html='';
   for(const[k,v]of Object.entries(PET_TYPES)){
-    const has=state.pets.some(p=>p.type===k&&p.id!==(pet?pet.id:null));
     html+=`<button class="pet-option${pet&&pet.type===k?' selected':''}" onclick="selectPetType('${k}')">${v.emoji}<span>${v.name}</span></button>`;
   }
   ps.innerHTML=html;
@@ -425,10 +481,8 @@ function renderPetPage(){
     document.getElementById('petStats').style.display='none';
     document.getElementById('petEmoji').textContent='🐣';
   }else{
-    // Remove the add button if it was added
     const btns=ps.parentElement.querySelectorAll('.add-pet-btn');
     btns.forEach(b=>b.parentElement.remove());
-    // If no pet selected, select first
     if(state.activePetIdx>=state.pets.length)state.activePetIdx=0;
     const p=getActivePet();
     applyDecay(p);
@@ -440,10 +494,9 @@ function renderPetPage(){
     document.getElementById('statHappiness').style.width=p.happiness+'%';
     document.getElementById('statHealth').style.width=p.health+'%';
     document.getElementById('statClean').style.width=p.clean+'%';
-    // Disable actions if no coins
     const actions=document.getElementById('petActions').querySelectorAll('button');
     actions.forEach(b=>{b.disabled=state.coins<1});
-    // Switch pets if multiple
+
     if(state.pets.length>1){
       const existingSwitcher=document.getElementById('petSwitcher');
       if(!existingSwitcher){
@@ -468,7 +521,6 @@ function renderPetPage(){
         });
       }
     }
-    // Can add more pets
     if(state.pets.length<Object.keys(PET_TYPES).length){
       if(!ps.parentElement.querySelector('.add-pet-btn')){
         ps.insertAdjacentHTML('afterend','<div style="text-align:center;padding:4px"><button class="add-pet-btn" onclick="addPet()">+ 添加新伙伴</button></div>');
@@ -490,7 +542,6 @@ function addPet(){
   if(!sel)return toastMsg('请先点击选择一个宠物!',true);
   const type=Object.keys(PET_TYPES).find(k=>PET_TYPES[k].name===sel.querySelector('span').textContent);
   if(!type)return;
-  // Check if already have this type (allow if user wants)
   const existing=state.pets.find(p=>p.type===type);
   if(existing)return toastMsg('你已经有这个伙伴啦!');
   const name=prompt('给你的小伙伴起个名字吧!',PET_TYPES[type].name);
@@ -513,16 +564,15 @@ function renderTaskPage(){
     const done=state.completedTasks[tk][t.id];
     return `<div class="task-card${done?' done':''}" onclick="${t.cat==='study'||t.cat==='game'?'startTask(\''+t.id+'\')':'completeSimpleTask(\''+t.id+'\')'}">
       <span class="tc-icon">${t.name.slice(0,2)}</span>
-      <div class="tc-info"><div class="tc-name">${t.name}</div><div class="tc-coin">🪙${t.coins} · ${t.difficulty||''}</div></div>
+      <div class="tc-info"><div class="tc-name">${t.name}</div><div class="tc-coin">${coinHtml('sm')}${t.coins} · ${t.difficulty||''}</div></div>
       ${done?'<span class="tc-check">✅</span>':''}
     </div>`;
   }).join('');
 
-  // Penalty section
   list.insertAdjacentHTML('beforeend','<div class="section-title">⚠️ 避免这些行为（会扣金币哦）</div>'+
     state.config.penalties.map(p=>`<div class="task-card" onclick="triggerPenalty('${p.id}')" style="border-left:3px solid #ff6b6b">
       <span style="font-size:24px">${p.name.slice(0,2)}</span>
-      <div class="tc-info"><div class="tc-name">${p.name}</div><div class="tc-coin" style="color:#ff6b6b">-🪙${p.coins}</div></div>
+      <div class="tc-info"><div class="tc-name">${p.name}</div><div class="tc-coin" style="color:#ff6b6b">-${coinHtml('sm')}${p.coins}</div></div>
     </div>`).join(''));
 }
 
@@ -534,7 +584,7 @@ function completeSimpleTask(taskId){
   state.completedTasks[tk][taskId]=true;
   state.coins+=t.coins;
   sfxCoin();
-  toastMsg(`+${t.coins}🪙 太棒了!🌟`);
+  toastMsg(`+${t.coins} 金币 太棒了!🌟`);
   saveState();renderTaskPage();updateCoinDisplay();renderReportPage();
 }
 
@@ -560,13 +610,21 @@ function closeModal(){
   exState=null;
 }
 
-// Chinese character exercise
+// ============================================================
+// CHINESE EXERCISE (4-5岁 level - simpler characters)
+// ============================================================
 function genChineseEx(task){
-  const pairs=[['🐱','猫'],['🐶','狗'],['🐰','兔'],['🐟','鱼'],['🐦','鸟'],['🐴','马'],['🐮','牛'],['🐑','羊'],['🌙','月'],['⭐','星'],['🌊','海'],['🏔️','山'],['🌳','树'],['🌸','花'],['🌞','日'],['🚗','车'],['🚢','船'],['✈️','机'],['🍎','果'],['📖','书']];
+  // 4-5岁小朋友的识字范围：基础象形字+常见动物
+  const pairs=[
+    ['👨','人'],['🐱','猫'],['🐶','狗'],['🐰','兔'],['🐟','鱼'],
+    ['🐦','鸟'],['🐮','牛'],['🐴','马'],['🌙','月'],['☀️','日'],
+    ['💧','水'],['🔥','火'],['⛰️','山'],['🌳','木'],['🌸','花'],
+    ['🚗','车'],['👀','目'],['🖐️','手'],['👄','口'],['⭐','星']
+  ];
   const q=pairs[Math.floor(Math.random()*pairs.length)];
   const wrong=pairs.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5).slice(0,3);
   const opts=[q[1],...wrong.map(p=>p[1])].sort(()=>Math.random()-.5);
-  exState={correct:q[1],task,total:0,correctCount:0,rounds:6};
+  exState={correct:q[1],task,total:0,correctCount:0,rounds:5,pairs};
   return `<div class="exercise-area">
     <h3>🔤 识字小达人</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题</p>
     <div class="ex-big">${q[0]}</div>
@@ -577,15 +635,30 @@ function genChineseEx(task){
   </div>`;
 }
 
+// ============================================================
+// MATH EXERCISE (10以内加减法)
+// ============================================================
 function genMathEx(task){
-  const level=10;const a=Math.floor(Math.random()*level)+1;const b=Math.floor(Math.random()*level)+1;
-  const op=Math.random()>.5?'+':'-';let ans;
-  if(op==='+')ans=a+b;else{if(a<b)[a,b]=[b,a];ans=a-b}
-  exState={correct:ans,task,total:0,correctCount:0,rounds:6};
+  // 10以内加减法：结果不超过10，差不能为负
+  let a,b,ans,op,symbol;
+  if(Math.random()>0.5){
+    // 加法：结果 ≤ 10
+    ans=Math.floor(Math.random()*9)+2; // 2-10
+    a=Math.floor(Math.random()*(ans-1))+1; // 1 to ans-1
+    b=ans-a;
+    op='+';symbol='+';
+  }else{
+    // 减法：被减数 ≤ 10，结果 ≥ 0
+    a=Math.floor(Math.random()*10)+1; // 1-10
+    b=Math.floor(Math.random()*(a+1)); // 0 to a
+    ans=a-b;
+    op='-';symbol='−';
+  }
+  exState={correct:String(ans),task,total:0,correctCount:0,rounds:5};
   return `<div class="exercise-area">
     <h3>🔢 数学大冒险</h3><p style="color:var(--sub);margin-bottom:8px">第1/${exState.rounds}题</p>
-    <div class="ex-big" style="font-size:48px">${a} ${op} ${b} = ?</div>
-    <input type="number" id="mathInput" style="width:120px;padding:12px;font-size:24px;text-align:center;border:2px solid #ddd;border-radius:12px;font-family:inherit;margin:12px 0" placeholder="?">
+    <div class="ex-big" style="font-size:48px">${a} ${symbol} ${b} = ?</div>
+    <input type="number" id="mathInput" style="width:120px;padding:12px;font-size:24px;text-align:center;border:2px solid #ddd;border-radius:12px;font-family:inherit;margin:12px 0" placeholder="?" inputmode="numeric">
     <br><button onclick="checkMathAnswer()" style="padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:16px;cursor:pointer;font-family:inherit;font-weight:600">✅ 提交</button>
     <div class="ex-feedback" id="exFeedback"></div>
     <div class="ex-score" id="exScore"></div>
@@ -598,31 +671,61 @@ function checkMathAnswer(){
   answerEx(String(val));
 }
 
+// ============================================================
+// ENGLISH EXERCISE (听和说导向)
+// ============================================================
 function genEnglishEx(task){
-  const words=[['apple','🍎','苹果'],['cat','🐱','猫'],['dog','🐶','狗'],['fish','🐟','鱼'],['bird','🐦','鸟'],['star','⭐','星星'],['moon','🌙','月亮'],['car','🚗','车'],['book','📖','书'],['flower','🌸','花'],['sun','🌞','太阳'],['tree','🌳','树']];
+  // 简单英语词汇 - 4-5岁常见词
+  const words=[
+    ['apple','🍎','苹果'],['cat','🐱','猫'],['dog','🐶','狗'],['fish','🐟','鱼'],
+    ['bird','🐦','鸟'],['star','⭐','星星'],['moon','🌙','月亮'],['car','🚗','汽车'],
+    ['book','📖','书'],['sun','☀️','太阳'],['tree','🌳','树'],['milk','🥛','牛奶'],
+    ['ball','⚽','球'],['hat','🎩','帽子'],['flower','🌸','花']
+  ];
   const q=words[Math.floor(Math.random()*words.length)];
   const wrong=words.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,3);
   const opts=[q[0],...wrong.map(w=>w[0])].sort(()=>Math.random()-.5);
-  exState={correct:q[0],task,total:0,correctCount:0,rounds:6};
+  exState={correct:q[0],task,total:0,correctCount:0,rounds:5,currentWord:q,words};
   return `<div class="exercise-area">
     <h3>📚 英语探险家</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题</p>
     <div class="ex-big">${q[1]}</div>
-    <div class="ex-question">${q[2]} — 选英文单词</div>
+    <div class="ex-question">👂 这个用英语怎么说？<br><span style="font-size:13px;color:var(--sub)">(${q[2]})</span></div>
     <div class="ex-options">${opts.map(o=>`<button class="ex-opt" onclick="answerEx('${o}')" style="font-size:16px;min-width:80px">${o}</button>`).join('')}</div>
     <div class="ex-feedback" id="exFeedback"></div>
     <div class="ex-score" id="exScore"></div>
+    <div class="ex-speak" id="exSpeakArea" style="display:none" onclick="speakWord()">🔊 跟我读</div>
   </div>`;
 }
 
+function speakWord(){
+  if(!exState||!exState.currentWord)return;
+  const word=exState.currentWord[0];
+  // Visual "speaking" feedback - show the word big and animate
+  const speakArea=document.getElementById('exSpeakArea');
+  speakArea.style.display='none';
+  const fb=document.getElementById('exFeedback');
+  fb.innerHTML='<span style="font-size:32px;letter-spacing:3px;font-weight:700;color:var(--accent)">'+word+'</span>';
+  playTone(523,.15);setTimeout(()=>playTone(659,.15),150);setTimeout(()=>playTone(784,.2),300);
+  setTimeout(()=>{
+    if(exState.currentRound+1>=exState.rounds)finishEx();
+    else continueChineseOrGeneral();
+  },1500);
+}
+
+// ============================================================
+// THINKING EXERCISE
+// ============================================================
 function genThinkingEx(task){
   const patterns=[
     {q:'🔴🟡🔴🟡🔴❓',opts:['🟡','🔴','🟢'],ans:'🟡'},
     {q:'🔺🔻🔺🔻❓',opts:['🔻','🔺','◼️'],ans:'🔺'},
     {q:'🐱🐶🐱🐶🐱❓',opts:['🐶','🐱','🐰'],ans:'🐶'},
     {q:'🍎🍌🍎🍌🍎❓',opts:['🍌','🍎','🍇'],ans:'🍌'},
+    {q:'1️⃣2️⃣3️⃣4️⃣❓',opts:['5️⃣','4️⃣','6️⃣'],ans:'5️⃣'},
+    {q:'⬜⬛⬜⬛⬜❓',opts:['⬛','⬜','🔲'],ans:'⬛'},
   ];
   const q=patterns[Math.floor(Math.random()*patterns.length)];
-  exState={correct:q.ans,task,total:0,correctCount:0,rounds:6};
+  exState={correct:q.ans,task,total:0,correctCount:0,rounds:5};
   return `<div class="exercise-area">
     <h3>🧠 思维小天才</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题 · 找规律</p>
     <div class="ex-big" style="font-size:40px">${q.q}</div>
@@ -633,72 +736,220 @@ function genThinkingEx(task){
   </div>`;
 }
 
+// ============================================================
+// GO EXERCISE - Interactive Board with Undo
+// ============================================================
+let goState=null;
+
 function genGoEx(task){
-  exState={correct:'eat',task,total:0,correctCount:0,rounds:3,currentRound:0};
-  return renderGoRound();
+  // Interactive go board - 7x7 with a simple capture problem
+  // Pre-place stones, child needs to place one more to capture
+  const problems=[
+    {
+      // Simple atari: black to capture 1 white stone
+      size:7,
+      prePlaced:[
+        [3,2,'black'],[4,2,'black'],[5,2,'black'],[3,3,'black'],
+        [4,3,'white'],[6,3,'black'],[4,4,'black'],[5,4,'black'],
+        [6,4,'black'],[4,5,'black']
+      ],
+      target:{row:5,col:3,color:'black'},
+      correct:{row:5,col:3,color:'black'},
+      hint:'黑棋🔴下一步，吃掉这颗白棋⚪！',
+      explanation:'黑棋落子后包围了白棋，吃掉它！'
+    },
+    {
+      size:7,
+      prePlaced:[
+        [2,3,'black'],[3,2,'black'],[3,3,'white'],[3,4,'black'],
+        [4,3,'black']
+      ],
+      target:{row:3,col:3,color:'black'},
+      correct:{row:3,col:3,color:'black'},
+      hint:'中间的白棋⚪被包围了！补上最后一颗黑棋🔴吃掉它',
+      explanation:'4颗黑棋包围了中间的白棋，吃掉！'
+    },
+    {
+      size:7,
+      prePlaced:[
+        [2,2,'white'],[2,3,'black'],[2,4,'black'],[2,5,'black'],
+        [3,2,'black'],[3,5,'black'],[4,2,'black'],[4,3,'black'],
+        [4,4,'black'],[4,5,'black']
+      ],
+      target:{row:3,col:3,color:'black'},
+      correct:{row:3,col:3,color:'black'},
+      hint:'上方的白棋⚪快被包围了！在中间落子吃掉它',
+      explanation:'最后一颗黑棋完成包围，白棋被吃掉了！'
+    }
+  ];
+
+  const p=problems[Math.floor(Math.random()*problems.length)];
+  goState={
+    task:task,
+    size:p.size,
+    prePlaced:p.prePlaced,
+    correct:p.correct,
+    hint:p.hint,
+    explanation:p.explanation,
+    userStones:[], // stones placed by user [{row,col,color}]
+    solved:false
+  };
+
+  return renderGoBoard();
 }
 
-function renderGoRound(){
-  const boards=[
-    {board:'⬜⬛⬜⬛⬜\n⬛⚪⬜⬛⬜\n⬜⬛⚫⬜⬜\n⬜⬜⬛⬜⬜\n⬜⬜⬜⬜⬜',q:'黑棋(⚫)吃掉了几颗白棋(⚪)？',ans:'1'},
-    {board:'⬜⬜⬜⬜⬜\n⬜⚪⬛⬜⬜\n⬜⬛⚫⬛⬜\n⬜⬜⬛⚪⬜\n⬜⬜⬜⬜⬜',q:'黑棋(⚫)正在包围白棋，能吃掉几颗？',ans:'2'},
-    {board:'⬜⬜⬜⬜⬜\n⬜⚪⚫⬜⬜\n⬜⚫⬜⚫⬜\n⬜⬜⚫⚪⬜\n⬜⬜⬜⬜⬜',q:'黑棋(⚫)吃掉了几个白棋(⚪)？',ans:'1'},
-  ];
-  const r=exState.currentRound;
-  if(r>=exState.rounds)return finishEx();
-  const b=boards[r%boards.length];
-  return `<div class="exercise-area">
-    <h3>⚫ 围棋小棋手</h3><p style="color:var(--sub);margin-bottom:8px">第${r+1}/${exState.rounds}轮</p>
-    <pre style="font-size:16px;line-height:1.6;background:#f9f4e8;padding:10px;border-radius:12px;display:inline-block;text-align:left">${b.board}</pre>
-    <div class="ex-question" style="margin-top:12px">${b.q}</div>
-    <div class="ex-options">${['1','2','0'].map(o=>`<button class="ex-opt" onclick="answerEx('${o}')">${o}颗</button>`).join('')}</div>
-    <div class="ex-feedback" id="exFeedback"></div>
-    <div class="ex-score" id="exScore"></div>
+function renderGoBoard(){
+  const gs=goState;
+  const allStones={};
+  // Pre-placed stones
+  gs.prePlaced.forEach(s=>{allStones[s[0]+','+s[1]]=s[2]});
+  // User-placed stones
+  gs.userStones.forEach(s=>{allStones[s.row+','+s.col]=s.color});
+
+  let grid='';
+  for(let r=0;r<gs.size;r++){
+    for(let c=0;c<gs.size;c++){
+      const key=r+','+c;
+      const stone=allStones[key];
+      const isPrePlaced=gs.prePlaced.some(s=>s[0]===r&&s[1]===c);
+      let inner='';
+      if(stone){
+        inner=`<div class="go-stone ${stone}"></div>`;
+      }
+      const clickable=!stone&&!gs.solved?'onclick="goPlaceStone(${r},${c})"':'';
+      // highlight target area
+      let extraClass='';
+      if(!stone&&!gs.solved&&gs.correct.row===r&&gs.correct.col===c)extraClass=' hint-cell';
+      grid+=`<div class="go-cell${extraClass}" ${clickable}>${inner}</div>`;
+    }
+  }
+
+  const boardStyle=`grid-template-columns:repeat(${gs.size},40px);grid-template-rows:repeat(${gs.size},40px);`;
+
+  return `<div class="go-board-container">
+    <h3>⚫ 围棋小棋手</h3>
+    <p style="color:var(--sub);font-size:13px;margin-bottom:4px">实际对弈练习</p>
+    <div class="go-board" style="${boardStyle}">${grid}</div>
+    <p class="go-tip" id="goTip">${gs.hint}</p>
+    <div class="go-controls">
+      <button class="go-undo" onclick="goUndo()" ${gs.userStones.length===0||gs.solved?'disabled':''}>↩️ 撤销</button>
+      <button class="go-reset" onclick="goReset()">🔄 重置</button>
+    </div>
   </div>`;
 }
 
+function goPlaceStone(row,col){
+  if(goState.solved)return;
+  goState.userStones.push({row,col,color:goState.correct.color});
+  
+  // Check if correct position
+  if(row===goState.correct.row&&col===goState.correct.col){
+    goState.solved=true;
+    document.getElementById('modalContent').innerHTML=renderGoBoard();
+    document.getElementById('goTip').textContent='✅ '+goState.explanation+' 太棒了！';
+    document.getElementById('goTip').style.color='var(--green)';
+    sfxHappy();
+    setTimeout(()=>{
+      // Treat go as completed - always pass
+      const tk=today();
+      state.completedTasks[tk][goState.task.id]=true;
+      state.coins+=goState.task.coins;
+      sfxCoin();
+      document.getElementById('modalContent').innerHTML=`
+        <div class="exercise-area"><div class="ex-big">🎉</div>
+        <h3>围棋练习完成!</h3><p>你成功吃掉了对方的棋子！</p>
+        <p style="font-size:24px;color:var(--accent);font-weight:700">+${goState.task.coins} ${coinHtml('sm')}</p>
+        <button onclick="closeModal()" style="margin-top:16px;padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:15px;cursor:pointer;font-family:inherit">✅ 收下奖励</button></div>`;
+      saveState();renderTaskPage();updateCoinDisplay();renderReportPage();
+    },1200);
+  }else{
+    document.getElementById('modalContent').innerHTML=renderGoBoard();
+    document.getElementById('goTip').textContent='❌ 不太对哦，再试一次！看看哪颗白棋被包围了？';
+    document.getElementById('goTip').style.color='var(--accent2)';
+    playTone(250,.2,'square',.05);
+  }
+}
+
+function goUndo(){
+  if(goState.solved)return;
+  if(goState.userStones.length>0){
+    goState.userStones.pop();
+    document.getElementById('modalContent').innerHTML=renderGoBoard();
+    document.getElementById('goTip').textContent=goState.hint;
+    document.getElementById('goTip').style.color='var(--sub)';
+  }
+}
+
+function goReset(){
+  goState.userStones=[];
+  goState.solved=false;
+  document.getElementById('modalContent').innerHTML=renderGoBoard();
+  document.getElementById('goTip').textContent=goState.hint;
+  document.getElementById('goTip').style.color='var(--sub)';
+}
+
+// ============================================================
+// ANSWER HANDLING
+// ============================================================
 function answerEx(choice){
   exState.total++;
   const fb=document.getElementById('exFeedback');
   const sc=document.getElementById('exScore');
   const isCorrect=choice===exState.correct;
 
-  if(isCorrect){exState.correctCount++;fb.textContent='✅ 答对了!';playTone(600,.1);playTone(800,.15)}
-  else{fb.textContent='❌ 再想想~';playTone(250,.2,'square',.05)}
+  if(isCorrect){
+    exState.correctCount++;
+    fb.textContent='✅ 答对了!';
+    playTone(600,.1);playTone(800,.15);
+    // For English: show the word for speaking practice
+    if(exState.task.id==='t3'){
+      const speakArea=document.getElementById('exSpeakArea');
+      if(speakArea){
+        speakArea.style.display='inline-flex';
+        // Show the word
+        fb.textContent='✅ 答对了! 念一念: '+exState.correct.toUpperCase();
+      }
+    }
+  }else{
+    fb.textContent='❌ 再想想~';
+    playTone(250,.2,'square',.05);
+  }
   sc.textContent=`正确: ${exState.correctCount}/${exState.total}`;
 
   // Highlight options
-  const opts=document.querySelectorAll('.ex-modal-btn');
-  if(!opts.length){
-    document.querySelectorAll('.ex-opt').forEach(o=>{
-      if(o.textContent.trim()===choice||o.textContent===choice){
-        if(isCorrect)o.classList.add('correct');else o.classList.add('wrong');
-      }
-    });
-  }
-
-  setTimeout(()=>{
-    if(exState.task.id==='t5'){
-      exState.currentRound++;renderGoContinue();
-    }else{
-      continueChineseOrGeneral();
+  document.querySelectorAll('.ex-opt').forEach(o=>{
+    if(o.textContent.trim()===choice||o.textContent===choice){
+      if(isCorrect)o.classList.add('correct');else o.classList.add('wrong');
     }
-  },1000);
+  });
+
+  // For English: wait longer for speaking practice
+  const delay=(exState.task.id==='t3'&&isCorrect)?2500:1000;
+  setTimeout(()=>{
+    if(exState.task.id==='t3'){
+      // English: check if speaking area was shown
+      const speakArea=document.getElementById('exSpeakArea');
+      if(speakArea&&speakArea.style.display!=='none'){
+        // User hasn't clicked speak, auto-continue
+        speakArea.style.display='none';
+      }
+    }
+    continueChineseOrGeneral();
+  },delay);
 }
 
 function continueChineseOrGeneral(){
   exState.currentRound=(exState.currentRound||0)+1;
   if(exState.currentRound>=exState.rounds){finishEx();return}
 
-  // Generate next question based on task type
   if(exState.task.id==='t1')regenerateChinese();
+  else if(exState.task.id==='t2')regenerateMath();
   else if(exState.task.id==='t3')regenerateEnglish();
   else if(exState.task.id==='t4')regenerateThinking();
-  else if(exState.task.id==='t2')regenerateMath();
 }
 
 function regenerateChinese(){
-  const pairs=[['🐱','猫'],['🐶','狗'],['🐰','兔'],['🐟','鱼'],['🐦','鸟'],['🐴','马'],['🐮','牛'],['🐑','羊'],['🌙','月'],['⭐','星'],['🌊','海'],['🏔️','山'],['🌳','树'],['🌸','花'],['🌞','日'],['🚗','车'],['🚢','船'],['✈️','机'],['🍎','果'],['📖','书']];
+  const pairs=exState.pairs;
   const q=pairs[Math.floor(Math.random()*pairs.length)];
   const wrong=pairs.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5).slice(0,3);
   const opts=[q[1],...wrong.map(p=>p[1])].sort(()=>Math.random()-.5);
@@ -709,43 +960,52 @@ function regenerateChinese(){
   document.getElementById('exFeedback').textContent='';
 }
 
-function regenerateEnglish(){
-  const words=[['apple','🍎','苹果'],['cat','🐱','猫'],['dog','🐶','狗'],['fish','🐟','鱼'],['bird','🐦','鸟'],['star','⭐','星星'],['moon','🌙','月亮'],['car','🚗','车'],['book','📖','书'],['flower','🌸','花'],['sun','🌞','太阳'],['tree','🌳','树']];
-  const q=words[Math.floor(Math.random()*words.length)];
-  const wrong=words.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,3);
-  const opts=[q[0],...wrong.map(w=>w[0])].sort(()=>Math.random()-.5);
-  exState.correct=q[0];
-  document.querySelector('.ex-big').textContent=q[1];
-  document.querySelector('.ex-question').textContent=q[2]+' — 选英文单词';
-  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i];o.className='ex-opt'});
+function regenerateMath(){
+  let a,b,ans,symbol;
+  if(Math.random()>0.5){
+    ans=Math.floor(Math.random()*9)+2;a=Math.floor(Math.random()*(ans-1))+1;b=ans-a;symbol='+';
+  }else{
+    a=Math.floor(Math.random()*10)+1;b=Math.floor(Math.random()*(a+1));ans=a-b;symbol='−';
+  }
+  exState.correct=String(ans);
+  const container=document.querySelector('.ex-big');
+  if(container)container.textContent=`${a} ${symbol} ${b} = ?`;
+  const inp=document.getElementById('mathInput');if(inp)inp.value='';
   document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
   document.getElementById('exFeedback').textContent='';
 }
 
+function regenerateEnglish(){
+  const words=exState.words;
+  const q=words[Math.floor(Math.random()*words.length)];
+  const wrong=words.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,3);
+  const opts=[q[0],...wrong.map(w=>w[0])].sort(()=>Math.random()-.5);
+  exState.correct=q[0];exState.currentWord=q;
+  document.querySelector('.ex-big').textContent=q[1];
+  const qEl=document.querySelector('.ex-question');
+  qEl.innerHTML='👂 这个用英语怎么说？<br><span style="font-size:13px;color:var(--sub)">('+q[2]+')</span>';
+  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i];o.className='ex-opt'});
+  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
+  document.getElementById('exFeedback').textContent='';
+  const speakArea=document.getElementById('exSpeakArea');
+  if(speakArea)speakArea.style.display='none';
+}
+
 function regenerateThinking(){
-  const patterns=[{q:'🔴🟡🔴🟡🔴❓',opts:['🟡','🔴','🟢'],ans:'🟡'},{q:'🔺🔻🔺🔻❓',opts:['🔻','🔺','◼️'],ans:'🔺'},{q:'🐱🐶🐱🐶🐱❓',opts:['🐶','🐱','🐰'],ans:'🐶'},{q:'🍎🍌🍎🍌🍎❓',opts:['🍌','🍎','🍇'],ans:'🍌'}];
+  const patterns=[
+    {q:'🔴🟡🔴🟡🔴❓',opts:['🟡','🔴','🟢'],ans:'🟡'},
+    {q:'🔺🔻🔺🔻❓',opts:['🔻','🔺','◼️'],ans:'🔺'},
+    {q:'🐱🐶🐱🐶🐱❓',opts:['🐶','🐱','🐰'],ans:'🐶'},
+    {q:'🍎🍌🍎🍌🍎❓',opts:['🍌','🍎','🍇'],ans:'🍌'},
+    {q:'1️⃣2️⃣3️⃣4️⃣❓',opts:['5️⃣','4️⃣','6️⃣'],ans:'5️⃣'},
+    {q:'⬜⬛⬜⬛⬜❓',opts:['⬛','⬜','🔲'],ans:'⬛'},
+  ];
   const q=patterns[Math.floor(Math.random()*patterns.length)];
   exState.correct=q.ans;
   document.querySelector('.ex-big').textContent=q.q;
   document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=q.opts[i];o.className='ex-opt'});
   document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
   document.getElementById('exFeedback').textContent='';
-}
-
-function regenerateMath(){
-  const a=Math.floor(Math.random()*10)+1;const b=Math.floor(Math.random()*10)+1;
-  const op=Math.random()>.5?'+':'-';let ans;
-  if(op==='+')ans=a+b;else{if(a<b)[a,b]=[b,a];ans=a-b}
-  exState.correct=String(ans);
-  const container=document.querySelector('.ex-big');
-  if(container)container.textContent=`${a} ${op} ${b} = ?`;
-  const inp=document.getElementById('mathInput');if(inp)inp.value='';
-  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
-  document.getElementById('exFeedback').textContent='';
-}
-
-function renderGoContinue(){
-  document.getElementById('modalContent').innerHTML=renderGoRound();
 }
 
 function finishEx(){
@@ -758,7 +1018,7 @@ function finishEx(){
     document.getElementById('modalContent').innerHTML=`
       <div class="exercise-area"><div class="ex-big">🎉</div>
       <h3>任务完成!</h3><p>答对 ${exState.correctCount}/${exState.total} 题</p>
-      <p style="font-size:24px;color:var(--accent);font-weight:700">+${exState.task.coins}🪙</p>
+      <p style="font-size:24px;color:var(--accent);font-weight:700">+${exState.task.coins} ${coinHtml('sm')}</p>
       <button onclick="closeModal()" style="margin-top:16px;padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:15px;cursor:pointer;font-family:inherit">✅ 收下奖励</button></div>`;
   }else{
     document.getElementById('modalContent').innerHTML=`
@@ -779,14 +1039,14 @@ function renderShopPage(){
       <div class="si-icon">${s.icon}</div>
       <div class="si-name">${s.name}</div>
       <div class="si-effect">${s.desc||''}</div>
-      <div class="si-cost">🪙${s.cost}</div>
+      <div class="si-cost">${coinHtml('sm')}${s.cost}</div>
     </div>`).join('');
 }
 
 function buyItem(itemId){
   const item=state.config.shopItems.find(s=>s.id===itemId);
   if(!item)return;
-  if(state.coins<item.cost)return toastMsg('金币不够啦!🪙',true);
+  if(state.coins<item.cost)return toastMsg('金币不够啦!',true);
   const pet=getActivePet();
   if(!pet)return toastMsg('请先选择小伙伴!');
   state.coins-=item.cost;
@@ -811,11 +1071,11 @@ function renderWishPage(){
     const prog=state.wishProgress[w.id]||0;
     const pct=Math.min(100,Math.round(prog/w.cost*100));
     return `<div class="wish-item">
-      <div class="wi-top"><span class="wi-name">${w.name}</span><span class="wi-cost">🪙${prog}/${w.cost}</span></div>
+      <div class="wi-top"><span class="wi-name">${w.name}</span><span class="wi-cost">${coinHtml('sm')}${prog}/${w.cost}</span></div>
       <div class="wish-bar"><div class="wish-fill" style="width:${pct}%"></div></div>
       <div class="wish-actions">
-        <button onclick="contributeWish('${w.id}',10)">+10🪙</button>
-        <button onclick="contributeWish('${w.id}',50)">+50🪙</button>
+        <button onclick="contributeWish('${w.id}',10)">+10</button>
+        <button onclick="contributeWish('${w.id}',50)">+50</button>
         <button class="wa-claim" ${prog<w.cost||state.coins<w.cost-prog?'disabled':''} onclick="claimWish('${w.id}')">${prog>=w.cost?'✅ 兑换':'攒够了来换'}</button>
       </div></div>`;
   }).join('');
@@ -846,261 +1106,4 @@ function claimWish(wishId){
 function addCustomWish(){
   const name=prompt('输入心愿名称:');
   if(!name||!name.trim())return;
-  const cost=parseInt(prompt('需要多少金币? (建议80-200):','100'));
-  if(isNaN(cost)||cost<1)return;
-  const id='wc'+Date.now().toString(36);
-  state.config.wishes.push({id,name:'✨ '+name.trim(),cost});
-  saveState();renderWishPage();
-}
-
-// ============================================================
-// REPORT SYSTEM
-// ============================================================
-function renderReportPage(){
-  const tk=today();
-  const ct=state.completedTasks[tk]||{};
-  const pen=state.dailyPenalties[tk]||[];
-  const shop=state.shopHistory[tk]||[];
-  const completed=state.config.tasks.filter(t=>ct[t.id]);
-  const earned=completed.reduce((s,t)=>s+t.coins,0);
-  const penaltyTotal=pen.reduce((s,p)=>{
-    const cfg=state.config.penalties.find(x=>x.id===p.id);
-    return s+(cfg?cfg.coins:0);
-  },0);
-  const shopTotal=shop.reduce((s,sh)=>{
-    const cfg=state.config.shopItems.find(x=>x.id===sh.item);
-    return s+(cfg?cfg.cost:0);
-  },0);
-
-  document.getElementById('reportContent').innerHTML=`
-    <div class="report-card">
-      <h4>📋 今日任务</h4>
-      ${state.config.tasks.map(t=>{
-        const done=!!ct[t.id];
-        return `<div class="report-row"><span>${done?'✅':'⬜'} ${t.name}</span><span style="color:${done?'var(--green)':'#ccc'}">${done?'+'+t.coins+'🪙':'---'}</span></div>`;
-      }).join('')}
-    </div>
-    <div class="report-card">
-      <h4>⚠️ 今日扣分</h4>
-      ${pen.length===0?'<p style="color:var(--sub);font-size:13px;padding:8px 0">今天没有扣分，很棒!</p>':
-        pen.map(p=>{const cfg=state.config.penalties.find(x=>x.id===p.id);
-          return `<div class="report-row"><span>${cfg?cfg.name:'未知'}</span><span style="color:#ff6b6b">-${cfg?cfg.coins:'?'}🪙</span></div>`;
-        }).join('')}
-    </div>
-    <div class="report-card">
-      <h4>🏪 今日购物</h4>
-      ${shop.length===0?'<p style="color:var(--sub);font-size:13px;padding:8px 0">今天还没买东西</p>':
-        shop.map(sh=>{const cfg=state.config.shopItems.find(x=>x.id===sh.item);
-          return `<div class="report-row"><span>${cfg?cfg.icon+' '+cfg.name:'物品'}</span><span style="color:var(--accent)">-${cfg?cfg.cost:'?'}🪙</span></div>`;
-        }).join('')}
-    </div>
-    <div class="report-card"><div class="report-total">
-      🪙 今日获得: <span style="color:var(--green)">+${earned}</span> &nbsp;
-      花费: <span style="color:var(--accent)">-${penaltyTotal+shopTotal}</span> &nbsp;
-      净变化: <span style="color:${earned-penaltyTotal-shopTotal>=0?'var(--green)':'var(--accent2)'}">${earned-penaltyTotal-shopTotal>=0?'+':''}${earned-penaltyTotal-shopTotal}</span>
-    </div></div>`;
-}
-
-// ============================================================
-// PARENT SETTINGS
-// ============================================================
-function unlockParent(){
-  const pw=document.getElementById('parentPassword').value;
-  if(pw!==state.parentPin)return toastMsg('密码错误!',true);
-  document.getElementById('parentLock').style.display='none';
-  document.getElementById('parentContent').classList.add('show');
-  renderParentConfig();
-}
-
-function changePassword(){
-  const np=document.getElementById('newPassword').value;
-  if(!np||np.length<2)return toastMsg('密码太短!',true);
-  state.parentPin=np;saveState();toastMsg('密码已修改!✅');
-}
-
-function renderParentConfig(){
-  renderConfigList('configTasks',state.config.tasks,'t');
-  renderConfigList('configPenalties',state.config.penalties,'p');
-  renderConfigList('configShopItems',state.config.shopItems,'s');
-  renderConfigList('configWishes',state.config.wishes,'w');
-}
-
-function renderConfigList(containerId,items,prefix){
-  const container=document.getElementById(containerId);
-  container.innerHTML=items.map((item,i)=>{
-    if(prefix==='t'){
-      return `<div class="config-item">
-        <div class="ci-info"><strong>${item.name}</strong>难度:${item.difficulty||'--'}</div>
-        <input class="ci-input" value="${item.coins}" onchange="updateConfigItem('${containerId}','${item.id}','coins',this.value)" type="number" min="1" max="20" style="width:55px">
-        <span style="font-size:12px;color:var(--sub)">🪙</span>
-        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
-    }else if(prefix==='p'){
-      return `<div class="config-item">
-        <div class="ci-info"><strong>${item.name}</strong></div>
-        <input class="ci-input" value="${item.coins}" onchange="updateConfigItem('${containerId}','${item.id}','coins',this.value)" type="number" min="1" max="20" style="width:55px">
-        <span style="font-size:12px;color:#ff6b6b">🪙</span>
-        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
-    }else if(prefix==='s'){
-      return `<div class="config-item">
-        <div class="ci-info"><strong>${item.icon} ${item.name}</strong>${item.desc||''}</div>
-        <input class="ci-input" value="${item.cost}" onchange="updateConfigItem('${containerId}','${item.id}','cost',this.value)" type="number" min="1" max="50" style="width:55px">
-        <span style="font-size:12px;color:var(--sub)">🪙</span>
-        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
-    }else{
-      return `<div class="config-item">
-        <div class="ci-info"><strong>${item.name}</strong></div>
-        <input class="ci-input" value="${item.cost}" onchange="updateConfigItem('${containerId}','${item.id}','cost',this.value)" type="number" min="10" max="500" style="width:55px">
-        <span style="font-size:12px;color:var(--sub)">🪙</span>
-        <button class="ci-del" onclick="removeConfigItem('${containerId}','${item.id}')">🗑️</button></div>`;
-    }
-  }).join('');
-}
-
-function updateConfigItem(containerId,itemId,field,value){
-  const numVal=parseInt(value);if(isNaN(numVal)||numVal<1)return;
-  let items;if(containerId==='configTasks')items=state.config.tasks;
-  else if(containerId==='configPenalties')items=state.config.penalties;
-  else if(containerId==='configShopItems')items=state.config.shopItems;
-  else items=state.config.wishes;
-  const item=items.find(x=>x.id===itemId);
-  if(item){item[field]=numVal;saveState();renderAllPages()}
-}
-
-function removeConfigItem(containerId,itemId){
-  let items;if(containerId==='configTasks')items=state.config.tasks;
-  else if(containerId==='configPenalties')items=state.config.penalties;
-  else if(containerId==='configShopItems')items=state.config.shopItems;
-  else items=state.config.wishes;
-  const idx=items.findIndex(x=>x.id===itemId);
-  if(idx>=0){items.splice(idx,1);saveState();renderParentConfig();renderAllPages()}
-}
-
-function addConfigTask(){
-  const name=prompt('任务名称(含emoji):','🧹 做家务');
-  if(!name)return;
-  const coins=parseInt(prompt('金币奖励:','4'));
-  if(isNaN(coins))return;
-  const diff=prompt('难度(简单/中等/较难):','简单');
-  state.config.tasks.push({id:'t'+Date.now().toString(36),name,cat:'habit',coins,difficulty:diff||'简单'});
-  saveState();renderParentConfig();renderAllPages();
-}
-
-function addConfigPenalty(){
-  const name=prompt('扣分项名称(含emoji):','📺 超时看电视');
-  if(!name)return;
-  const coins=parseInt(prompt('扣除金币:','4'));
-  if(isNaN(coins))return;
-  state.config.penalties.push({id:'p'+Date.now().toString(36),name,coins});
-  saveState();renderParentConfig();renderAllPages();
-}
-
-function addConfigShopItem(){
-  const name=prompt('商品名称:','饼干');
-  if(!name)return;
-  const icon=prompt('emoji图标:','🍪');
-  const cost=parseInt(prompt('价格(🪙):','3'));
-  if(isNaN(cost))return;
-  const effect=prompt('效果类型(hunger/happiness/health/clean):','hunger');
-  const val=parseInt(prompt('效果值(1-50):','15'));
-  state.config.shopItems.push({id:'s'+Date.now().toString(36),name,icon:icon||'🎁',cost,effect:effect||'hunger',val:isNaN(val)?15:val,desc:''});
-  saveState();renderParentConfig();renderAllPages();
-}
-
-function addConfigWish(){
-  const name=prompt('心愿名称:','🎮 买游戏');
-  if(!name)return;
-  const cost=parseInt(prompt('需要金币:','100'));
-  if(isNaN(cost))return;
-  state.config.wishes.push({id:'w'+Date.now().toString(36),name:'✨ '+name,cost});
-  saveState();renderParentConfig();renderAllPages();
-}
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-function switchPage(pageName){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+pageName).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelector(`.nav-item[data-page="${pageName}"]`).classList.add('active');
-  const titles={pet:'🐾 小伙伴',task:'📋 今日任务',shop:'🏪 宠物商店',wish:'🌟 心愿清单',report:'📊 今日日报',parent:'⚙️ 家长后台'};
-  document.getElementById('topTitle').textContent=titles[pageName];
-
-  if(pageName==='pet')renderPetPage();
-  else if(pageName==='task')renderTaskPage();
-  else if(pageName==='shop')renderShopPage();
-  else if(pageName==='wish')renderWishPage();
-  else if(pageName==='report')renderReportPage();
-  else if(pageName==='parent'){
-    document.getElementById('parentLock').style.display='block';
-    document.getElementById('parentContent').classList.remove('show');
-    document.getElementById('parentPassword').value='';
-  }
-}
-
-// ============================================================
-// UI HELPERS
-// ============================================================
-function toastMsg(msg,isPenalty=false){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast'+(isPenalty?' penalty':'');
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),1800);
-}
-
-function updateCoinDisplay(){
-  document.getElementById('coinCount').textContent=state.coins;
-}
-
-function renderAllPages(){
-  renderTaskPage();
-  renderShopPage();
-  renderWishPage();
-  renderReportPage();
-}
-
-// ============================================================
-// BOTTOM NAV CLICKS
-// ============================================================
-document.getElementById('bottomNav').addEventListener('click',(e)=>{
-  const btn=e.target.closest('.nav-item');
-  if(!btn)return;switchPage(btn.dataset.page);
-});
-
-// Close modal on overlay click
-document.getElementById('modalOverlay').addEventListener('click',(e)=>{
-  if(e.target===document.getElementById('modalOverlay'))closeModal();
-});
-
-// ============================================================
-// INIT
-// ============================================================
-function init(){
-  // Ensure today's task state exists
-  const tk=today();
-  if(!state.completedTasks[tk])state.completedTasks[tk]={};
-  if(!state.dailyPenalties[tk])state.dailyPenalties[tk]=[];
-  if(!state.shopHistory[tk])state.shopHistory[tk]={};
-  // Initialize app
-  updateCoinDisplay();
-  renderAllPages();
-  renderPetPage();
-  saveState();
-}
-
-// ============================================================
-// PWA SERVICE WORKER
-// ============================================================
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('/sw.js').catch(()=>{});
-  });
-}
-
-// ============================================================
-// START
-// ============================================================
-init();
-</script>
-</body>
-</html>
+  const cost=parseInt(prompt('需要多少金币? (建议80-200
