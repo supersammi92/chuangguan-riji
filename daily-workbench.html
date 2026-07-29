@@ -208,7 +208,7 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 
 <!-- Top Bar -->
 <div class="top-bar" id="topBar">
-  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v6</span></h1>
+  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v7</span></h1>
   <div class="coin-display"><span class="coin-icon"><span class="coin coin-lg"></span></span><span id="coinCount">0</span></div>
 </div>
 
@@ -354,10 +354,10 @@ const DEFAULT_STATE={
   parentPin:'1234',
   config:{
     tasks:[
-      {id:'t1',name:'🔤 识字小达人',cat:'study',coins:4,difficulty:'中等'},
-      {id:'t2',name:'🔢 数学大冒险',cat:'study',coins:4,difficulty:'中等'},
-      {id:'t3',name:'📚 英语探险家',cat:'study',coins:5,difficulty:'较难'},
-      {id:'t4',name:'🧠 思维小天才',cat:'study',coins:5,difficulty:'较难'},
+      {id:'t1',name:'🔤 识字小达人',cat:'study',coins:4,difficulty:'渐进'},
+      {id:'t2',name:'🔢 数学大冒险',cat:'study',coins:4,difficulty:'渐进'},
+      {id:'t3',name:'📚 英语探险家',cat:'study',coins:5,difficulty:'渐进'},
+      {id:'t4',name:'🧠 思维小天才',cat:'study',coins:5,difficulty:'渐进'},
       {id:'t5',name:'⚫ 围棋小棋手',cat:'game',coins:3,difficulty:'简单'},
       {id:'t6',name:'⚡ 运动小健将',cat:'sport',coins:3,difficulty:'简单'},
       {id:'t7',name:'📖 阅读小书虫',cat:'habit',coins:3,difficulty:'简单'},
@@ -613,22 +613,40 @@ function closeModal(){
 }
 
 // ============================================================
-// CHINESE EXERCISE (4-5岁 level - simpler characters)
+// CHINESE EXERCISE — 5级渐进 (4-5岁)
 // ============================================================
+// Level 0: 最简单笔画字 (一、二、三、大、小、上、下) — 2选1
+// Level 1: 基础象形字 (人、口、手、目、日、月) — 3选1
+// Level 2: 自然元素   (山、水、火、木、花、车、星) — 3选1
+// Level 3: 动物       (猫、狗、兔、鱼、鸟、牛、马) — 4选1
+// Level 4: 综合全部 — 4选1
+const CN_TIERS=[
+  [['1️⃣','一'],['2️⃣','二'],['3️⃣','三'],['⚪','大'],['🔸','小'],['🔼','上'],['🔽','下']],
+  [['👨','人'],['👄','口'],['🖐️','手'],['👀','目'],['☀️','日'],['🌙','月']],
+  [['⛰️','山'],['💧','水'],['🔥','火'],['🌳','木'],['🌸','花'],['🚗','车'],['⭐','星']],
+  [['🐱','猫'],['🐶','狗'],['🐰','兔'],['🐟','鱼'],['🐦','鸟'],['🐮','牛'],['🐴','马']]
+];
+
+function getCnPool(level){
+  const lv=Math.min(Math.max(Math.round(level),0),CN_TIERS.length-1);
+  return CN_TIERS.slice(0,lv+1).flat();
+}
+
 function genChineseEx(task){
-  // 4-5岁小朋友的识字范围：基础象形字+常见动物
-  const pairs=[
-    ['👨','人'],['🐱','猫'],['🐶','狗'],['🐰','兔'],['🐟','鱼'],
-    ['🐦','鸟'],['🐮','牛'],['🐴','马'],['🌙','月'],['☀️','日'],
-    ['💧','水'],['🔥','火'],['⛰️','山'],['🌳','木'],['🌸','花'],
-    ['🚗','车'],['👀','目'],['🖐️','手'],['👄','口'],['⭐','星']
-  ];
-  const q=pairs[Math.floor(Math.random()*pairs.length)];
-  const wrong=pairs.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5).slice(0,3);
-  const opts=[q[1],...wrong.map(p=>p[1])].sort(()=>Math.random()-.5);
-  exState={correct:q[1],task,total:0,correctCount:0,rounds:5,pairs};
+  const pool=getCnPool(0);
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  const wrong=pool.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5).slice(0,1);
+  const opts=shuffle([q[1],...wrong.map(p=>p[1])]);
+  exState={correct:q[1],task,total:0,correctCount:0,rounds:3,level:0,maxLevel:4,subject:'cn'};
+  return buildCnHtml(0,q,opts);
+}
+
+function buildCnHtml(roundNum,q,opts){
+  const lv=exState.level||0;
+  const stars=lv<1?'⭐':lv<2?'⭐⭐':lv<3?'⭐⭐⭐':'🌟🌟';
   return `<div class="exercise-area">
-    <h3>🔤 识字小达人</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题</p>
+    <h3>🔤 识字小达人 <span style="font-size:14px">${stars}</span></h3>
+    <p style="color:var(--sub);margin-bottom:12px">第${roundNum+1}/${exState.rounds}题</p>
     <div class="ex-big">${q[0]}</div>
     <div class="ex-question">这个是什么字？</div>
     <div class="ex-options">${opts.map(o=>`<button class="ex-opt" onclick="answerEx('${o}')">${o}</button>`).join('')}</div>
@@ -637,34 +655,89 @@ function genChineseEx(task){
   </div>`;
 }
 
+function regenerateChinese(){
+  const pool=getCnPool(exState.level);
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  const wrong=pool.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5);
+  const optCount=exState.level<0.5?1:exState.level<2?2:3;
+  const opts=shuffle([q[1],...wrong.slice(0,optCount).map(p=>p[1])]);
+  exState.correct=q[1];
+  document.querySelector('.ex-big').textContent=q[0];
+  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i]||'';o.className='ex-opt';o.style.display=opts[i]?'':'none'});
+  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
+  document.getElementById('exFeedback').textContent='';
+  // Update stars
+  const h3=document.querySelector('.modal-box h3');
+  const lv=exState.level||0;
+  const stars=lv<1?'⭐':lv<2?'⭐⭐':lv<3?'⭐⭐⭐':'🌟🌟';
+  if(h3)h3.innerHTML='🔤 识字小达人 <span style=\"font-size:14px\">'+stars+'</span>';
+}
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
 // ============================================================
-// MATH EXERCISE (10以内加减法)
+// MATH EXERCISE — 4级渐进 (4-5岁)
 // ============================================================
+// Level 0: 5以内加法 (1+2, 2+3, ...)
+// Level 1: 5以内加减法
+// Level 2: 10以内加法
+// Level 3: 10以内加减法
 function genMathEx(task){
-  // 10以内加减法：结果不超过10，差不能为负
+  const q=genMathQ(0);
+  exState={correct:String(q.ans),task,total:0,correctCount:0,rounds:3,level:0,maxLevel:3,subject:'math'};
+  return buildMathHtml(0,q);
+}
+
+function genMathQ(level){
   let a,b,ans,op,symbol;
-  if(Math.random()>0.5){
-    // 加法：结果 ≤ 10
-    ans=Math.floor(Math.random()*9)+2; // 2-10
-    a=Math.floor(Math.random()*(ans-1))+1; // 1 to ans-1
-    b=ans-a;
-    op='+';symbol='+';
+  if(level<1){
+    // 5以内加法
+    ans=Math.floor(Math.random()*3)+3; // 3-5
+    a=Math.floor(Math.random()*(ans-1))+1;
+    b=ans-a;symbol='+';
+  }else if(level<2){
+    // 5以内加减
+    if(Math.random()>0.5){ans=Math.floor(Math.random()*3)+3;a=Math.floor(Math.random()*(ans-1))+1;b=ans-a;symbol='+';}
+    else{a=Math.floor(Math.random()*4)+1;b=Math.floor(Math.random()*(a+1));ans=a-b;symbol='−';}
+  }else if(level<3){
+    // 10以内加法
+    ans=Math.floor(Math.random()*7)+4; // 4-10
+    a=Math.floor(Math.random()*(ans-1))+1;b=ans-a;symbol='+';
   }else{
-    // 减法：被减数 ≤ 10，结果 ≥ 0
-    a=Math.floor(Math.random()*10)+1; // 1-10
-    b=Math.floor(Math.random()*(a+1)); // 0 to a
-    ans=a-b;
-    op='-';symbol='−';
+    // 10以内加减
+    if(Math.random()>0.5){ans=Math.floor(Math.random()*7)+4;a=Math.floor(Math.random()*(ans-1))+1;b=ans-a;symbol='+';}
+    else{a=Math.floor(Math.random()*9)+2;b=Math.floor(Math.random()*(a-1))+1;ans=a-b;symbol='−';}
   }
-  exState={correct:String(ans),task,total:0,correctCount:0,rounds:5};
+  return {a,b,ans,symbol};
+}
+
+function buildMathHtml(roundNum,q){
+  const lv=exState.level||0;
+  const stars=lv<1?'⭐':lv<2?'⭐⭐':lv<3?'⭐⭐⭐':'🌟🌟';
+  const hint=lv<1?'(5以内加法)':lv<2?'(5以内)':lv<3?'(10以内加法)':'(10以内)';
   return `<div class="exercise-area">
-    <h3>🔢 数学大冒险</h3><p style="color:var(--sub);margin-bottom:8px">第1/${exState.rounds}题</p>
-    <div class="ex-big" style="font-size:48px">${a} ${symbol} ${b} = ?</div>
+    <h3>🔢 数学大冒险 <span style="font-size:14px">${stars}</span></h3>
+    <p style="color:var(--sub);margin-bottom:8px">第${roundNum+1}/${exState.rounds}题 <span style="font-size:11px;color:#aaa">${hint}</span></p>
+    <div class="ex-big" style="font-size:48px">${q.a} ${q.symbol} ${q.b} = ?</div>
     <input type="number" id="mathInput" style="width:120px;padding:12px;font-size:24px;text-align:center;border:2px solid #ddd;border-radius:12px;font-family:inherit;margin:12px 0" placeholder="?" inputmode="numeric">
     <br><button onclick="checkMathAnswer()" style="padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:16px;cursor:pointer;font-family:inherit;font-weight:600">✅ 提交</button>
     <div class="ex-feedback" id="exFeedback"></div>
     <div class="ex-score" id="exScore"></div>
   </div>`;
+}
+
+function regenerateMath(){
+  const q=genMathQ(exState.level);
+  exState.correct=String(q.ans);
+  document.querySelector('.ex-big').textContent=`${q.a} ${q.symbol} ${q.b} = ?`;
+  const inp=document.getElementById('mathInput');if(inp)inp.value='';
+  const lv=exState.level||0;
+  const stars=lv<1?'⭐':lv<2?'⭐⭐':lv<3?'⭐⭐⭐':'🌟🌟';
+  const hint=lv<1?'(5以内加法)':lv<2?'(5以内)':lv<3?'(10以内加法)':'(10以内)';
+  document.querySelector('.modal-box p').innerHTML=`第${exState.currentRound+1}/${exState.rounds}题 <span style="font-size:11px;color:#aaa">${hint}</span>`;
+  document.getElementById('exFeedback').textContent='';
+  const h3=document.querySelector('.modal-box h3');
+  if(h3)h3.innerHTML='🔢 数学大冒险 <span style=\"font-size:14px\">'+stars+'</span>';
 }
 
 function checkMathAnswer(){
@@ -674,22 +747,37 @@ function checkMathAnswer(){
 }
 
 // ============================================================
-// ENGLISH EXERCISE (听和说导向)
+// ENGLISH EXERCISE — 3级渐进 (4-5岁 听说导向)
 // ============================================================
+// Level 0: 4个最简单的词 (cat,dog,fish,bird) — 2选1
+// Level 1: 8个常用词 — 3选1
+// Level 2: 全部15个词 — 4选1
+const EN_TIERS=[
+  [['cat','🐱','猫'],['dog','🐶','狗'],['fish','🐟','鱼'],['bird','🐦','鸟']],
+  [['apple','🍎','苹果'],['star','⭐','星星'],['moon','🌙','月亮'],['car','🚗','汽车']],
+  [['book','📖','书'],['sun','☀️','太阳'],['tree','🌳','树'],['milk','🥛','牛奶'],['ball','⚽','球'],['hat','🎩','帽子'],['flower','🌸','花']]
+];
+
+function getEnPool(level){
+  const lv=Math.min(Math.max(Math.round(level),0),EN_TIERS.length-1);
+  return EN_TIERS.slice(0,lv+1).flat();
+}
+
 function genEnglishEx(task){
-  // 简单英语词汇 - 4-5岁常见词
-  const words=[
-    ['apple','🍎','苹果'],['cat','🐱','猫'],['dog','🐶','狗'],['fish','🐟','鱼'],
-    ['bird','🐦','鸟'],['star','⭐','星星'],['moon','🌙','月亮'],['car','🚗','汽车'],
-    ['book','📖','书'],['sun','☀️','太阳'],['tree','🌳','树'],['milk','🥛','牛奶'],
-    ['ball','⚽','球'],['hat','🎩','帽子'],['flower','🌸','花']
-  ];
-  const q=words[Math.floor(Math.random()*words.length)];
-  const wrong=words.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,3);
-  const opts=[q[0],...wrong.map(w=>w[0])].sort(()=>Math.random()-.5);
-  exState={correct:q[0],task,total:0,correctCount:0,rounds:5,currentWord:q,words};
+  const pool=getEnPool(0);
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  const wrong=pool.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,1);
+  const opts=shuffle([q[0],...wrong.map(w=>w[0])]);
+  exState={correct:q[0],task,total:0,correctCount:0,rounds:3,level:0,maxLevel:2,currentWord:q,subject:'en'};
+  return buildEnHtml(0,q,opts);
+}
+
+function buildEnHtml(roundNum,q,opts){
+  const lv=exState.level||0;
+  const stars=lv<1?'⭐':lv<2?'⭐⭐':'🌟🌟';
   return `<div class="exercise-area">
-    <h3>📚 英语探险家</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题</p>
+    <h3>📚 英语探险家 <span style="font-size:14px">${stars}</span></h3>
+    <p style="color:var(--sub);margin-bottom:12px">第${roundNum+1}/${exState.rounds}题</p>
     <div class="ex-big">${q[1]}</div>
     <div class="ex-question">👂 这个用英语怎么说？<br><span style="font-size:13px;color:var(--sub)">(${q[2]})</span></div>
     <div class="ex-options">${opts.map(o=>`<button class="ex-opt" onclick="answerEx('${o}')" style="font-size:16px;min-width:80px">${o}</button>`).join('')}</div>
@@ -699,10 +787,28 @@ function genEnglishEx(task){
   </div>`;
 }
 
+function regenerateEnglish(){
+  const pool=getEnPool(exState.level);
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  const wrong=pool.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5);
+  const optCount=exState.level<1?1:exState.level<2?2:3;
+  const opts=shuffle([q[0],...wrong.slice(0,optCount).map(w=>w[0])]);
+  exState.correct=q[0];exState.currentWord=q;
+  document.querySelector('.ex-big').textContent=q[1];
+  document.querySelector('.ex-question').innerHTML='👂 这个用英语怎么说？<br><span style="font-size:13px;color:var(--sub)">('+q[2]+')</span>';
+  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i]||'';o.className='ex-opt';o.style.display=opts[i]?'':'none';o.style.fontSize='16px';o.style.minWidth='80px'});
+  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
+  document.getElementById('exFeedback').textContent='';
+  document.getElementById('exSpeakArea').style.display='none';
+  const h3=document.querySelector('.modal-box h3');
+  const lv=exState.level||0;
+  const stars=lv<1?'⭐':lv<2?'⭐⭐':'🌟🌟';
+  if(h3)h3.innerHTML='📚 英语探险家 <span style=\"font-size:14px\">'+stars+'</span>';
+}
+
 function speakWord(){
   if(!exState||!exState.currentWord)return;
   const word=exState.currentWord[0];
-  // Visual "speaking" feedback - show the word big and animate
   const speakArea=document.getElementById('exSpeakArea');
   speakArea.style.display='none';
   const fb=document.getElementById('exFeedback');
@@ -715,27 +821,72 @@ function speakWord(){
 }
 
 // ============================================================
-// THINKING EXERCISE
+// THINKING EXERCISE — 3级渐进
 // ============================================================
-function genThinkingEx(task){
-  const patterns=[
+// Level 0: 简单AB模式 (2物品交替)
+// Level 1: AB + 数字数数
+// Level 2: 综合混合
+const THINK_TIERS=[
+  [ // Level 0: 2-item AB patterns
+    {q:'🔴🟡🔴🟡❓',opts:['🟡','🔴'],ans:'🟡'},
+    {q:'🔺🔻🔺🔻❓',opts:['🔻','🔺'],ans:'🔺'},
+    {q:'🍎🍌🍎🍌❓',opts:['🍌','🍎'],ans:'🍌'},
+    {q:'⬜⬛⬜⬛❓',opts:['⬛','⬜'],ans:'⬛'},
+  ],
+  [ // Level 1: AB + counting
+    {q:'🐱🐶🐱🐶🐱❓',opts:['🐶','🐱','🐰'],ans:'🐶'},
+    {q:'1️⃣2️⃣3️⃣4️⃣❓',opts:['5️⃣','4️⃣','6️⃣'],ans:'5️⃣'},
+    {q:'⭐🌟⭐🌟⭐❓',opts:['🌟','⭐','✨'],ans:'🌟'},
+    {q:'🅰️🅱️🅰️🅱️❓',opts:['🅱️','🅰️','©️'],ans:'🅰️'},
+  ],
+  [ // Level 2: Mixed
     {q:'🔴🟡🔴🟡🔴❓',opts:['🟡','🔴','🟢'],ans:'🟡'},
     {q:'🔺🔻🔺🔻❓',opts:['🔻','🔺','◼️'],ans:'🔺'},
     {q:'🐱🐶🐱🐶🐱❓',opts:['🐶','🐱','🐰'],ans:'🐶'},
     {q:'🍎🍌🍎🍌🍎❓',opts:['🍌','🍎','🍇'],ans:'🍌'},
     {q:'1️⃣2️⃣3️⃣4️⃣❓',opts:['5️⃣','4️⃣','6️⃣'],ans:'5️⃣'},
     {q:'⬜⬛⬜⬛⬜❓',opts:['⬛','⬜','🔲'],ans:'⬛'},
-  ];
-  const q=patterns[Math.floor(Math.random()*patterns.length)];
-  exState={correct:q.ans,task,total:0,correctCount:0,rounds:5};
+  ]
+];
+
+function getThinkPool(level){
+  const lv=Math.min(Math.max(Math.round(level),0),THINK_TIERS.length-1);
+  return THINK_TIERS[lv];
+}
+
+function genThinkingEx(task){
+  const pool=getThinkPool(0);
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  exState={correct:q.ans,task,total:0,correctCount:0,rounds:3,level:0,maxLevel:2,subject:'think'};
+  return buildThinkHtml(0,q);
+}
+
+function buildThinkHtml(roundNum,q){
+  const lv=exState.level||0;
+  const stars=lv<1?'⭐':lv<2?'⭐⭐':'🌟🌟';
   return `<div class="exercise-area">
-    <h3>🧠 思维小天才</h3><p style="color:var(--sub);margin-bottom:12px">第1/${exState.rounds}题 · 找规律</p>
+    <h3>🧠 思维小天才 <span style="font-size:14px">${stars}</span></h3>
+    <p style="color:var(--sub);margin-bottom:12px">第${roundNum+1}/${exState.rounds}题 · 找规律</p>
     <div class="ex-big" style="font-size:40px">${q.q}</div>
     <div class="ex-question">❓ 处应该是什么？</div>
     <div class="ex-options">${q.opts.map(o=>`<button class="ex-opt" onclick="answerEx('${o}')" style="font-size:32px">${o}</button>`).join('')}</div>
     <div class="ex-feedback" id="exFeedback"></div>
     <div class="ex-score" id="exScore"></div>
   </div>`;
+}
+
+function regenerateThinking(){
+  const pool=getThinkPool(exState.level);
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  exState.correct=q.ans;
+  document.querySelector('.ex-big').textContent=q.q;
+  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=q.opts[i]||'';o.className='ex-opt';o.style.display=q.opts[i]?'':'none';o.style.fontSize='32px'});
+  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
+  document.getElementById('exFeedback').textContent='';
+  const h3=document.querySelector('.modal-box h3');
+  const lv=exState.level||0;
+  const stars=lv<1?'⭐':lv<2?'⭐⭐':'🌟🌟';
+  if(h3)h3.innerHTML='🧠 思维小天才 <span style=\"font-size:14px\">'+stars+'</span>';
 }
 
 // ============================================================
@@ -899,16 +1050,20 @@ function answerEx(choice){
   const sc=document.getElementById('exScore');
   const isCorrect=choice===exState.correct;
 
+  // Difficulty progression: correct = level up, wrong = level down
+  if(exState.maxLevel!==undefined){
+    if(isCorrect) exState.level=Math.min((exState.level||0)+0.5, exState.maxLevel);
+    else exState.level=Math.max((exState.level||0)-0.5, 0);
+  }
+
   if(isCorrect){
     exState.correctCount++;
     fb.textContent='✅ 答对了!';
     playTone(600,.1);playTone(800,.15);
-    // For English: show the word for speaking practice
     if(exState.task.id==='t3'){
       const speakArea=document.getElementById('exSpeakArea');
       if(speakArea){
         speakArea.style.display='inline-flex';
-        // Show the word
         fb.textContent='✅ 答对了! 念一念: '+exState.correct.toUpperCase();
       }
     }
@@ -918,21 +1073,17 @@ function answerEx(choice){
   }
   sc.textContent=`正确: ${exState.correctCount}/${exState.total}`;
 
-  // Highlight options
   document.querySelectorAll('.ex-opt').forEach(o=>{
     if(o.textContent.trim()===choice||o.textContent===choice){
       if(isCorrect)o.classList.add('correct');else o.classList.add('wrong');
     }
   });
 
-  // For English: wait longer for speaking practice
   const delay=(exState.task.id==='t3'&&isCorrect)?2500:1000;
   setTimeout(()=>{
     if(exState.task.id==='t3'){
-      // English: check if speaking area was shown
       const speakArea=document.getElementById('exSpeakArea');
       if(speakArea&&speakArea.style.display!=='none'){
-        // User hasn't clicked speak, auto-continue
         speakArea.style.display='none';
       }
     }
@@ -948,66 +1099,6 @@ function continueChineseOrGeneral(){
   else if(exState.task.id==='t2')regenerateMath();
   else if(exState.task.id==='t3')regenerateEnglish();
   else if(exState.task.id==='t4')regenerateThinking();
-}
-
-function regenerateChinese(){
-  const pairs=exState.pairs;
-  const q=pairs[Math.floor(Math.random()*pairs.length)];
-  const wrong=pairs.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5).slice(0,3);
-  const opts=[q[1],...wrong.map(p=>p[1])].sort(()=>Math.random()-.5);
-  exState.correct=q[1];
-  document.querySelector('.ex-big').textContent=q[0];
-  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i];o.className='ex-opt'});
-  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
-  document.getElementById('exFeedback').textContent='';
-}
-
-function regenerateMath(){
-  let a,b,ans,symbol;
-  if(Math.random()>0.5){
-    ans=Math.floor(Math.random()*9)+2;a=Math.floor(Math.random()*(ans-1))+1;b=ans-a;symbol='+';
-  }else{
-    a=Math.floor(Math.random()*10)+1;b=Math.floor(Math.random()*(a+1));ans=a-b;symbol='−';
-  }
-  exState.correct=String(ans);
-  const container=document.querySelector('.ex-big');
-  if(container)container.textContent=`${a} ${symbol} ${b} = ?`;
-  const inp=document.getElementById('mathInput');if(inp)inp.value='';
-  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
-  document.getElementById('exFeedback').textContent='';
-}
-
-function regenerateEnglish(){
-  const words=exState.words;
-  const q=words[Math.floor(Math.random()*words.length)];
-  const wrong=words.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,3);
-  const opts=[q[0],...wrong.map(w=>w[0])].sort(()=>Math.random()-.5);
-  exState.correct=q[0];exState.currentWord=q;
-  document.querySelector('.ex-big').textContent=q[1];
-  const qEl=document.querySelector('.ex-question');
-  qEl.innerHTML='👂 这个用英语怎么说？<br><span style="font-size:13px;color:var(--sub)">('+q[2]+')</span>';
-  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i];o.className='ex-opt'});
-  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
-  document.getElementById('exFeedback').textContent='';
-  const speakArea=document.getElementById('exSpeakArea');
-  if(speakArea)speakArea.style.display='none';
-}
-
-function regenerateThinking(){
-  const patterns=[
-    {q:'🔴🟡🔴🟡🔴❓',opts:['🟡','🔴','🟢'],ans:'🟡'},
-    {q:'🔺🔻🔺🔻❓',opts:['🔻','🔺','◼️'],ans:'🔺'},
-    {q:'🐱🐶🐱🐶🐱❓',opts:['🐶','🐱','🐰'],ans:'🐶'},
-    {q:'🍎🍌🍎🍌🍎❓',opts:['🍌','🍎','🍇'],ans:'🍌'},
-    {q:'1️⃣2️⃣3️⃣4️⃣❓',opts:['5️⃣','4️⃣','6️⃣'],ans:'5️⃣'},
-    {q:'⬜⬛⬜⬛⬜❓',opts:['⬛','⬜','🔲'],ans:'⬛'},
-  ];
-  const q=patterns[Math.floor(Math.random()*patterns.length)];
-  exState.correct=q.ans;
-  document.querySelector('.ex-big').textContent=q.q;
-  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=q.opts[i];o.className='ex-opt'});
-  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
-  document.getElementById('exFeedback').textContent='';
 }
 
 function finishEx(){
@@ -1336,102 +1427,4 @@ function switchPage(pageName){
 // ============================================================
 function toastMsg(msg,isPenalty=false){
   const t=document.getElementById('toast');
-  // Build HTML manually - don't let innerHTML set then get overwritten by textContent
-  t.innerHTML='';
-  t.appendChild(document.createTextNode(msg));
-  t.className='toast'+(isPenalty?' penalty':'');
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),1800);
-}
-
-function updateCoinDisplay(){
-  document.getElementById('coinCount').textContent=state.coins;
-}
-
-function renderAllPages(){
-  renderTaskPage();
-  renderShopPage();
-  renderWishPage();
-  renderReportPage();
-}
-
-// ============================================================
-// BOTTOM NAV CLICKS
-// ============================================================
-document.getElementById('bottomNav').addEventListener('click',(e)=>{
-  const btn=e.target.closest('.nav-item');
-  if(!btn)return;switchPage(btn.dataset.page);
-});
-
-// Close modal on overlay click
-document.getElementById('modalOverlay').addEventListener('click',(e)=>{
-  if(e.target===document.getElementById('modalOverlay'))closeModal();
-});
-
-// ============================================================
-// INIT
-// ============================================================
-function init(){
-  const tk=today();
-  // Normalize data structures - handle corrupted/old format data
-  if(!state.completedTasks||typeof state.completedTasks!=='object')state.completedTasks={};
-  if(!state.completedTasks[tk])state.completedTasks[tk]={};
-  if(!state.dailyPenalties)state.dailyPenalties={};
-  if(!state.dailyPenalties[tk]||!Array.isArray(state.dailyPenalties[tk]))state.dailyPenalties[tk]=[];
-  if(!state.shopHistory||typeof state.shopHistory!=='object')state.shopHistory={};
-  if(!state.shopHistory[tk]||!Array.isArray(state.shopHistory[tk]))state.shopHistory[tk]=[];
-  if(!state.config||!Array.isArray(state.config.tasks))state.config=DEFAULT_STATE.config;
-  updateCoinDisplay();
-  renderAllPages();
-  renderPetPage();
-  saveState();
-}
-
-// ============================================================
-// ERROR HANDLER — shows errors on-screen for debugging
-// ============================================================
-window.onerror=function(msg,src,line,col,err){
-  const dbg=document.getElementById('debugPanel');
-  if(dbg){
-    dbg.style.display='block';
-    dbg.innerHTML+='<div style="color:#ff6b6b;margin:4px 0;font-size:11px">❌ '+msg+' (line '+line+')</div>';
-  }
-};
-window.addEventListener('unhandledrejection',function(e){
-  const dbg=document.getElementById('debugPanel');
-  if(dbg){
-    dbg.style.display='block';
-    dbg.innerHTML+='<div style="color:#ff6b6b;margin:4px 0;font-size:11px">❌ Promise: '+e.reason+'</div>';
-  }
-});
-
-// ============================================================
-// PWA SERVICE WORKER
-// ============================================================
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('/sw.js?v=6').catch(()=>{});
-  });
-}
-
-// ============================================================
-// START
-// ============================================================
-try{
-  init();
-  console.log('✅ v6 loaded successfully');
-}catch(e){
-  const dbg=document.getElementById('debugPanel');
-  if(dbg){
-    dbg.style.display='block';
-    dbg.innerHTML='<div style="color:#ff6b6b;font-size:13px;font-weight:700">❌ 初始化失败: '+e.message+'</div><div style="color:#888;font-size:11px">'+e.stack+'</div>';
-  }
-  console.error('Init error:',e);
-}
-</script>
-<!-- DEBUG: shows JS errors -->
-<div id="debugPanel" style="display:none;position:fixed;bottom:70px;left:0;right:0;background:#1a1a2e;color:#fff;padding:10px;font-family:monospace;z-index:9999;max-height:40vh;overflow-y:auto;border-top:3px solid #ff6b6b">
-  <div style="font-size:12px;font-weight:700;margin-bottom:6px">🐛 Debug Panel — v6</div>
-</div>
-</body>
-</html>
+  // Build HTML manually - don't let innerHTML set then ge
