@@ -1,12 +1,12 @@
 {
   "name": "小六一的闯关日记",
   "short_name": "闯关日记",
-  "description": "小六一每日学习闯关打卡 - 汉字、数学、英语、思维、围棋",
-  "start_url": "/",
+  "description": "养宠物闯关学习 - 喂食陪玩治病洗澡，完成任务赚金币",
+  "start_url": "/daily-workbench.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#E8F4FD",
-  "theme_color": "#667eea",
+  "background_color": "#FFF8F0",
+  "theme_color": "#ff9a56",
   "lang": "zh-CN",
   "icons": [
     {
