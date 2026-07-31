@@ -206,9 +206,27 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 </head>
 <body>
 
+<!-- ===== IMMEDIATE DIAGNOSTIC (runs before anything else) ===== -->
+<div id="quickDiag" style="background:#1a1a2e;color:#0f0;padding:6px 12px;font-family:monospace;font-size:11px;text-align:center;z-index:99999;position:sticky;top:0;cursor:pointer" onclick="this.innerHTML='🟢 BUILD: 2026-07-29 17:41 v8.2 | ✅ 点击正常！';setTimeout(function(){var t=new Date();document.getElementById('diagTime').textContent=t.getHours()+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0')},2000)">
+  🟢 v8.2 · <span id="diagTime"></span> · 点击此处测试 ←
+</div>
+<script>
+(function(){
+  var t=new Date();
+  document.getElementById('diagTime').textContent=t.getHours()+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0');
+  // Aggressively unregister ALL old service workers
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistrations().then(function(regs){
+      regs.forEach(function(r){r.unregister()});
+      console.log('🧹 Old SWs cleaned');
+    }).catch(function(){});
+  }
+})();
+</script>
+
 <!-- Top Bar -->
 <div class="top-bar" id="topBar">
-  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v8.1</span></h1>
+  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v8.2</span></h1>
   <div class="coin-display"><span class="coin-icon"><span class="coin coin-lg"></span></span><span id="coinCount">0</span></div>
 </div>
 
@@ -1396,28 +1414,3 @@ function addConfigPenalty(){
     });
 }
 
-function addConfigShopItem(){
-  showCustomInputModal('添加商品','商品名称','价格(金币)','3',
-    (name,cost)=>{
-      state.config.shopItems.push({id:'s'+Date.now().toString(36),name,icon:'🎁',cost,effect:'hunger',val:15,desc:''});
-      saveState();renderParentConfig();renderAllPages();
-    });
-}
-
-function addConfigWish(){
-  showCustomInputModal('添加心愿','心愿名称','需要金币','100',
-    (name,cost)=>{
-      state.config.wishes.push({id:'w'+Date.now().toString(36),name:'✨ '+name,cost});
-      saveState();renderParentConfig();renderAllPages();
-    });
-}
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-function switchPage(pageName){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+pageName).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelector(`.nav-item[data-page="${pageName}"]`).classList.add('active');
-  const titles={pet:'🐾 小伙伴',t
