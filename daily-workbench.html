@@ -207,26 +207,54 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 <body>
 
 <!-- ===== IMMEDIATE DIAGNOSTIC (runs before anything else) ===== -->
-<div id="quickDiag" style="background:#1a1a2e;color:#0f0;padding:6px 12px;font-family:monospace;font-size:11px;text-align:center;z-index:99999;position:sticky;top:0;cursor:pointer" onclick="this.innerHTML='🟢 BUILD: 2026-07-29 17:41 v8.2 | ✅ 点击正常！';setTimeout(function(){var t=new Date();document.getElementById('diagTime').textContent=t.getHours()+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0')},2000)">
-  🟢 v8.2 · <span id="diagTime"></span> · 点击此处测试 ←
+<div id="quickDiag" style="background:#1a1a2e;color:#0f0;padding:8px 12px;font-family:monospace;font-size:11px;text-align:center;z-index:99999;position:sticky;top:0;cursor:pointer" onclick="_diagClick()">
+  🟢 v8.3 · <span id="diagTime"></span> · 宠物:<span id="diagPets">?</span> · 金币:<span id="diagCoins">?</span> · 错误:<span id="diagErrs">0</span> · 长按看日志
 </div>
 <script>
+window._diagClick=function(){
+  var d=document.getElementById('quickDiag');
+  d.innerHTML='🟢 点击正常！ · '+new Date().toLocaleTimeString();
+  setTimeout(_updateDiag,2000);
+};
+window._updateDiag=function(){
+  try{
+    var t=new Date();
+    var ds=document.getElementById('diagTime');if(ds)ds.textContent=t.getHours()+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0');
+    var dp=document.getElementById('diagPets');if(dp)dp.textContent=(state&&state.pets)?state.pets.length:'?';
+    var dc=document.getElementById('diagCoins');if(dc)dc.textContent=(state&&typeof state.coins==='number')?state.coins:'?';
+  }catch(e){}
+};
+window._diagErrs=0;
+window._diagLog=[];
+window._logErr=function(loc,e){
+  window._diagErrs++;
+  var msg='['+loc+'] '+(e&&e.message?e.message:e);
+  window._diagLog.push(msg);
+  if(window._diagLog.length>8)window._diagLog.shift();
+  var de=document.getElementById('diagErrs');if(de){de.textContent=window._diagErrs;de.style.color='#ff6b6b'}
+  var qd=document.getElementById('quickDiag');if(qd)qd.style.background='#600';
+};
 (function(){
   var t=new Date();
-  document.getElementById('diagTime').textContent=t.getHours()+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0');
-  // Aggressively unregister ALL old service workers
+  var ds=document.getElementById('diagTime');if(ds)ds.textContent=t.getHours()+':'+String(t.getMinutes()).padStart(2,'0')+':'+String(t.getSeconds()).padStart(2,'0');
+  // Aggressively unregister ALL old service workers + clear caches
   if('serviceWorker' in navigator){
     navigator.serviceWorker.getRegistrations().then(function(regs){
       regs.forEach(function(r){r.unregister()});
       console.log('🧹 Old SWs cleaned');
     }).catch(function(){});
   }
+  if('caches' in window){
+    caches.keys().then(function(ks){ks.forEach(function(k){caches.delete(k)})});
+  }
 })();
+// Update diag every second
+setInterval(_updateDiag,1000);
 </script>
 
 <!-- Top Bar -->
 <div class="top-bar" id="topBar">
-  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v8.2</span></h1>
+  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v8.3</span></h1>
   <div class="coin-display"><span class="coin-icon"><span class="coin coin-lg"></span></span><span id="coinCount">0</span></div>
 </div>
 
@@ -251,10 +279,10 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
       </div>
     </div>
     <div class="pet-actions" id="petActions">
-      <button class="pet-btn" onclick="petAction('feed')"><span>🍎</span>喂食<span class="cost"><span class="coin coin-sm"></span>2</span></button>
-      <button class="pet-btn" onclick="petAction('play')"><span>🎾</span>陪玩<span class="cost"><span class="coin coin-sm"></span>1</span></button>
-      <button class="pet-btn" onclick="petAction('heal')"><span>💊</span>治病<span class="cost"><span class="coin coin-sm"></span>3</span></button>
-      <button class="pet-btn" onclick="petAction('bath')"><span>🛁</span>洗澡<span class="cost"><span class="coin coin-sm"></span>1</span></button>
+      <button class="pet-btn" onclick="try{petAction('feed')}catch(e){_logErr('feed',e)}"><span>🍎</span>喂食<span class="cost"><span class="coin coin-sm"></span>2</span></button>
+      <button class="pet-btn" onclick="try{petAction('play')}catch(e){_logErr('play',e)}"><span>🎾</span>陪玩<span class="cost"><span class="coin coin-sm"></span>1</span></button>
+      <button class="pet-btn" onclick="try{petAction('heal')}catch(e){_logErr('heal',e)}"><span>💊</span>治病<span class="cost"><span class="coin coin-sm"></span>3</span></button>
+      <button class="pet-btn" onclick="try{petAction('bath')}catch(e){_logErr('bath',e)}"><span>🛁</span>洗澡<span class="cost"><span class="coin coin-sm"></span>1</span></button>
     </div>
   </div>
 </div>
@@ -318,12 +346,12 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 
 <!-- Bottom Nav -->
 <div class="bottom-nav" id="bottomNav">
-  <button class="nav-item active" data-page="pet"><span class="ni-icon">🐾</span>小伙伴</button>
-  <button class="nav-item" data-page="task"><span class="ni-icon">📋</span>任务</button>
-  <button class="nav-item" data-page="shop"><span class="ni-icon">🏪</span>商店</button>
-  <button class="nav-item" data-page="wish"><span class="ni-icon">🌟</span>心愿</button>
-  <button class="nav-item" data-page="report"><span class="ni-icon">📊</span>报告</button>
-  <button class="nav-item" data-page="parent"><span class="ni-icon">⚙️</span>家长</button>
+  <button class="nav-item active" data-page="pet" onclick="try{switchPage('pet')}catch(e){_logErr('nav-pet',e)}"><span class="ni-icon">🐾</span>小伙伴</button>
+  <button class="nav-item" data-page="task" onclick="try{switchPage('task')}catch(e){_logErr('nav-task',e)}"><span class="ni-icon">📋</span>任务</button>
+  <button class="nav-item" data-page="shop" onclick="try{switchPage('shop')}catch(e){_logErr('nav-shop',e)}"><span class="ni-icon">🏪</span>商店</button>
+  <button class="nav-item" data-page="wish" onclick="try{switchPage('wish')}catch(e){_logErr('nav-wish',e)}"><span class="ni-icon">🌟</span>心愿</button>
+  <button class="nav-item" data-page="report" onclick="try{switchPage('report')}catch(e){_logErr('nav-report',e)}"><span class="ni-icon">📊</span>报告</button>
+  <button class="nav-item" data-page="parent" onclick="try{switchPage('parent')}catch(e){_logErr('nav-parent',e)}"><span class="ni-icon">⚙️</span>家长</button>
 </div>
 
 <!-- Exercise Modal -->
@@ -1414,3 +1442,205 @@ function addConfigPenalty(){
     });
 }
 
+function addConfigShopItem(){
+  showCustomInputModal('添加商品','商品名称','价格(金币)','3',
+    (name,cost)=>{
+      state.config.shopItems.push({id:'s'+Date.now().toString(36),name,icon:'🎁',cost,effect:'hunger',val:15,desc:''});
+      saveState();renderParentConfig();renderAllPages();
+    });
+}
+
+function addConfigWish(){
+  showCustomInputModal('添加心愿','心愿名称','需要金币','100',
+    (name,cost)=>{
+      state.config.wishes.push({id:'w'+Date.now().toString(36),name:'✨ '+name,cost});
+      saveState();renderParentConfig();renderAllPages();
+    });
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function switchPage(pageName){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pageName).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${pageName}"]`).classList.add('active');
+  const titles={pet:'🐾 小伙伴',task:'📋 今日任务',shop:'🏪 宠物商店',wish:'🌟 心愿清单',report:'📊 今日日报',parent:'⚙️ 家长后台'};
+  document.getElementById('topTitle').textContent=titles[pageName];
+
+  if(pageName==='pet')renderPetPage();
+  else if(pageName==='task')renderTaskPage();
+  else if(pageName==='shop')renderShopPage();
+  else if(pageName==='wish')renderWishPage();
+  else if(pageName==='report')renderReportPage();
+  else if(pageName==='parent'){
+    document.getElementById('parentLock').style.display='block';
+    document.getElementById('parentContent').classList.remove('show');
+    document.getElementById('parentPassword').value='';
+  }
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function toastMsg(msg,isPenalty=false){
+  const t=document.getElementById('toast');
+  // Build HTML manually - don't let innerHTML set then get overwritten by textContent
+  t.innerHTML='';
+  t.appendChild(document.createTextNode(msg));
+  t.className='toast'+(isPenalty?' penalty':'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+function updateCoinDisplay(){
+  document.getElementById('coinCount').textContent=state.coins;
+}
+
+function renderAllPages(){
+  renderTaskPage();
+  renderShopPage();
+  renderWishPage();
+  renderReportPage();
+}
+
+// Generic prompt replacement for iOS PWA (prompt() not supported in standalone mode)
+let _customCallback=null;
+function showCustomInputModal(title,label1,label2,defaultVal2,callback){
+  _customCallback=callback;
+  const modalContent=document.getElementById('modalContent');
+  modalContent.innerHTML=`<div class="exercise-area">
+    <h3>${title}</h3>
+    <p style="color:var(--sub);margin:8px 0">${label1}</p>
+    <input type="text" id="customInput1" style="width:220px;padding:10px;font-size:16px;text-align:center;border:2px solid #ddd;border-radius:10px;font-family:inherit;margin-bottom:8px" maxlength="30">
+    <p style="color:var(--sub);margin:8px 0">${label2}</p>
+    <input type="number" id="customInput2" value="${defaultVal2}" style="width:120px;padding:10px;font-size:16px;text-align:center;border:2px solid #ddd;border-radius:10px;font-family:inherit;margin-bottom:16px" inputmode="numeric">
+    <br><button onclick="confirmCustomInput()" style="padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:16px;cursor:pointer;font-family:inherit;font-weight:600">✅ 确认</button>
+    <button onclick="closeModal();_customCallback=null;" style="padding:10px 20px;background:#f5f5f5;color:var(--sub);border:none;border-radius:16px;font-size:14px;cursor:pointer;font-family:inherit;margin-left:8px">取消</button>
+  </div>`;
+  document.getElementById('modalOverlay').classList.add('show');
+  setTimeout(()=>{const inp=document.getElementById('customInput1');if(inp)inp.focus()},100);
+}
+function confirmCustomInput(){
+  const v1=(document.getElementById('customInput1')?.value||'').trim();
+  const v2=parseInt(document.getElementById('customInput2')?.value||'0');
+  if(!v1){toastMsg('请输入名称!',true);return;}
+  if(isNaN(v2)||v2<1){toastMsg('请输入有效数字!',true);return;}
+  closeModal();
+  if(_customCallback){_customCallback(v1,v2);_customCallback=null;}
+}
+
+// ============================================================
+// BOTTOM NAV CLICKS — handled by inline onclick (more reliable)
+// ============================================================
+// document.getElementById('bottomNav').addEventListener('click',(e)=>{...}) removed
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click',(e)=>{
+  if(e.target===document.getElementById('modalOverlay'))closeModal();
+});
+
+// ============================================================
+// GLOBAL CLICK TRACKER — diagnose if clicks are being intercepted
+// ============================================================
+var _clickLog=[];
+document.addEventListener('click',function(e){
+  try{
+    var tag=e.target.tagName;
+    var id=e.target.id||'';
+    var cls=e.target.className||'';
+    _clickLog.push(tag+(id?'#'+id:'')+(cls?'.'+String(cls).split(' ')[0]:''));
+    if(_clickLog.length>5)_clickLog.shift();
+    var diag=document.getElementById('quickDiag');
+    if(diag&&_clickLog.length>=3)diag.title='最近点击: '+_clickLog.join(' → ');
+  }catch(err){}
+},true);
+
+// Long-press on diagnostic bar shows error log inline (no alert - iOS PWA blocks it)
+var _lpTimer=null;
+function _showLog(){
+  var msg=window._diagLog.length?window._diagLog.join(' | '):'暂无错误';
+  var d=document.getElementById('quickDiag');
+  if(d){
+    d.innerHTML='📋 '+msg+' · '+new Date().toLocaleTimeString();
+    setTimeout(_updateDiag,3000);
+  }
+}
+document.getElementById('quickDiag').addEventListener('touchstart',function(){
+  _lpTimer=setTimeout(_showLog,1500);
+},{passive:true});
+document.getElementById('quickDiag').addEventListener('touchend',function(){if(_lpTimer)clearTimeout(_lpTimer)});
+document.getElementById('quickDiag').addEventListener('mousedown',function(){
+  _lpTimer=setTimeout(_showLog,1500);
+});
+document.getElementById('quickDiag').addEventListener('mouseup',function(){if(_lpTimer)clearTimeout(_lpTimer)});
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  try{
+    const tk=today();
+    // Normalize data structures - handle corrupted/old format data
+    if(!state.completedTasks||typeof state.completedTasks!=='object')state.completedTasks={};
+    if(!state.completedTasks[tk])state.completedTasks[tk]={};
+    if(!state.dailyPenalties)state.dailyPenalties={};
+    if(!state.dailyPenalties[tk]||!Array.isArray(state.dailyPenalties[tk]))state.dailyPenalties[tk]=[];
+    if(!state.shopHistory||typeof state.shopHistory!=='object')state.shopHistory={};
+    if(!state.shopHistory[tk]||!Array.isArray(state.shopHistory[tk]))state.shopHistory[tk]=[];
+    if(!state.config||!Array.isArray(state.config.tasks))state.config=DEFAULT_STATE.config;
+    if(!state.pets)state.pets=[];
+    if(typeof state.activePetIdx!=='number')state.activePetIdx=0;
+    try{updateCoinDisplay()}catch(e){window._logErr('coinDisplay',e)}
+    try{renderAllPages()}catch(e){window._logErr('renderAll',e)}
+    try{renderPetPage()}catch(e){window._logErr('renderPet',e)}
+    try{saveState()}catch(e){window._logErr('saveState',e)}
+    if(typeof _updateDiag==='function')_updateDiag();
+  }catch(e){
+    window._logErr('init',e);
+  }
+}"
+
+// ============================================================
+// ERROR HANDLER — shows errors on-screen for debugging
+// ============================================================
+window.onerror=function(msg,src,line,col,err){
+  try{window._logErr('window',{message:msg+' (line '+line+')'})}catch(e){}
+};
+window.addEventListener('unhandledrejection',function(e){
+  try{window._logErr('promise',{message:String(e.reason)})}catch(err){}
+});
+
+// ============================================================
+// PWA SERVICE WORKER — delayed registration to avoid blocking page
+// ============================================================
+if('serviceWorker' in navigator){
+  // Delay SW registration by 3s to ensure page loads fully first
+  setTimeout(function(){
+    navigator.serviceWorker.register('/sw.js?v=83').catch(function(){});
+  },3000);
+}
+
+// ============================================================
+// START
+// ============================================================
+try{
+  init();
+  console.log('✅ v8.3 loaded successfully');
+}catch(e){
+  try{window._logErr('start',e)}catch(err){}
+  const dbg=document.getElementById('debugPanel');
+  if(dbg){
+    dbg.style.display='block';
+    dbg.innerHTML='<div style="color:#ff6b6b;font-size:13px;font-weight:700">❌ 初始化失败: '+e.message+'</div><div style="color:#888;font-size:11px">'+e.stack+'</div>';
+  }
+  console.error('Init error:',e);
+}
+</script>
+<!-- DEBUG: shows JS errors -->
+<div id="debugPanel" style="display:none;position:fixed;bottom:70px;left:0;right:0;background:#1a1a2e;color:#fff;padding:10px;font-family:monospace;z-index:9999;max-height:40vh;overflow-y:auto;border-top:3px solid #ff6b6b">
+  <div style="font-size:12px;font-weight:700;margin-bottom:6px">🐛 Debug Panel — v8.3</div>
+</div>
+</body>
+</html>
