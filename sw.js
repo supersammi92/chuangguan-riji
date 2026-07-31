@@ -1,5 +1,5 @@
-// Service Worker for 小六一的闯关日记 PWA — v8.1
-const CACHE_NAME = 'chuangguan-riji-v81';
+// Service Worker for 小六一的闯关日记 PWA — v8.2
+const CACHE_NAME = 'chuangguan-riji-v82';
 const ASSETS = [
   '/',
   '/daily-workbench.html',
@@ -32,13 +32,12 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: NETWORK-FIRST — always try network first, fallback to cache
+// Fetch: NETWORK-FIRST
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     fetch(event.request).then(response => {
-      // Cache the fresh response
       if (response && response.status === 200) {
         const clone = response.clone();
         caches.open(CACHE_NAME).then(cache => {
@@ -47,7 +46,6 @@ self.addEventListener('fetch', event => {
       }
       return response;
     }).catch(() => {
-      // Offline — serve from cache
       return caches.match(event.request).then(cached => {
         if (cached) return cached;
         if (event.request.mode === 'navigate') {
