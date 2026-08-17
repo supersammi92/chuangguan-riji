@@ -1,5 +1,5 @@
-// Service Worker for 小六一的闯关日记 PWA — v8.3
-const CACHE_NAME = 'chuangguan-riji-v83';
+// Service Worker for 小六一的闯关日记 PWA — v8.6
+const CACHE_NAME = 'chuangguan-riji-v86';
 const ASSETS = [
   '/',
   '/daily-workbench.html',
