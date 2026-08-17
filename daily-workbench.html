@@ -208,7 +208,7 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 
 <!-- ===== IMMEDIATE DIAGNOSTIC (runs before anything else) ===== -->
 <div id="quickDiag" style="background:#1a1a2e;color:#0f0;padding:8px 12px;font-family:monospace;font-size:11px;text-align:center;z-index:99999;position:sticky;top:0;cursor:pointer" onclick="_diagClick()">
-  🟢 v8.6 · <span id="diagTime"></span> · 宠物:<span id="diagPets">?</span> · 金币:<span id="diagCoins">?</span> · 错误:<span id="diagErrs">0</span> · 长按看日志
+  🟢 v8.9 · <span id="diagTime"></span> · 宠物:<span id="diagPets">?</span> · 金币:<span id="diagCoins">?</span> · 错误:<span id="diagErrs">0</span> · 长按看日志
 </div>
 <script>
 window._diagClick=function(){
@@ -254,7 +254,7 @@ setInterval(_updateDiag,1000);
 
 <!-- Top Bar -->
 <div class="top-bar" id="topBar">
-  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v8.6</span></h1>
+  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v8.9</span></h1>
   <div class="coin-display"><span class="coin-icon"><span class="coin coin-lg"></span></span><span id="coinCount">0</span></div>
 </div>
 
@@ -398,6 +398,8 @@ function coinHtml(size='sm'){return '<span class="coin coin-'+size+'"></span>';}
 const STORAGE_KEY='workbench_v5';
 const DEFAULT_STATE={
   coins:20,
+  cnLevel:0,
+  enLevel:0,
   pets:[],
   activePetIdx:0,
   completedTasks:{},
@@ -706,12 +708,62 @@ function getCnPool(level){
 }
 
 function genChineseEx(task){
-  const pool=getCnPool(0);
-  const q=pool[Math.floor(Math.random()*pool.length)];
-  const wrong=pool.filter(p=>p[1]!==q[1]).sort(()=>Math.random()-.5).slice(0,1);
-  const opts=shuffle([q[1],...wrong.map(p=>p[1])]);
-  exState={correct:q[1],task,total:0,correctCount:0,rounds:3,level:0,maxLevel:4,subject:'cn'};
-  return buildCnHtml(0,q,opts);
+  // 出字朗读模式：一次 5 个字，小朋友读出来
+  const pool=getCnPool(state.cnLevel||0);
+  const chars=shuffle(pool).slice(0,5);
+  exState={task,chars,idx:0,correctCount:0,total:0,rounds:5,subject:'cn',mode:'read'};
+  return buildCnReadHtml();
+}
+
+function buildCnReadHtml(){
+  const c=exState.chars[exState.idx];
+  const emoji=c[0],cn=c[1];
+  return `<div class="exercise-area">
+    <h3>🔤 识字小达人 <span style="font-size:14px">⭐ 读一读</span></h3>
+    <p style="color:var(--sub);margin-bottom:12px">第${exState.idx+1}/${exState.rounds}个字</p>
+    <div class="ex-big" style="font-size:100px">${cn}</div>
+    <div style="font-size:40px;margin:2px 0 14px">${emoji}</div>
+    <button class="ex-opt" onclick="cnSpeak()">🔊 听一听</button>
+    <div class="ex-feedback" id="exFeedback" style="min-height:26px;margin-top:10px"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="ex-opt" style="flex:1;background:var(--accent);color:#fff;border:none" onclick="cnMark(true)">✅ 读对了</button>
+      <button class="ex-opt" style="flex:1;background:#eee;color:var(--sub);border:none" onclick="cnMark(false)">🔁 不熟</button>
+    </div>
+  </div>`;
+}
+
+function cnSpeak(){
+  const c=exState.chars[exState.idx];
+  if(!c)return;
+  try{
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(c[1]);
+      u.lang='zh-CN';u.rate=0.6;u.pitch=1.1;
+      speechSynthesis.speak(u);
+    }
+  }catch(e){}
+}
+
+function cnMark(ok){
+  exState.total++;
+  const fb=document.getElementById('exFeedback');
+  if(ok){
+    exState.correctCount++;
+    if(fb){fb.textContent='✅ 太棒了!';fb.style.color='var(--accent)'}
+    playTone(600,.1);playTone(800,.15);
+  }else{
+    if(fb){fb.textContent='🔁 没关系，再听一遍~';fb.style.color='var(--sub)'}
+    playTone(250,.2,'square',.05);
+  }
+  setTimeout(cnNextChar,900);
+}
+
+function cnNextChar(){
+  exState.idx++;
+  if(exState.idx>=exState.rounds){finishEx();return}
+  const box=document.querySelector('.exercise-area');
+  if(box)box.innerHTML=buildCnReadHtml();
 }
 
 function buildCnHtml(roundNum,q,opts){
@@ -837,60 +889,67 @@ function getEnPool(level){
 }
 
 function genEnglishEx(task){
-  const pool=getEnPool(0);
-  const q=pool[Math.floor(Math.random()*pool.length)];
-  const wrong=pool.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5).slice(0,1);
-  const opts=shuffle([q[0],...wrong.map(w=>w[0])]);
-  exState={correct:q[0],task,total:0,correctCount:0,rounds:3,level:0,maxLevel:2,currentWord:q,subject:'en'};
-  return buildEnHtml(0,q,opts);
+  // 出词朗读模式：一次 5 个单词，小朋友读出来
+  const pool=getEnPool(state.enLevel||0);
+  const words=shuffle(pool).slice(0,5);
+  exState={task,words,idx:0,correctCount:0,total:0,rounds:5,subject:'en',mode:'read'};
+  return buildEnReadHtml();
 }
 
-function buildEnHtml(roundNum,q,opts){
-  const lv=exState.level||0;
-  const stars=lv<1?'⭐':lv<2?'⭐⭐':'🌟🌟';
+function buildEnReadHtml(){
+  const w=exState.words[exState.idx];
+  const emoji=w[1],en=w[0],cn=w[2];
   return `<div class="exercise-area">
-    <h3>📚 英语探险家 <span style="font-size:14px">${stars}</span></h3>
-    <p style="color:var(--sub);margin-bottom:12px">第${roundNum+1}/${exState.rounds}题</p>
-    <div class="ex-big">${q[1]}</div>
-    <div class="ex-question">👂 这个用英语怎么说？<br><span style="font-size:13px;color:var(--sub)">(${q[2]})</span></div>
-    <div class="ex-options">${opts.map(o=>`<button class="ex-opt" onclick="answerEx('${o}')" style="font-size:16px;min-width:80px">${o}</button>`).join('')}</div>
-    <div class="ex-feedback" id="exFeedback"></div>
-    <div class="ex-score" id="exScore"></div>
-    <div class="ex-speak" id="exSpeakArea" style="display:none" onclick="speakWord()">🔊 跟我读</div>
+    <h3>📚 英语探险家 <span style="font-size:14px">⭐ 读一读</span></h3>
+    <p style="color:var(--sub);margin-bottom:12px">第${exState.idx+1}/${exState.rounds}个单词</p>
+    <div style="font-size:40px;margin-bottom:4px">${emoji}</div>
+    <div class="ex-big" style="font-size:44px;letter-spacing:2px">${en}</div>
+    <div style="font-size:16px;color:var(--sub);margin-bottom:14px">${cn}</div>
+    <button class="ex-opt" onclick="enSpeak()">🔊 听一听</button>
+    <div class="ex-feedback" id="exFeedback" style="min-height:26px;margin-top:10px"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="ex-opt" style="flex:1;background:var(--accent);color:#fff;border:none" onclick="enMark(true)">✅ 读对了</button>
+      <button class="ex-opt" style="flex:1;background:#eee;color:var(--sub);border:none" onclick="enMark(false)">🔁 不熟</button>
+    </div>
   </div>`;
 }
 
-function regenerateEnglish(){
-  const pool=getEnPool(exState.level);
-  const q=pool[Math.floor(Math.random()*pool.length)];
-  const wrong=pool.filter(w=>w[0]!==q[0]).sort(()=>Math.random()-.5);
-  const optCount=exState.level<1?1:exState.level<2?2:3;
-  const opts=shuffle([q[0],...wrong.slice(0,optCount).map(w=>w[0])]);
-  exState.correct=q[0];exState.currentWord=q;
-  document.querySelector('.ex-big').textContent=q[1];
-  document.querySelector('.ex-question').innerHTML='👂 这个用英语怎么说？<br><span style="font-size:13px;color:var(--sub)">('+q[2]+')</span>';
-  document.querySelectorAll('.ex-opt').forEach((o,i)=>{o.textContent=opts[i]||'';o.className='ex-opt';o.style.display=opts[i]?'':'none';o.style.fontSize='16px';o.style.minWidth='80px'});
-  document.querySelector('.modal-box p').textContent=`第${exState.currentRound+1}/${exState.rounds}题`;
-  document.getElementById('exFeedback').textContent='';
-  document.getElementById('exSpeakArea').style.display='none';
-  const h3=document.querySelector('.modal-box h3');
-  const lv=exState.level||0;
-  const stars=lv<1?'⭐':lv<2?'⭐⭐':'🌟🌟';
-  if(h3)h3.innerHTML='📚 英语探险家 <span style=\"font-size:14px\">'+stars+'</span>';
+function enSpeak(){
+  const w=exState.words[exState.idx];
+  if(!w)return;
+  try{
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(w[0]);
+      u.lang='en-US';u.rate=0.55;u.pitch=1.05;
+      speechSynthesis.speak(u);
+    }
+  }catch(e){}
 }
 
-function speakWord(){
-  if(!exState||!exState.currentWord)return;
-  const word=exState.currentWord[0];
-  const speakArea=document.getElementById('exSpeakArea');
-  speakArea.style.display='none';
+function enMark(ok){
+  exState.total++;
   const fb=document.getElementById('exFeedback');
-  fb.innerHTML='<span style="font-size:32px;letter-spacing:3px;font-weight:700;color:var(--accent)">'+word+'</span>';
-  playTone(523,.15);setTimeout(()=>playTone(659,.15),150);setTimeout(()=>playTone(784,.2),300);
-  setTimeout(()=>{
-    if(exState.currentRound+1>=exState.rounds)finishEx();
-    else continueChineseOrGeneral();
-  },1500);
+  if(ok){
+    exState.correctCount++;
+    if(fb){fb.textContent='✅ 太棒了!';fb.style.color='var(--accent)'}
+    playTone(600,.1);playTone(800,.15);
+  }else{
+    if(fb){fb.textContent='🔁 没关系，再听一遍~';fb.style.color='var(--sub)'}
+    playTone(250,.2,'square',.05);
+  }
+  setTimeout(enNextWord,900);
+}
+
+function enNextWord(){
+  exState.idx++;
+  if(exState.idx>=exState.rounds){finishEx();return}
+  const box=document.querySelector('.exercise-area');
+  if(box)box.innerHTML=buildEnReadHtml();
+}
+
+function regenerateEnglish(){
+  enNextWord();
 }
 
 // ============================================================
@@ -972,40 +1031,41 @@ function genGoEx(task){
   // Pre-place stones, child needs to place one more to capture
   const problems=[
     {
-      // Simple atari: black to capture 1 white stone
+      // Simple atari: white to capture 1 black stone
       size:7,
       prePlaced:[
-        [3,2,'black'],[4,2,'black'],[5,2,'black'],[3,3,'black'],
-        [4,3,'white'],[6,3,'black'],[4,4,'black'],[5,4,'black'],
-        [6,4,'black'],[4,5,'black']
+        [3,2,'white'],[4,2,'white'],[5,2,'white'],[3,3,'white'],
+        [4,3,'black'],[6,3,'white'],[4,4,'white'],[5,4,'white'],
+        [6,4,'white'],[4,5,'white']
       ],
-      target:{row:5,col:3,color:'black'},
-      correct:{row:5,col:3,color:'black'},
-      hint:'黑棋🔴下一步，吃掉这颗白棋⚪！',
-      explanation:'黑棋落子后包围了白棋，吃掉它！'
+      target:{row:5,col:3,color:'white'},
+      correct:{row:5,col:3,color:'white'},
+      hint:'白棋⚪下一步，吃掉这颗黑棋⚫！',
+      explanation:'白棋落子后包围了黑棋，吃掉它！'
     },
     {
       size:7,
       prePlaced:[
-        [2,3,'black'],[3,2,'black'],[3,3,'white'],[3,4,'black'],
-        [4,3,'black']
+        [2,3,'white'],[3,2,'white'],[3,4,'white'],
+        [3,3,'black']
       ],
-      target:{row:3,col:3,color:'black'},
-      correct:{row:3,col:3,color:'black'},
-      hint:'中间的白棋⚪被包围了！补上最后一颗黑棋🔴吃掉它',
-      explanation:'4颗黑棋包围了中间的白棋，吃掉！'
+      target:{row:4,col:3,color:'white'},
+      correct:{row:4,col:3,color:'white'},
+      hint:'黑棋⚫只有一口气了！白棋⚪落下最后一颗，吃掉它',
+      explanation:'3颗白棋包围了黑棋，吃掉！'
     },
     {
       size:7,
       prePlaced:[
-        [2,2,'white'],[2,3,'black'],[2,4,'black'],[2,5,'black'],
-        [3,2,'black'],[3,5,'black'],[4,2,'black'],[4,3,'black'],
-        [4,4,'black'],[4,5,'black']
+        [1,2,'white'],[1,3,'white'],[1,4,'white'],[1,5,'white'],
+        [2,2,'white'],[2,5,'white'],
+        [2,3,'black'],[2,4,'black'],
+        [3,3,'white'],[3,4,'white']
       ],
-      target:{row:3,col:3,color:'black'},
-      correct:{row:3,col:3,color:'black'},
-      hint:'上方的白棋⚪快被包围了！在中间落子吃掉它',
-      explanation:'最后一颗黑棋完成包围，白棋被吃掉了！'
+      target:{row:3,col:2,color:'white'},
+      correct:{row:3,col:2,color:'white'},
+      hint:'两颗黑棋⚫被包围啦！白棋⚪落下最后一颗，全部吃掉',
+      explanation:'白棋包围了两颗黑棋，全部吃掉！'
     }
   ];
 
@@ -1053,8 +1113,8 @@ function renderGoBoard(){
   const boardStyle=`grid-template-columns:repeat(${gs.size},40px);grid-template-rows:repeat(${gs.size},40px);`;
 
   return `<div class="go-board-container">
-    <h3>⚫ 围棋小棋手</h3>
-    <p style="color:var(--sub);font-size:13px;margin-bottom:4px">实际对弈练习</p>
+    <h3>⚪ 围棋小棋手</h3>
+    <p style="color:var(--sub);font-size:13px;margin-bottom:4px">白棋吃子练习</p>
     <div class="go-board" style="${boardStyle}">${grid}</div>
     <p class="go-tip" id="goTip">${gs.hint}</p>
     <div class="go-controls">
@@ -1090,7 +1150,7 @@ function goPlaceStone(row,col){
     },1200);
   }else{
     document.getElementById('modalContent').innerHTML=renderGoBoard();
-    document.getElementById('goTip').textContent='❌ 不太对哦，再试一次！看看哪颗白棋被包围了？';
+    document.getElementById('goTip').textContent='❌ 不太对哦，再试一次！看看哪颗黑棋⚫被包围了？';
     document.getElementById('goTip').style.color='var(--accent2)';
     playTone(250,.2,'square',.05);
   }
@@ -1176,21 +1236,37 @@ function continueChineseOrGeneral(){
 
 function finishEx(){
   const tk=today();
+  // 朗读模式：根据表现调整难度（读对/答对>=4/5 升级，<2/5 降级）
+  if(exState.mode==='read'){
+    const r=exState.total?exState.correctCount/exState.total:0;
+    const delta=r>=0.8?1:(r<0.4?-1:0);
+    if(exState.subject==='cn'){
+      const lv=state.cnLevel||0;
+      state.cnLevel=Math.max(0,Math.min(4,lv+delta));
+    }else if(exState.subject==='en'){
+      const lv=state.enLevel||0;
+      state.enLevel=Math.max(0,Math.min(2,lv+delta));
+    }
+  }
   const ratio=exState.correctCount/exState.total;
+  const isRead=exState.mode==='read';
+  const isCn=exState.subject==='cn';
+  const isEn=exState.subject==='en';
+  const resText=(isRead&&isCn)?`读对 ${exState.correctCount}/${exState.total} 个字`:(isRead&&isEn)?`读对 ${exState.correctCount}/${exState.total} 个单词`:`答对 ${exState.correctCount}/${exState.total} 题`;
   if(ratio>=0.5){
     state.completedTasks[tk][exState.task.id]=true;
     state.coins+=exState.task.coins;
     sfxCoin();
     document.getElementById('modalContent').innerHTML=`
       <div class="exercise-area"><div class="ex-big">🎉</div>
-      <h3>任务完成!</h3><p>答对 ${exState.correctCount}/${exState.total} 题</p>
+      <h3>任务完成!</h3><p>${resText}</p>
       <p style="font-size:24px;color:var(--accent);font-weight:700">+${exState.task.coins} ${coinHtml('sm')}</p>
       <button onclick="closeModal()" style="margin-top:16px;padding:10px 30px;background:var(--accent);color:#fff;border:none;border-radius:16px;font-size:15px;cursor:pointer;font-family:inherit">✅ 收下奖励</button></div>`;
   }else{
     document.getElementById('modalContent').innerHTML=`
       <div class="exercise-area"><div class="ex-big">😅</div>
-      <h3>还要再练练哦</h3><p>答对 ${exState.correctCount}/${exState.total} 题</p>
-      <p style="color:var(--sub)">需要答对一半以上才能获得金币</p>
+      <h3>还要再练练哦</h3><p>${resText}</p>
+      <p style="color:var(--sub)">需要读对一半以上才能获得金币</p>
       <button onclick="closeModal();startTask('${exState.task.id}')" style="margin-top:16px;padding:10px 30px;background:var(--accent2);color:#fff;border:none;border-radius:16px;font-size:15px;cursor:pointer;font-family:inherit">🔄 再来一次</button></div>`;
   }
   saveState();renderTaskPage();updateCoinDisplay();renderReportPage();
@@ -1635,7 +1711,7 @@ if('serviceWorker' in navigator){
 // ============================================================
 try{
   init();
-  console.log('✅ v8.6 loaded successfully');
+  console.log('✅ v8.9 loaded successfully');
 }catch(e){
   try{window._logErr('start',e)}catch(err){}
   const dbg=document.getElementById('debugPanel');
@@ -1646,4 +1722,9 @@ try{
   console.error('Init error:',e);
 }
 </script>
-<!-- DEB
+<!-- DEBUG: shows JS errors -->
+<div id="debugPanel" style="display:none;position:fixed;bottom:70px;left:0;right:0;background:#1a1a2e;color:#fff;padding:10px;font-family:monospace;z-index:9999;max-height:40vh;overflow-y:auto;border-top:3px solid #ff6b6b">
+  <div style="font-size:12px;font-weight:700;margin-bottom:6px">🐛 Debug Panel — v8.9</div>
+</div>
+</body>
+</html>
