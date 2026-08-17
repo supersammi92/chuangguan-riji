@@ -208,7 +208,7 @@ body{font-family:-apple-system,'Segoe UI','PingFang SC','Microsoft YaHei',sans-s
 
 <!-- ===== IMMEDIATE DIAGNOSTIC (runs before anything else) ===== -->
 <div id="quickDiag" style="background:#1a1a2e;color:#0f0;padding:8px 12px;font-family:monospace;font-size:11px;text-align:center;z-index:99999;position:sticky;top:0;cursor:pointer" onclick="_diagClick()">
-  🟢 v8.3 · <span id="diagTime"></span> · 宠物:<span id="diagPets">?</span> · 金币:<span id="diagCoins">?</span> · 错误:<span id="diagErrs">0</span> · 长按看日志
+  🟢 v8.6 · <span id="diagTime"></span> · 宠物:<span id="diagPets">?</span> · 金币:<span id="diagCoins">?</span> · 错误:<span id="diagErrs">0</span> · 长按看日志
 </div>
 <script>
 window._diagClick=function(){
@@ -254,7 +254,7 @@ setInterval(_updateDiag,1000);
 
 <!-- Top Bar -->
 <div class="top-bar" id="topBar">
-  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v8.3</span></h1>
+  <h1 id="topTitle">🐾 小伙伴<span class="version-tag">v8.6</span></h1>
   <div class="coin-display"><span class="coin-icon"><span class="coin coin-lg"></span></span><span id="coinCount">0</span></div>
 </div>
 
@@ -266,7 +266,14 @@ setInterval(_updateDiag,1000);
 
 <!-- ========== PAGE: 小伙伴 ========== -->
 <div class="page active" id="page-pet">
-  <div class="pet-select" id="petSelect"></div>
+  <div class="pet-select" id="petSelect">
+    <button class="pet-option" onclick="selectPetType('rabbit')">🐰<span>小兔子</span></button>
+    <button class="pet-option" onclick="selectPetType('cat')">🐱<span>小猫咪</span></button>
+    <button class="pet-option" onclick="selectPetType('dog')">🐶<span>小狗狗</span></button>
+  </div>
+  <div id="adoptArea" style="text-align:center;padding:8px">
+    <button class="add-pet-btn" onclick="addPet()">✨ 领养新伙伴</button>
+  </div>
   <div id="petStage">
     <div class="pet-area">
       <div class="pet-stage"><span class="pet-emoji" id="petEmoji">🐰</span></div>
@@ -513,25 +520,24 @@ function triggerPenalty(penaltyId){
 function renderPetPage(){
   const ps=document.getElementById('petSelect');
   const pet=getActivePet();
-  let html='';
-  for(const[k,v]of Object.entries(PET_TYPES)){
-    html+=`<button class="pet-option${pet&&pet.type===k?' selected':''}" onclick="selectPetType('${k}')">${v.emoji}<span>${v.name}</span></button>`;
+  // Update selected state on hardcoded pet buttons (don't regenerate)
+  document.querySelectorAll('.pet-option').forEach(btn=>{btn.classList.remove('selected')});
+  if(pet){
+    const sel=document.querySelector(`.pet-option[onclick*="'${pet.type}'"]`)||document.querySelectorAll('.pet-option')[Object.keys(PET_TYPES).indexOf(pet.type)];
+    if(sel)sel.classList.add('selected');
   }
-  ps.innerHTML=html;
 
-  // Clear any previously injected add-pet button area
-  const oldAdopt=document.getElementById('adoptArea');
-  if(oldAdopt)oldAdopt.remove();
+  // Handle adopt area visibility
+  const adoptArea=document.getElementById('adoptArea');
   if(state.pets.length===0){
-    ps.insertAdjacentHTML('afterend','<div id="adoptArea" style="text-align:center;padding:8px"><button class="add-pet-btn" onclick="addPet()">✨ 领养新伙伴</button></div>');
+    if(adoptArea)adoptArea.style.display='block';
     document.getElementById('petStage').style.display='none';
     document.getElementById('petName').style.display='block';
     document.getElementById('petName').textContent='选一个，然后领养!';
     document.getElementById('petStats').style.display='none';
     document.getElementById('petEmoji').textContent='🐣';
   }else{
-    const btns=ps.parentElement.querySelectorAll('.add-pet-btn');
-    btns.forEach(b=>b.parentElement.remove());
+    if(adoptArea)adoptArea.style.display='none';
     if(state.activePetIdx>=state.pets.length)state.activePetIdx=0;
     const p=getActivePet();
     applyDecay(p);
@@ -1523,8 +1529,10 @@ function showCustomInputModal(title,label1,label2,defaultVal2,callback){
   setTimeout(()=>{const inp=document.getElementById('customInput1');if(inp)inp.focus()},100);
 }
 function confirmCustomInput(){
-  const v1=(document.getElementById('customInput1')?.value||'').trim();
-  const v2=parseInt(document.getElementById('customInput2')?.value||'0');
+  const el1=document.getElementById('customInput1');
+  const el2=document.getElementById('customInput2');
+  const v1=(el1?el1.value:'').trim();
+  const v2=parseInt(el2?el2.value:'0');
   if(!v1){toastMsg('请输入名称!',true);return;}
   if(isNaN(v2)||v2<1){toastMsg('请输入有效数字!',true);return;}
   closeModal();
@@ -1600,7 +1608,7 @@ function init(){
   }catch(e){
     window._logErr('init',e);
   }
-}"
+}
 
 // ============================================================
 // ERROR HANDLER — shows errors on-screen for debugging
@@ -1618,7 +1626,7 @@ window.addEventListener('unhandledrejection',function(e){
 if('serviceWorker' in navigator){
   // Delay SW registration by 3s to ensure page loads fully first
   setTimeout(function(){
-    navigator.serviceWorker.register('/sw.js?v=83').catch(function(){});
+    navigator.serviceWorker.register('/sw.js?v=84').catch(function(){});
   },3000);
 }
 
@@ -1627,7 +1635,7 @@ if('serviceWorker' in navigator){
 // ============================================================
 try{
   init();
-  console.log('✅ v8.3 loaded successfully');
+  console.log('✅ v8.6 loaded successfully');
 }catch(e){
   try{window._logErr('start',e)}catch(err){}
   const dbg=document.getElementById('debugPanel');
@@ -1638,9 +1646,4 @@ try{
   console.error('Init error:',e);
 }
 </script>
-<!-- DEBUG: shows JS errors -->
-<div id="debugPanel" style="display:none;position:fixed;bottom:70px;left:0;right:0;background:#1a1a2e;color:#fff;padding:10px;font-family:monospace;z-index:9999;max-height:40vh;overflow-y:auto;border-top:3px solid #ff6b6b">
-  <div style="font-size:12px;font-weight:700;margin-bottom:6px">🐛 Debug Panel — v8.3</div>
-</div>
-</body>
-</html>
+<!-- DEB
